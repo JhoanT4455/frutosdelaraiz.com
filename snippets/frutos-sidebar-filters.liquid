@@ -1,0 +1,213 @@
+{%- comment -%}
+  ============================================================
+  FRUTOS DE LA RAÍZ — snippets/frutos-sidebar-filters.liquid
+  v2 — Usa filtros nativos de Shopify + categorías reales
+  Uso: {% render 'frutos-sidebar-filters', collection: collection, show_price: true %}
+  ============================================================
+{%- endcomment -%}
+
+{%- liquid
+  assign active_total = 0
+  for filter in collection.filters
+    if filter.type == 'price_range'
+      if filter.min_value.value or filter.max_value.value
+        assign active_total = active_total | plus: 1
+      endif
+    else
+      assign active_total = active_total | plus: filter.active_values.size
+    endif
+  endfor
+-%}
+
+{%- comment -%}
+  ── Si la colección tiene filtros nativos de Shopify, los usamos.
+  ── Si NO hay filtros (storefront filters desactivados), mostramos
+     links manuales a las categorías reales de Frutos de la Raíz.
+{%- endcomment -%}
+
+{%- if collection.filters.size > 0 -%}
+
+  {%- for filter in collection.filters -%}
+    {%- liquid
+      assign gid   = 'frc-fg-' | append: forloop.index
+      assign is_op = true
+      if forloop.index > 3
+        assign is_op = false
+      endif
+    -%}
+
+    {%- comment -%} ── PRECIO ── {%- endcomment -%}
+    {%- if filter.type == 'price_range' and show_price -%}
+    <div class="frc-fg">
+      <button class="frc-fg-toggle" aria-expanded="{{ is_op }}" aria-controls="{{ gid }}">
+        <span>💰 {{ filter.label }}</span>
+        <span class="frc-chevron" style="transition:transform .25s;{% unless is_op %}transform:rotate(-90deg);{% endunless %}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </button>
+      <div id="{{ gid }}" class="frc-fg-body" style="{% unless is_op %}display:none;{% endunless %}">
+        <form class="frc-price-form" method="get" action="{{ collection.url }}">
+          {%- for param in filter.url_params -%}
+            <input type="hidden" name="{{ param.name }}" value="{{ param.value }}">
+          {%- endfor -%}
+          <div class="frc-price-inputs">
+            <input
+              class="frc-price-inp"
+              type="number"
+              name="{{ filter.min_value.param_name }}"
+              value="{{ filter.min_value.value | divided_by: 100 | default: '' }}"
+              placeholder="Mín $"
+              min="0"
+              aria-label="Precio mínimo"
+            >
+            <span class="frc-price-sep">—</span>
+            <input
+              class="frc-price-inp"
+              type="number"
+              name="{{ filter.max_value.param_name }}"
+              value="{{ filter.max_value.value | divided_by: 100 | default: '' }}"
+              placeholder="Máx $"
+              min="0"
+              aria-label="Precio máximo"
+            >
+          </div>
+          <button type="submit" class="frc-price-apply">Aplicar</button>
+        </form>
+      </div>
+    </div>
+
+    {%- comment -%} ── LISTA (tags, vendor, availability…) ── {%- endcomment -%}
+    {%- elsif filter.type == 'list' and filter.values.size > 0 -%}
+    <div class="frc-fg">
+      <button class="frc-fg-toggle" aria-expanded="{{ is_op }}" aria-controls="{{ gid }}">
+        <span>
+          {%- case filter.label | downcase -%}
+            {%- when 'categoría','categoria','category','colección','coleccion' -%}🌿&nbsp;
+            {%- when 'beneficio','benefit' -%}✨&nbsp;
+            {%- when 'marca','brand','fabricante','vendor' -%}🏷️&nbsp;
+            {%- when 'disponibilidad','availability' -%}📦&nbsp;
+            {%- when 'sabor','flavor' -%}🍃&nbsp;
+            {%- when 'tipo','type' -%}🔖&nbsp;
+            {%- else -%}🔖&nbsp;
+          {%- endcase -%}
+          {{ filter.label }}
+          {%- if filter.active_values.size > 0 -%}
+            <span style="background:rgba(27,94,32,.15);color:#1B5E20;border-radius:20px;font-size:10px;font-weight:700;padding:1px 6px;margin-left:5px;display:inline-block;">{{ filter.active_values.size }}</span>
+          {%- endif -%}
+        </span>
+        <span class="frc-chevron" style="transition:transform .25s;{% unless is_op %}transform:rotate(-90deg);{% endunless %}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </button>
+      <div id="{{ gid }}" class="frc-fg-body" style="{% unless is_op %}display:none;{% endunless %}">
+        {%- for value in filter.values limit: 20 -%}
+          <label class="frc-chk" for="Frc-{{ filter.label | handleize }}-{{ forloop.index }}">
+            <input
+              type="checkbox"
+              id="Frc-{{ filter.label | handleize }}-{{ forloop.index }}"
+              name="{{ value.param_name }}"
+              value="{{ value.value }}"
+              {%- if value.active %} checked{%- endif -%}
+              {%- if value.count == 0 and value.active == false %} disabled{%- endif -%}
+              onchange="window.location='{{ value.active | ternary: value.url_to_remove, value.url_to_add }}'"
+            >
+            <span>
+              {%- liquid
+                assign vl = value.label | downcase
+                case vl
+                  when 'panadería','panaderia'
+                    echo '🍞 '
+                  when 'frutos secos','nueces','nuts'
+                    echo '🥜 '
+                  when 'bebidas','drinks'
+                    echo '🧃 '
+                  when 'especias','spices'
+                    echo '🌶️ '
+                  when 'harinas','cereales','granos','cereals','grains'
+                    echo '🌾 '
+                  when 'toppings'
+                    echo '✨ '
+                  when 'aceites','oils'
+                    echo '🫙 '
+                  when 'aromáticas','aromaticas','infusiones','tés','teas'
+                    echo '🍵 '
+                  when 'semillas','seeds'
+                    echo '🌱 '
+                  when 'superfoods','súper alimentos'
+                    echo '⚡ '
+                  when 'endulzantes','sweeteners'
+                    echo '🍯 '
+                  when 'disponible','in stock'
+                    echo '✅ '
+                  when 'agotado','out of stock'
+                    echo '⭕ '
+                endcase
+              -%}
+              {{ value.label }}
+            </span>
+            <span class="frc-chk-cnt">{{ value.count }}</span>
+          </label>
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- endif -%}
+
+  {%- endfor -%}
+
+{%- else -%}
+
+  {%- comment -%}
+    ── FALLBACK: No hay storefront filters configurados.
+    ── Mostramos las categorías reales de Frutos de la Raíz como links.
+  {%- endcomment -%}
+
+  <div class="frc-fg">
+    <button class="frc-fg-toggle" aria-expanded="true" onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded')==='true'?'false':'true'); this.nextElementSibling.style.display = this.getAttribute('aria-expanded')==='true'?'flex':'none';">
+      <span>🌿 Categorías</span>
+      <span class="frc-chevron">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+    </button>
+    <div class="frc-fg-body" style="display:flex;">
+      {%- assign cats = 'all,panaderia,frutos-secos,bebidas,especias,harinas-cereales-granos,toppings,aceites,aromaticas' | split: ',' -%}
+      {%- assign cat_labels = 'Todos,Panadería,Frutos Secos,Bebidas,Especias,Harinas & Cereales,Toppings,Aceites,Aromáticas' | split: ',' -%}
+      {%- assign cat_icons = '🌿,🍞,🥜,🧃,🌶️,🌾,✨,🫙,🍵' | split: ',' -%}
+      {%- for cat in cats -%}
+        {%- liquid
+          assign is_active = false
+          if collection.handle == cat
+            assign is_active = true
+          elsif cat == 'all' and collection.handle == 'all'
+            assign is_active = true
+          endif
+          if cat == 'all'
+            assign cat_url = routes.all_products_collection_url
+          else
+            assign cat_url = '/collections/' | append: cat
+          endif
+        -%}
+        <a
+          href="{{ cat_url }}"
+          class="frc-chk"
+          style="text-decoration:none;{% if is_active %}color:#1B5E20;font-weight:700;{% endif %}"
+          {%- if is_active %} aria-current="page"{%- endif -%}
+        >
+          <span style="font-size:15px;">{{ cat_icons[forloop.index0] }}</span>
+          <span>{{ cat_labels[forloop.index0] }}</span>
+          {%- if is_active -%}
+            <span style="margin-left:auto;color:#1B5E20;">✓</span>
+          {%- endif -%}
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+
+{%- endif -%}
+
+{%- comment -%} Botón limpiar filtros activos {%- endcomment -%}
+{%- if active_total > 0 -%}
+  <a href="{{ collection.url }}" class="frc-clear-all">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    Limpiar {{ active_total }} filtro{%- if active_total > 1 -%}s{%- endif -%}
+  </a>
+{%- endif -%}
