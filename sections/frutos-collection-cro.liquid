@@ -1,0 +1,299 @@
+{% comment %} FRUTOS COLLECTION CRO v4 — CSS inline, filtros funcionales, paginate correcto {% endcomment %}
+{%- assign prods_per_page = section.settings.products_per_page | default: 24 -%}
+{%- assign wapp_number = section.settings.whatsapp_number | default: '573027045952' -%}
+
+<style>
+.frc-col-v4 { --g:#1B5E20; --gm:#2E7D32; --gl:#4CAF50; --ye:#FFC107; --or:#FF5722; --re:#E53935; --bg:#F5F5F0; --wh:#FFFFFF; --tx:#1A2E1A; --tx2:#6B7280; --bo:#DDD8CF; --b2:#E8F5E9; --wa:#25D366; }
+
+/* Hero */
+.frc-col-v4 .frc-hr { position:relative !important; border-radius:12px !important; overflow:hidden !important; min-height:220px !important; display:flex !important; align-items:flex-end !important; margin-bottom:24px !important; }
+.frc-col-v4 .frc-hr.img { background-size:cover !important; background-position:center !important; }
+.frc-col-v4 .frc-hr.grd { background:linear-gradient(135deg,#1B5E20,#2E7D32) !important; }
+.frc-col-v4 .frc-hr .ov { background:linear-gradient(to top,rgba(0,0,0,.75) 0%,rgba(0,0,0,.3) 50%,transparent 100%) !important; width:100% !important; padding:48px 32px 28px !important; color:#fff !important; }
+.frc-col-v4 .frc-hr h1 { font-family:'Amatic SC',cursive !important; font-size:3.2rem !important; margin:0 0 6px !important; }
+.frc-col-v4 .frc-hr p { font-size:15px !important; opacity:.9 !important; margin:0 0 10px !important; max-width:560px !important; line-height:1.5 !important; }
+.frc-col-v4 .frc-hr .cnt { display:inline-block !important; padding:5px 14px !important; background:rgba(255,255,255,.2) !important; border-radius:20px !important; font-size:13px !important; font-weight:600 !important; }
+
+/* Toolbar */
+.frc-col-v4 .frc-tl { display:flex !important; justify-content:space-between !important; align-items:center !important; padding:16px 0 !important; margin-bottom:20px !important; border-bottom:2px solid #1B5E20 !important; flex-wrap:wrap !important; gap:12px !important; }
+.frc-col-v4 .frc-tl .cnt { font-size:13px !important; font-weight:500 !important; color:var(--tx2) !important; }
+.frc-col-v4 .frc-tl .cnt strong { color:var(--g) !important; font-weight:700 !important; }
+.frc-col-v4 .frc-tl select { appearance:none !important; background:var(--wh) !important; border:1.5px solid var(--bo) !important; border-radius:8px !important; padding:8px 34px 8px 12px !important; font-size:12.5px !important; font-weight:600 !important; color:var(--tx) !important; cursor:pointer !important; outline:none !important; font-family:'Montserrat',sans-serif !important; }
+
+/* Filters */
+.frc-col-v4 .frc-fl { padding:16px !important; background:var(--bg) !important; border-radius:8px !important; margin-bottom:20px !important; }
+.frc-col-v4 .frc-fl h4 { font-size:12px !important; font-weight:700 !important; color:var(--tx2) !important; margin:0 0 8px !important; text-transform:uppercase !important; letter-spacing:.08em !important; font-family:'Montserrat',sans-serif !important; }
+.frc-col-v4 .frc-fl label { display:flex !important; align-items:center !important; gap:6px !important; padding:4px 0 !important; font-size:13px !important; color:var(--tx) !important; cursor:pointer !important; font-family:'Lato',sans-serif !important; }
+.frc-col-v4 .frc-fl label input { accent-color:#1B5E20 !important; }
+.frc-col-v4 .frc-fl .cl { padding:8px 16px !important; background:var(--g) !important; color:var(--wh) !important; border:none !important; border-radius:8px !important; font-size:12px !important; font-weight:700 !important; cursor:pointer !important; width:100% !important; margin-top:12px !important; font-family:'Montserrat',sans-serif !important; }
+.frc-col-v4 .frc-fl .cl:hover { background:var(--gm) !important; }
+.frc-col-v4 .frc-fl .fg { margin-bottom:16px !important; }
+
+/* Grid */
+.frc-col-v4 .frc-gd { display:grid !important; grid-template-columns:repeat(2,1fr) !important; gap:20px !important; list-style:none !important; margin:0 !important; padding:0 !important; }
+
+/* Card */
+.frc-col-v4 .frc-cd { background:var(--wh) !important; border-radius:12px !important; border:1px solid var(--bo) !important; overflow:hidden !important; display:flex !important; flex-direction:column !important; box-shadow:0 1px 6px rgba(0,0,0,.07) !important; transition:box-shadow .3s,transform .3s !important; position:relative !important; }
+.frc-col-v4 .frc-cd:hover { box-shadow:0 8px 32px rgba(27,94,32,.16) !important; transform:translateY(-3px) !important; }
+.frc-col-v4 .frc-cd .iw { position:relative !important; aspect-ratio:1 !important; overflow:hidden !important; background:#f0ede7 !important; flex-shrink:0 !important; }
+.frc-col-v4 .frc-cd .iw img { position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; object-fit:cover !important; transition:opacity .4s ease,transform .4s ease !important; }
+.frc-col-v4 .frc-cd .iw .im { opacity:1 !important; }
+.frc-col-v4 .frc-cd .iw .ih { opacity:0 !important; }
+.frc-col-v4 .frc-cd:hover .iw .im { opacity:0 !important; transform:scale(1.04) !important; }
+.frc-col-v4 .frc-cd:hover .iw .ih { opacity:1 !important; }
+
+/* Badges */
+.frc-col-v4 .frc-cd .bdg { position:absolute !important; top:10px !important; left:10px !important; display:flex !important; flex-direction:column !important; gap:4px !important; z-index:3 !important; }
+.frc-col-v4 .frc-cd .bdg span { display:inline-block !important; padding:3px 10px !important; border-radius:20px !important; font-size:10px !important; font-weight:700 !important; letter-spacing:.06em !important; text-transform:uppercase !important; }
+.frc-col-v4 .frc-cd .bdg .s { background:var(--g) !important; color:#fff !important; }
+.frc-col-v4 .frc-cd .bdg .n { background:#0083f7 !important; color:#fff !important; }
+.frc-col-v4 .frc-cd .bdg .o { background:var(--re) !important; color:#fff !important; }
+.frc-col-v4 .frc-cd .bdg .l { background:var(--ye) !important; color:var(--tx) !important; }
+.frc-col-v4 .frc-cd .bdg .p { background:var(--or) !important; color:#fff !important; }
+.frc-col-v4 .frc-cd .bdg .og { background:rgba(27,94,32,.12) !important; color:var(--g) !important; border:1px solid rgba(27,94,32,.3) !important; }
+
+/* Hover actions */
+.frc-col-v4 .frc-cd .hv { position:absolute !important; top:10px !important; right:10px !important; display:flex !important; flex-direction:column !important; gap:7px !important; z-index:3 !important; transform:translateX(50px) !important; opacity:0 !important; transition:transform .28s,opacity .28s !important; }
+.frc-col-v4 .frc-cd:hover .hv { transform:translateX(0) !important; opacity:1 !important; }
+.frc-col-v4 .frc-cd .hv a { width:36px !important; height:36px !important; background:var(--wh) !important; border:1px solid var(--bo) !important; border-radius:50% !important; display:flex !important; align-items:center !important; justify-content:center !important; cursor:pointer !important; color:var(--tx) !important; font-size:15px !important; text-decoration:none !important; transition:all .2s !important; box-shadow:0 2px 8px rgba(0,0,0,.1) !important; }
+.frc-col-v4 .frc-cd .hv a:hover { background:var(--g) !important; color:var(--wh) !important; border-color:var(--g) !important; transform:scale(1.1) !important; }
+
+/* Quick view */
+.frc-col-v4 .frc-cd .qv { position:absolute !important; bottom:0 !important; left:0 !important; right:0 !important; background:rgba(27,94,32,.92) !important; padding:9px 12px !important; display:flex !important; align-items:center !important; justify-content:center !important; gap:7px !important; color:var(--wh) !important; font-size:12px !important; font-weight:700 !important; letter-spacing:.06em !important; text-decoration:none !important; transform:translateY(100%) !important; transition:transform .28s !important; }
+.frc-col-v4 .frc-cd:hover .qv { transform:translateY(0) !important; }
+
+/* Body */
+.frc-col-v4 .frc-cd .bd { padding:14px 16px 16px !important; display:flex !important; flex-direction:column !important; flex:1 !important; gap:6px !important; }
+.frc-col-v4 .frc-cd .bd .vn { font-size:10.5px !important; font-weight:700 !important; text-transform:uppercase !important; letter-spacing:.12em !important; color:var(--g) !important; font-family:'Montserrat',sans-serif !important; }
+.frc-col-v4 .frc-cd .bd h3 { margin:0 !important; }
+.frc-col-v4 .frc-cd .bd h3 a { font-size:14.5px !important; font-weight:600 !important; color:var(--tx) !important; text-decoration:none !important; line-height:1.35 !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; transition:color .2s !important; font-family:'Montserrat',sans-serif !important; }
+.frc-col-v4 .frc-cd .bd h3 a:hover { color:var(--g) !important; }
+.frc-col-v4 .frc-cd .bd .dc { font-size:12.5px !important; color:var(--tx2) !important; line-height:1.55 !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; overflow:hidden !important; margin:0 !important; font-family:'Lato',sans-serif !important; }
+
+/* Variants */
+.frc-col-v4 .frc-cd .vr { display:flex !important; align-items:center !important; gap:7px !important; flex-wrap:wrap !important; }
+.frc-col-v4 .frc-cd .vr .vl { font-size:10.5px !important; font-weight:700 !important; text-transform:uppercase !important; letter-spacing:.08em !important; color:var(--tx2) !important; flex-shrink:0 !important; font-family:'Montserrat',sans-serif !important; }
+.frc-col-v4 .frc-cd .vr select { flex:1 !important; min-width:90px !important; border:1.5px solid var(--bo) !important; border-radius:6px !important; padding:6px 8px !important; font-size:12.5px !important; color:var(--tx) !important; background:var(--wh) !important; cursor:pointer !important; outline:none !important; font-family:'Lato',sans-serif !important; }
+
+/* Price */
+.frc-col-v4 .frc-cd .pr { display:flex !important; align-items:baseline !important; gap:8px !important; flex-wrap:wrap !important; margin-top:auto !important; padding-top:4px !important; }
+.frc-col-v4 .frc-cd .pr .cr { font-size:1.1rem !important; font-weight:700 !important; color:var(--g) !important; font-family:'Montserrat',sans-serif !important; }
+.frc-col-v4 .frc-cd .pr .ol { font-size:.875rem !important; color:var(--tx2) !important; text-decoration:line-through !important; }
+.frc-col-v4 .frc-cd .pr .sv { font-size:10.5px !important; font-weight:700 !important; color:var(--or) !important; font-family:'Montserrat',sans-serif !important; }
+
+/* Actions */
+.frc-col-v4 .frc-cd .ac { display:flex !important; gap:8px !important; margin-top:10px !important; }
+.frc-col-v4 .frc-cd .ac .atc { flex:1 !important; min-height:42px !important; display:flex !important; align-items:center !important; justify-content:center !important; gap:7px !important; background:var(--g) !important; color:var(--wh) !important; border:2px solid var(--g) !important; border-radius:8px !important; font-size:12.5px !important; font-weight:700 !important; cursor:pointer !important; text-decoration:none !important; transition:all .2s !important; font-family:'Montserrat',sans-serif !important; }
+.frc-col-v4 .frc-cd .ac .atc:hover:not(:disabled) { background:var(--gm) !important; border-color:var(--gm) !important; transform:scale(1.02) !important; }
+.frc-col-v4 .frc-cd .ac .atc:disabled { opacity:.65 !important; cursor:not-allowed !important; background:#9E9E9E !important; border-color:#9E9E9E !important; }
+.frc-col-v4 .frc-cd .ac .wa { width:42px !important; height:42px !important; flex-shrink:0 !important; background:var(--wa) !important; color:var(--wh) !important; border:2px solid var(--wa) !important; border-radius:8px !important; display:flex !important; align-items:center !important; justify-content:center !important; text-decoration:none !important; cursor:pointer !important; transition:all .2s !important; }
+.frc-col-v4 .frc-cd .ac .wa:hover { background:#22c55e !important; transform:scale(1.05) !important; }
+
+/* Toast */
+.frc-col-v4 .frc-toast { position:fixed !important; bottom:24px !important; left:50% !important; transform:translateX(-50%) translateY(80px) !important; background:var(--g) !important; color:var(--wh) !important; padding:13px 24px !important; border-radius:10px !important; font-size:13.5px !important; font-weight:600 !important; box-shadow:0 8px 28px rgba(0,0,0,.22) !important; z-index:9999 !important; display:flex !important; align-items:center !important; gap:10px !important; opacity:0 !important; transition:transform .35s,opacity .35s !important; white-space:nowrap !important; max-width:90vw !important; font-family:'Montserrat',sans-serif !important; }
+.frc-col-v4 .frc-toast.on { transform:translateX(-50%) translateY(0) !important; opacity:1 !important; }
+.frc-col-v4 .frc-toast.err { background:var(--re) !important; }
+
+/* Pagination */
+.frc-col-v4 .frc-pg { display:flex !important; align-items:center !important; justify-content:center !important; gap:6px !important; padding:40px 0 8px !important; }
+.frc-col-v4 .frc-pg a,.frc-col-v4 .frc-pg span { min-width:40px !important; height:40px !important; display:flex !important; align-items:center !important; justify-content:center !important; border:1.5px solid var(--bo) !important; border-radius:8px !important; background:var(--wh) !important; color:var(--tx) !important; font-size:13px !important; font-weight:600 !important; text-decoration:none !important; padding:0 12px !important; transition:all .2s !important; font-family:'Montserrat',sans-serif !important; }
+.frc-col-v4 .frc-pg a:hover { border-color:var(--g) !important; color:var(--g) !important; background:rgba(27,94,32,.06) !important; }
+.frc-col-v4 .frc-pg .act { background:var(--g) !important; color:var(--wh) !important; border-color:var(--g) !important; }
+.frc-col-v4 .frc-pg .dis { opacity:.35 !important; pointer-events:none !important; }
+
+/* Empty */
+.frc-col-v4 .frc-emp { grid-column:1/-1 !important; padding:72px 24px !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:16px !important; text-align:center !important; }
+.frc-col-v4 .frc-emp h2 { font-family:'Amatic SC',cursive !important; font-size:2.2rem !important; color:var(--tx) !important; margin:0 !important; }
+.frc-col-v4 .frc-emp p { font-size:15px !important; color:var(--tx2) !important; max-width:360px !important; line-height:1.65 !important; margin:0 !important; }
+.frc-col-v4 .frc-emp a { display:inline-flex !important; align-items:center !important; gap:8px !important; padding:12px 28px !important; background:var(--g) !important; color:var(--wh) !important; border-radius:8px !important; font-size:13px !important; font-weight:700 !important; text-decoration:none !important; }
+
+/* Layout */
+.frc-col-v4 .frc-ly { display:block !important; }
+@media(min-width:750px){ .frc-col-v4 .frc-gd { grid-template-columns:repeat(3,1fr) !important; gap:20px !important; } }
+@media(min-width:990px){ .frc-col-v4 .frc-ly { display:grid !important; grid-template-columns:220px 1fr !important; gap:24px !important; } .frc-col-v4 .frc-fl { margin-bottom:0 !important; position:sticky !important; top:20px !important; align-self:start !important; } }
+@media(min-width:1200px){ .frc-col-v4 .frc-gd { grid-template-columns:repeat(4,1fr) !important; } }
+@media(max-width:749px){ .frc-col-v4 .frc-hr h1 { font-size:2.2rem !important; } .frc-col-v4 .frc-hr .ov { padding:32px 20px 20px !important; } .frc-col-v4 .frc-cd .bd { padding:10px 11px 12px !important; } .frc-col-v4 .frc-cd .bd h3 a { font-size:13px !important; } .frc-col-v4 .frc-cd .pr .cr { font-size:1rem !important; } .frc-col-v4 .frc-cd .ac .atc { font-size:11px !important; min-height:38px !important; } .frc-col-v4 .frc-cd .bd .dc { display:none !important; } }
+@media(max-width:480px){ .frc-col-v4 .frc-gd { grid-template-columns:repeat(2,1fr) !important; gap:10px !important; } }
+</style>
+
+{%- paginate collection.products by prods_per_page -%}
+
+<div class="frc-col-v4 page-width" style="padding-bottom:48px;">
+
+  <div class="frc-hr {% if collection.image %}img{% else %}grd{% endif %}" {% if collection.image %}style="background-image:url('{{ collection.image | image_url: width:1800 }}');"{% endif %}>
+    <div class="ov">
+      <h1>{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}<p>{{ collection.description | strip_html | truncatewords:20 }}</p>{%- endif -%}
+      <span class="cnt">{{ collection.products_count }} producto{{ collection.products_count | pluralize:'','s' }}</span>
+    </div>
+  </div>
+
+  <div class="frc-tl">
+    <span class="cnt"><strong>{{ collection.products_count }}</strong> producto{{ collection.products_count | pluralize:'','s' }}</span>
+    <select aria-label="Ordenar" onchange="window.location.href=this.value">
+      {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+      {%- for opt in collection.sort_options -%}<option value="{{ collection.url }}?sort_by={{ opt.value }}"{% if opt.value == sort_by %} selected{% endif %}>{{ opt.name }}</option>{%- endfor -%}
+    </select>
+  </div>
+
+  <div class="frc-ly">
+
+    <div class="frc-fl">
+      <h4>&#128269; Filtrar</h4>
+
+      {%- assign all_tags = collection.all_tags | sort -%}
+      {%- if all_tags.size > 0 -%}
+      <div class="fg">
+        <h4>Categorias</h4>
+        {%- for tag in all_tags limit:10 -%}{%- unless tag contains '_' -%}
+          <label><input type="checkbox" class="f-tag" value="{{ tag | escape }}" onchange="fcF()"> {{ tag }}</label>
+        {%- endunless -%}{%- endfor -%}
+      </div>
+      {%- endif -%}
+
+      <div class="fg">
+        <h4>Precio</h4>
+        <label><input type="radio" name="f-pr" value="0-5000000" onchange="fcF()"> Hasta $50.000</label>
+        <label><input type="radio" name="f-pr" value="5000000-10000000" onchange="fcF()"> $50.000 - $100.000</label>
+        <label><input type="radio" name="f-pr" value="10000000-20000000" onchange="fcF()"> $100.000 - $200.000</label>
+        <label><input type="radio" name="f-pr" value="20000000-99900000000" onchange="fcF()"> Mas de $200.000</label>
+      </div>
+
+      <div class="fg">
+        <h4>Disponibilidad</h4>
+        <label><input type="checkbox" class="f-st" value="1" onchange="fcF()"> En stock</label>
+      </div>
+
+      <button class="cl" onclick="fcClr()">Limpiar filtros</button>
+    </div>
+
+    <div>
+      {%- if collection.products_count == 0 -%}
+        <div class="frc-emp"><h2>No encontramos productos</h2><p>Prueba con otros filtros o explora toda nuestra tienda.</p><a href="/collections/all">Ver todos los productos</a></div>
+      {%- else -%}
+        <ul class="frc-gd" id="fcG">
+          {%- for product in collection.products -%}
+            {%- liquid
+              assign fv = product.selected_or_first_available_variant
+              assign has_cmp = false
+              if fv.compare_at_price > fv.price
+                assign has_cmp = true
+                assign save_pct = fv.compare_at_price | minus: fv.price | times: 100 | divided_by: fv.compare_at_price
+              endif
+              assign is_out = false
+              unless product.available
+                assign is_out = true
+              endunless
+              assign low_stock = false
+              if fv.inventory_quantity > 0 and fv.inventory_quantity <= 5
+                assign low_stock = true
+              endif
+              assign is_new = false
+              if product.tags contains 'nuevo' or product.tags contains 'new'
+                assign is_new = true
+              endif
+              assign is_pop = false
+              if product.tags contains 'popular' or product.tags contains 'destacado'
+                assign is_pop = true
+              endif
+              assign is_org = false
+              if product.tags contains 'organico' or product.tags contains 'organic'
+                assign is_org = true
+              endif
+              assign wapp_msg = product.title | url_encode
+              assign second_img = product.images[1]
+              assign tag_list = product.tags | join: ','
+            -%}
+            <li class="fc-i" data-tags="{{ tag_list | escape }}" data-price="{{ fv.price }}" data-stock="{% if is_out %}0{% else %}1{% endif %}">
+              <article class="frc-cd" aria-label="{{ product.title | escape }}">
+                <div class="iw">
+                  <div class="bdg" aria-hidden="true">
+                    {%- if is_out -%}<span class="o">Agotado</span>
+                    {%- elsif has_cmp -%}<span class="s">-{{ save_pct }}%</span>{%- endif -%}
+                    {%- if is_new and is_out == false -%}<span class="n">Nuevo</span>{%- endif -%}
+                    {%- if low_stock and is_out == false -%}<span class="l">&#9889; Pocos</span>{%- endif -%}
+                    {%- if is_pop -%}<span class="p">Destacado</span>{%- endif -%}
+                    {%- if is_org -%}<span class="og">&#127807; Organico</span>{%- endif -%}
+                  </div>
+                  <div class="hv" aria-hidden="true">
+                    <a href="https://wa.me/{{ wapp_number }}?text=Hola!%20Me%20interesa:%20{{ wapp_msg }}" target="_blank" rel="noopener" title="WhatsApp">&#128172;</a>
+                    <a href="{{ product.url }}" title="Ver">&#128065;</a>
+                  </div>
+                  {%- if product.featured_image -%}
+                    <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+                      <img class="im" src="{{ product.featured_image | image_url: width:600 }}" alt="{{ product.featured_image.alt | escape | default: product.title }}" width="600" height="600" {% if forloop.index <= 6 %}loading="eager"{% else %}loading="lazy"{% endif %}>
+                      {%- if second_img -%}<img class="ih" src="{{ second_img | image_url: width:600 }}" alt="{{ second_img.alt | escape }}" width="600" height="600" loading="lazy">{%- endif -%}
+                    </a>
+                  {%- endif -%}
+                  <a href="{{ product.url }}" class="qv">&#128065; Ver producto</a>
+                </div>
+                <div class="bd">
+                  {%- if product.vendor != blank -%}<p class="vn">{{ product.vendor }}</p>{%- endif -%}
+                  <h3><a href="{{ product.url }}">{{ product.title }}</a></h3>
+                  {%- if product.description != blank -%}<p class="dc">{{ product.description | strip_html | truncate:80 }}</p>{%- endif -%}
+                  {%- if product.variants.size > 1 -%}
+                    <div class="vr">
+                      <span class="vl">Peso:</span>
+                      <select aria-label="Variante" onchange="fcV(this)">
+                        {%- for v in product.variants -%}
+                          <option value="{{ v.id }}" data-price="{{ v.price | money }}" data-stock="{% if v.available %}1{% else %}0{% endif %}" {% if v.compare_at_price > v.price %}data-compare="{{ v.compare_at_price | money }}"{% endif %} {% unless v.available %}disabled{% endunless %}>{{ v.title }}{% unless v.available %} — Agotado{% endunless %}</option>
+                        {%- endfor -%}
+                      </select>
+                    </div>
+                  {%- endif -%}
+                  <div class="pr">
+                    <span class="cr">{{ fv.price | money }}</span>
+                    {%- if has_cmp -%}<span class="ol">{{ fv.compare_at_price | money }}</span><span class="sv">Ahorra {{ save_pct }}%</span>{%- endif -%}
+                  </div>
+                  <div class="ac">
+                    {%- if is_out -%}
+                      <button class="atc" disabled>&#128683; Agotado</button>
+                    {%- else -%}
+                      <button class="atc" data-vid="{{ fv.id }}" onclick="fcAdd(this)">&#128722; Anadir</button>
+                      <a href="https://wa.me/{{ wapp_number }}?text=Hola!%20Me%20interesa:%20{{ wapp_msg }}" target="_blank" rel="noopener" class="wa">&#128172;</a>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </article>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="frc-pg" aria-label="Paginacion">
+            {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">&#8249;</a>{%- else -%}<span class="dis">&#8249;</span>{%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+              {%- elsif part.title == paginate.current_page -%}<span class="act">{{ part.title }}</span>
+              {%- else -%}<span class="dis">{{ part.title }}</span>{%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}<a href="{{ paginate.next.url }}">&#8250;</a>{%- else -%}<span class="dis">&#8250;</span>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script>
+function fcToast(m,e){var o=document.querySelector('.frc-toast');if(o)o.remove();var t=document.createElement('div');t.className='frc-col-toast frc-toast'+(e?' err':'');t.innerHTML='<span>'+m+'</span>';document.body.appendChild(t);requestAnimationFrame(function(){t.classList.add('on');});setTimeout(function(){t.classList.remove('on');setTimeout(function(){t.remove();},400);},3000);}
+function fcAdd(b){var v=b.dataset.vid;if(!v)return;b.disabled=true;b.innerHTML='<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:frcSpin .7s linear infinite;"></span>';fetch('/cart/add.js',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:Number(v),quantity:1})}).then(function(r){if(!r.ok)throw new Error();return r.json();}).then(function(d){fcToast('Agregado: '+d.product_title);b.innerHTML='&#10003;';setTimeout(function(){b.innerHTML='&#128722; Anadir';b.disabled=false;},1500);return fetch('/cart.js');}).then(function(r){return r.json();}).then(function(c){document.querySelectorAll('[data-cart-count]').forEach(function(el){el.textContent=c.item_count;});}).catch(function(){fcToast('Error al agregar',true);b.innerHTML='&#128722; Anadir';b.disabled=false;});}
+function fcV(s){var c=s.closest('.fc-i'),b=c.querySelector('.atc'),p=c.querySelector('.cr'),cm=c.querySelector('.ol');if(b)b.dataset.vid=s.value;var o=s.options[s.selectedIndex];if(p&&o.dataset.price)p.textContent=o.dataset.price;if(cm&&o.dataset.compare){cm.textContent=o.dataset.compare;cm.style.display='';}else if(cm)cm.style.display='none';if(o.dataset.stock==='0'){b.disabled=true;b.textContent='Agotado';}else{b.disabled=false;b.innerHTML='&#128722; Anadir';}}
+function fcF(){var items=document.querySelectorAll('.fc-i'),checkedTags=[],priceRange=null,stockOnly=false;document.querySelectorAll('.f-tag:checked').forEach(function(c){checkedTags.push(c.value.toLowerCase());});var pr=document.querySelector('input[name="f-pr"]:checked');if(pr){var pp=pr.value.split('-');priceRange=[parseInt(pp[0]),parseInt(pp[1])];}if(document.querySelector('.f-st:checked'))stockOnly=true;items.forEach(function(it){var show=true,tags=(it.dataset.tags||'').toLowerCase().split(','),price=parseInt(it.dataset.price)||0,stock=it.dataset.stock==='1';if(checkedTags.length>0){var hasTag=checkedTags.some(function(t){return tags.some(function(tag){return tag.trim()===t;});});if(!hasTag)show=false;}if(priceRange&&show){if(price<priceRange[0]||price>priceRange[1])show=false;}if(stockOnly&&!stock)show=false;it.style.display=show?'':'none';});var vis=document.querySelectorAll('.fc-i:not([style*="none"])').length;document.querySelector('.frc-tl .cnt strong').textContent=vis;}
+function fcClr(){document.querySelectorAll('.f-tag:checked').forEach(function(c){c.checked=false;});document.querySelectorAll('input[name="f-pr"]:checked').forEach(function(c){c.checked=false;});document.querySelectorAll('.f-st:checked').forEach(function(c){c.checked=false;});document.querySelectorAll('.fc-i').forEach(function(it){it.style.display='';});document.querySelector('.frc-tl .cnt strong').textContent=document.querySelectorAll('.fc-i').length;}
+</script>
+
+<style>@keyframes frcSpin{to{transform:rotate(360deg);}}</style>
+
+{% schema %}
+{
+  "name": "Collection CRO Frutos",
+  "class": "frutos-collection-cro",
+  "enabled_on": { "templates": ["collection"] },
+  "settings": [
+    {"type":"range","id":"products_per_page","label":"Productos por pagina","min":8,"max":48,"step":4,"default":24},
+    {"type":"text","id":"whatsapp_number","label":"Numero WhatsApp","default":"573027045952"}
+  ],
+  "presets": [{"name":"Collection CRO Frutos","category":"Frutos de la Raiz"}]
+}
+{% endschema %}
