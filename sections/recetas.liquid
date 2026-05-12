@@ -1,0 +1,527 @@
+{{ 'https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Lato:wght@300;400;700&family=Montserrat:wght@500;600;700&display=swap' | stylesheet_tag }}
+
+<style>
+  /* =============================================
+     BLOG / RECETAS CRO - FRUTOS DE LA RAÍZ
+     ============================================= */
+
+  .blog-section {
+    padding: {{ section.settings.padding_top }}px 5% {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+  }
+
+  .blog-inner { max-width: {{ section.settings.max_width }}px; margin: 0 auto; }
+
+  .blog-eyebrow {
+    display: block;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    margin-bottom: 8px;
+  }
+
+  .blog-title {
+    font-family: 'Amatic SC', cursive;
+    font-size: {{ section.settings.title_size }}px;
+    color: {{ section.settings.title_color }};
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 10px;
+    line-height: 1;
+  }
+
+  .blog-subtitle {
+    font-family: 'Lato', sans-serif;
+    font-size: {{ section.settings.subtitle_size }}px;
+    color: {{ section.settings.subtitle_color }};
+    text-align: center;
+    margin-bottom: {{ section.settings.header_gap }}px;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  /* ---- GRID ---- */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.cols_desktop }}, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+  }
+
+  /* ---- CARD ---- */
+  .blog-card {
+    background: {{ section.settings.card_bg }};
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    transition: transform 0.35s cubic-bezier(0.175,0.885,0.32,1.275), box-shadow 0.3s;
+    text-decoration: none;
+    border: 1px solid {{ section.settings.card_border }};
+  }
+
+  .blog-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+  }
+
+  /* Imagen */
+  .blog-card__img-wrap {
+    overflow: hidden;
+    position: relative;
+    height: {{ section.settings.img_height }}px;
+    background: #f4f4f4;
+    flex-shrink: 0;
+  }
+
+  .blog-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.55s ease;
+    display: block;
+  }
+
+  .blog-card:hover .blog-card__img { transform: scale(1.06); }
+
+  .blog-card__img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    background: {{ section.settings.card_placeholder_bg }};
+  }
+
+  /* Tag de categoría */
+  .blog-card__tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: {{ section.settings.accent_color }};
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+  }
+
+  /* Tiempo de lectura */
+  .blog-card__read-time {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.5);
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+  }
+
+  /* Contenido de la card */
+  .blog-card__body {
+    padding: {{ section.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .blog-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    color: #aaa;
+    flex-wrap: wrap;
+  }
+
+  .blog-card__title {
+    font-family: 'Montserrat', cursive;
+    font-size: 20px;
+    color: {{ section.settings.card_title_color }};
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 10px;
+    transition: color 0.25s;
+    display: block;
+  }
+
+  .blog-card:hover .blog-card__title { color: {{ section.settings.accent_color }}; }
+
+  .blog-card__excerpt {
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: {{ section.settings.card_text_color }};
+    line-height: 1.65;
+    margin-bottom: 18px;
+    flex: 1;
+  }
+
+  /* CRO: Beneficio del producto relacionado */
+  .blog-card__product-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: {{ section.settings.accent_color }};
+    text-decoration: none;
+    padding: 7px 14px;
+    background: {{ section.settings.accent_color }}12;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    transition: background 0.25s;
+    align-self: flex-start;
+  }
+
+  .blog-card__product-link:hover { background: {{ section.settings.accent_color }}22; }
+
+  .blog-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: {{ section.settings.accent_color }};
+    transition: gap 0.25s;
+    margin-top: auto;
+  }
+
+  .blog-card:hover .blog-card__cta { gap: 10px; }
+
+  /* ---- FEATURED (primer post más grande) ---- */
+  .blog-grid--featured .blog-card:first-child {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+
+  .blog-grid--featured .blog-card:first-child .blog-card__img-wrap {
+    width: 45%;
+    height: auto;
+    min-height: 280px;
+    flex-shrink: 0;
+  }
+
+  .blog-grid--featured .blog-card:first-child .blog-card__title {
+    font-size: {{ section.settings.card_title_size | times: 1.3 | round }}px;
+  }
+
+  /* ---- NEWSLETTER INLINE (CRO: captura en contexto) ---- */
+  .blog-newsletter {
+    background: linear-gradient(135deg, {{ section.settings.accent_color }}, {{ section.settings.accent_color }}cc);
+    border-radius: {{ section.settings.card_radius }}px;
+    padding: 36px 32px;
+    text-align: center;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .blog-newsletter h3 {
+    font-family: 'Amatic SC', cursive;
+    font-size: 44px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    line-height: 1;
+  }
+
+  .blog-newsletter p {
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 18px;
+  }
+
+  .blog-newsletter-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .blog-newsletter-input {
+    flex: 1 1 180px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 30px;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    outline: none;
+    color: #333;
+  }
+
+  .blog-newsletter-btn {
+    padding: 10px 20px;
+    background: #FFC107;
+    color: #5D4037;
+    border: none;
+    border-radius: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+
+  .blog-newsletter-btn:hover { background: #fff; color: {{ section.settings.accent_color }}; }
+
+  /* ---- VER TODOS ---- */
+  .blog-view-all {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .blog-view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid {{ section.settings.accent_color }};
+    color: {{ section.settings.accent_color }};
+    padding: 12px 32px;
+    border-radius: 40px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .blog-view-all-btn:hover {
+    background: {{ section.settings.accent_color }};
+    color: #76ff03;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(27,94,32,0.2);
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 900px) {
+    .blog-grid { grid-template-columns: repeat({{ section.settings.cols_tablet }}, 1fr); }
+    .blog-grid--featured .blog-card:first-child { flex-direction: column; }
+    .blog-grid--featured .blog-card:first-child .blog-card__img-wrap { width: 100%; height: {{ section.settings.img_height }}px; }
+  }
+
+  @media (max-width: 640px) {
+    .blog-grid { grid-template-columns: 1fr; }
+    .blog-title { font-size: {{ section.settings.title_size | times: 0.72 | round }}px; }
+  }
+</style>
+
+<section class="blog-section">
+  <div class="blog-inner">
+
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="blog-eyebrow">{{ section.settings.eyebrow }}</span>
+    {%- endif -%}
+
+    {%- if section.settings.show_title -%}
+      <h2 class="blog-title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subtitle != blank -%}
+      <p class="blog-subtitle">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+
+    <div class="blog-grid{% if section.settings.featured_first %} blog-grid--featured{% endif %}">
+
+      {%- comment -%} Primero: posts del blog real de Shopify {%- endcomment -%}
+      {%- assign blog_handle = section.settings.blog_handle -%}
+      {%- assign post_limit = section.settings.post_limit -%}
+      {%- assign shown = 0 -%}
+
+      {%- if blogs[blog_handle] != blank -%}
+        {%- for article in blogs[blog_handle].articles limit: post_limit -%}
+          {%- assign shown = shown | plus: 1 -%}
+          <a href="{{ article.url }}" class="blog-card">
+            <div class="blog-card__img-wrap">
+              {%- if article.image -%}
+                <img src="{{ article.image | image_url: width: 700 }}" alt="{{ article.title }}" loading="lazy" class="blog-card__img">
+              {%- else -%}
+                <div class="blog-card__img-placeholder">🌿</div>
+              {%- endif -%}
+              {%- if article.tags.size > 0 -%}
+                <span class="blog-card__tag">{{ article.tags.first }}</span>
+              {%- endif -%}
+              <span class="blog-card__read-time">📖 {{ article.content | strip_html | split: ' ' | size | divided_by: 200 | at_least: 1 }} min</span>
+            </div>
+            <div class="blog-card__body">
+              <div class="blog-card__meta">
+                <span>{{ article.published_at | date: '%d %b %Y' }}</span>
+                {%- if article.author != blank -%}<span>· {{ article.author }}</span>{%- endif -%}
+              </div>
+              <span class="blog-card__title">{{ article.title }}</span>
+              {%- if article.excerpt != blank -%}
+                <p class="blog-card__excerpt">{{ article.excerpt | strip_html | truncate: 120 }}</p>
+              {%- endif -%}
+              <span class="blog-card__cta">Leer receta →</span>
+            </div>
+          </a>
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- comment -%} Si no hay posts reales, mostrar cards de bloques {%- endcomment -%}
+      {%- if shown == 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'post' -%}
+            <a href="{{ block.settings.link | default: '#' }}" class="blog-card" {{ block.shopify_attributes }}>
+              <div class="blog-card__img-wrap">
+                {%- if block.settings.image -%}
+                  <img src="{{ block.settings.image | image_url: width: 700 }}" alt="{{ block.settings.title }}" loading="lazy" class="blog-card__img">
+                {%- else -%}
+                  <div class="blog-card__img-placeholder">{{ block.settings.placeholder_emoji }}</div>
+                {%- endif -%}
+                {%- if block.settings.tag != blank -%}
+                  <span class="blog-card__tag">{{ block.settings.tag }}</span>
+                {%- endif -%}
+                {%- if block.settings.read_time != blank -%}
+                  <span class="blog-card__read-time">📖 {{ block.settings.read_time }}</span>
+                {%- endif -%}
+              </div>
+              <div class="blog-card__body">
+                <div class="blog-card__meta">
+                  {%- if block.settings.date != blank -%}<span>{{ block.settings.date }}</span>{%- endif -%}
+                </div>
+                <span class="blog-card__title">{{ block.settings.title }}</span>
+                {%- if block.settings.excerpt != blank -%}
+                  <p class="blog-card__excerpt">{{ block.settings.excerpt }}</p>
+                {%- endif -%}
+                {%- if block.settings.product_link_text != blank -%}
+                  <span class="blog-card__product-link">🛒 {{ block.settings.product_link_text }}</span>
+                {%- endif -%}
+                <span class="blog-card__cta">{{ block.settings.cta_text | default: 'Leer más →' }}</span>
+              </div>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- comment -%} Bloque newsletter inline (CRO) {%- endcomment -%}
+      {%- if section.settings.show_inline_newsletter -%}
+        <div class="blog-newsletter">
+          <h3>{{ section.settings.inline_newsletter_title }}</h3>
+          <p>{{ section.settings.inline_newsletter_subtitle }}</p>
+          <form class="blog-newsletter-form" action="/contact#contact_form" method="post" accept-charset="UTF-8">
+            <input type="hidden" name="form_type" value="customer">
+            <input type="hidden" name="utf8" value="✓">
+            <input type="email" name="contact[email]" class="blog-newsletter-input" placeholder="{{ section.settings.inline_newsletter_placeholder }}" required>
+            <button type="submit" class="blog-newsletter-btn">{{ section.settings.inline_newsletter_btn }}</button>
+          </form>
+        </div>
+      {%- endif -%}
+
+    </div>
+
+    {%- if section.settings.show_view_all -%}
+      <div class="blog-view-all">
+        <a href="{{ section.settings.view_all_link | default: '/blogs/news' }}" class="blog-view-all-btn">
+          {{ section.settings.view_all_text }} →
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog / Recetas CRO",
+  "settings": [
+    { "type": "header", "content": "📐 Layout" },
+    { "type": "color", "id": "bg_color", "label": "Fondo de sección", "default": "#fafaf8" },
+    { "type": "range", "id": "padding_top", "label": "Padding superior", "min": 20, "max": 120, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding inferior", "min": 20, "max": 120, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "max_width", "label": "Ancho máximo", "min": 800, "max": 1600, "step": 50, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "grid_gap", "label": "Espacio entre cards", "min": 10, "max": 40, "step": 2, "unit": "px", "default": 26 },
+    { "type": "select", "id": "cols_desktop", "label": "Columnas desktop", "options": [{"value":"2","label":"2"},{"value":"3","label":"3"},{"value":"4","label":"4"}], "default": "3" },
+    { "type": "select", "id": "cols_tablet", "label": "Columnas tablet", "options": [{"value":"1","label":"1"},{"value":"2","label":"2"}], "default": "2" },
+    { "type": "checkbox", "id": "featured_first", "label": "Primer post en ancho completo", "default": false },
+    { "type": "header", "content": "✍️ Encabezado" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "🍵 Recetas e inspiración" },
+    { "type": "checkbox", "id": "show_title", "label": "Mostrar título", "default": true },
+    { "type": "text", "id": "title", "label": "Título", "default": "Del Origen a tu Cocina" },
+    { "type": "color", "id": "title_color", "label": "Color del título", "default": "#1B5E20" },
+    { "type": "range", "id": "title_size", "label": "Tamaño del título (px)", "min": 24, "max": 80, "step": 2, "unit": "px", "default": 72 },
+    { "type": "text", "id": "subtitle", "label": "Subtítulo", "default": "Recetas saludables con nuestros ingredientes para nutrir tu cuerpo y tu alma." },
+    { "type": "color", "id": "subtitle_color", "label": "Color subtítulo", "default": "#888888" },
+    { "type": "range", "id": "subtitle_size", "label": "Tamaño subtítulo (px)", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "header_gap", "label": "Espacio encabezado-grid", "min": 16, "max": 80, "step": 4, "unit": "px", "default": 44 },
+    { "type": "color", "id": "accent_color", "label": "Color de acento", "default": "#1B5E20" },
+    { "type": "header", "content": "📰 Blog de Shopify (automático)" },
+    { "type": "blog", "id": "blog_handle", "label": "Blog de Shopify" },
+    { "type": "range", "id": "post_limit", "label": "Número de posts a mostrar", "min": 1, "max": 9, "step": 1, "default": 3 },
+    { "type": "header", "content": "🃏 Cards — Apariencia" },
+    { "type": "color", "id": "card_bg", "label": "Fondo de la card", "default": "#ffffff" },
+    { "type": "color", "id": "card_border", "label": "Borde de la card", "default": "#f0f0f0" },
+    { "type": "range", "id": "card_radius", "label": "Radio de la card", "min": 0, "max": 30, "step": 2, "unit": "px", "default": 16 },
+    { "type": "range", "id": "card_padding", "label": "Padding interno", "min": 12, "max": 36, "step": 2, "unit": "px", "default": 22 },
+    { "type": "range", "id": "img_height", "label": "Altura de imagen", "min": 140, "max": 360, "step": 10, "unit": "px", "default": 220 },
+    { "type": "color", "id": "card_placeholder_bg", "label": "Fondo placeholder imagen", "default": "#e8f5e9" },
+    { "type": "range", "id": "card_title_size", "label": "Tamaño título de card (px)", "min": 16, "max": 48, "step": 2, "unit": "px", "default": 40 },
+    { "type": "color", "id": "card_title_color", "label": "Color título de card", "default": "#333333" },
+    { "type": "color", "id": "card_text_color", "label": "Color texto de card", "default": "#666666" },
+    { "type": "header", "content": "📧 Newsletter Inline" },
+    { "type": "checkbox", "id": "show_inline_newsletter", "label": "Mostrar newsletter en el grid", "default": true },
+    { "type": "text", "id": "inline_newsletter_title", "label": "Título newsletter inline", "default": "¿Te gustan las recetas?" },
+    { "type": "text", "id": "inline_newsletter_subtitle", "label": "Subtítulo", "default": "Recíbelas cada semana en tu correo." },
+    { "type": "text", "id": "inline_newsletter_placeholder", "label": "Placeholder email", "default": "tu@correo.com" },
+    { "type": "text", "id": "inline_newsletter_btn", "label": "Botón", "default": "Suscribirme 🌱" },
+    { "type": "header", "content": "🔘 Botón Ver Todo" },
+    { "type": "checkbox", "id": "show_view_all", "label": "Mostrar ver todos", "default": true },
+    { "type": "text", "id": "view_all_text", "label": "Texto del botón", "default": "Ver todas las recetas" },
+    { "type": "url", "id": "view_all_link", "label": "Enlace del botón" }
+  ],
+  "blocks": [
+    {
+      "type": "post",
+      "name": "Post / Receta",
+      "limit": 6,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen del post" },
+        { "type": "text", "id": "placeholder_emoji", "label": "Emoji si no hay imagen", "default": "🌿" },
+        { "type": "text", "id": "tag", "label": "Tag de categoría", "default": "Receta" },
+        { "type": "text", "id": "read_time", "label": "Tiempo de lectura", "default": "3 min" },
+        { "type": "text", "id": "date", "label": "Fecha", "default": "10 Mar 2026" },
+        { "type": "text", "id": "title", "label": "Título del post", "default": "Smoothie de Chía y Aguacate" },
+        { "type": "textarea", "id": "excerpt", "label": "Extracto", "default": "Aprende a preparar esta deliciosa bebida nutritiva con nuestras semillas de chía y aguacate fresco." },
+        { "type": "text", "id": "product_link_text", "label": "Link a producto relacionado (vacío oculta)" },
+        { "type": "url", "id": "product_link", "label": "URL del producto relacionado" },
+        { "type": "text", "id": "cta_text", "label": "Texto del CTA", "default": "Leer receta →" },
+        { "type": "url", "id": "link", "label": "URL del post" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog / Recetas CRO",
+      "category": "Custom",
+      "blocks": [
+        { "type": "post", "settings": { "placeholder_emoji": "🥤", "tag": "Receta", "read_time": "3 min", "title": "Smoothie energético de Chía y Aguacate", "excerpt": "Una bomba de energía natural para empezar el día con todo. Lista en 5 minutos." } },
+        { "type": "post", "settings": { "placeholder_emoji": "🍵", "tag": "Bienestar", "read_time": "4 min", "title": "Infusión relajante de Manzanilla y Lavanda", "excerpt": "El ritual nocturno perfecto para dormir mejor y despertar renovado." } },
+        { "type": "post", "settings": { "placeholder_emoji": "🫙", "tag": "Tips", "read_time": "2 min", "title": "5 usos del Aceite de Coco que no conocías", "date": "5 Mar 2026", "excerpt": "Desde cocinar hasta cuidado de la piel — el aceite de coco es más versátil de lo que crees." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+

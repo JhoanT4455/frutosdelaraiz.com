@@ -1,0 +1,909 @@
+{{ 'https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Lato:wght@300;400;700&family=Montserrat:wght@500;600;700&display=swap' | stylesheet_tag }}
+
+<!-- ============================================================
+     FRUTOS CRO EXTRAS — UN SOLO ARCHIVO CON:
+     B. Countdown de urgencia (en el hero o standalone)
+     C. Pop-up Exit Intent con descuento
+     D. Sección "Cómo funciona"
+     F. WhatsApp burbuja expandida tipo chat
+     ============================================================ -->
+
+<!-- ===== D. SECCIÓN CÓMO FUNCIONA ===== -->
+{%- if section.settings.show_how_it_works -%}
+<section class="hiw-section" style="background:{{ section.settings.hiw_bg }}; padding:{{ section.settings.hiw_padding_top }}px 5% {{ section.settings.hiw_padding_bottom }}px;">
+
+  <div class="hiw-inner">
+    {%- if section.settings.hiw_eyebrow != blank -%}
+      <span class="hiw-eyebrow" style="color:{{ section.settings.hiw_accent }};">{{ section.settings.hiw_eyebrow }}</span>
+    {%- endif -%}
+    <h2 class="hiw-title" style="color:{{ section.settings.hiw_title_color }};">{{ section.settings.hiw_title }}</h2>
+    {%- if section.settings.hiw_subtitle != blank -%}
+      <p class="hiw-subtitle" style="color:{{ section.settings.hiw_subtitle_color }};">{{ section.settings.hiw_subtitle }}</p>
+    {%- endif -%}
+
+    <div class="hiw-steps">
+      {%- for i in (1..4) -%}
+        {%- liquid
+          case i
+          when 1
+            assign step_emoji = section.settings.step1_emoji
+            assign step_title = section.settings.step1_title
+            assign step_desc  = section.settings.step1_desc
+          when 2
+            assign step_emoji = section.settings.step2_emoji
+            assign step_title = section.settings.step2_title
+            assign step_desc  = section.settings.step2_desc
+          when 3
+            assign step_emoji = section.settings.step3_emoji
+            assign step_title = section.settings.step3_title
+            assign step_desc  = section.settings.step3_desc
+          when 4
+            assign step_emoji = section.settings.step4_emoji
+            assign step_title = section.settings.step4_title
+            assign step_desc  = section.settings.step4_desc
+          endcase
+        -%}
+        {%- if step_title != blank -%}
+          <div class="hiw-step">
+            <div class="hiw-step__num" style="background:{{ section.settings.hiw_accent }}; color:{{ section.settings.hiw_bg }};">{{ i }}</div>
+            <div class="hiw-step__icon">{{ step_emoji }}</div>
+            <h3 class="hiw-step__title" style="color:{{ section.settings.hiw_title_color }};">{{ step_title }}</h3>
+            <p class="hiw-step__desc" style="color:{{ section.settings.hiw_subtitle_color }};">{{ step_desc }}</p>
+          </div>
+          {%- if i < 4 and step_title != blank -%}
+            <div class="hiw-arrow" style="color:{{ section.settings.hiw_accent }};">→</div>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.hiw_cta_text != blank -%}
+      <div class="hiw-cta">
+        <a href="{{ section.settings.hiw_cta_link | default: '/collections/all' }}" class="hiw-cta-btn" style="background:{{ section.settings.hiw_accent }}; color:{{ section.settings.hiw_btn_text_color }};">
+          {{ section.settings.hiw_cta_text }} →
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+
+</section>
+{%- endif -%}
+
+<!-- ===== B. COUNTDOWN DE URGENCIA ===== -->
+{%- if section.settings.show_countdown -%}
+<div class="frutos-countdown-bar" id="frutos-countdown-bar" style="background:{{ section.settings.countdown_bg }}; color:{{ section.settings.countdown_text_color }}; padding:{{ section.settings.countdown_padding }}px 20px;">
+  <span class="countdown-label">{{ section.settings.countdown_label }}</span>
+  <div class="countdown-timer" id="frutos-countdown-timer">
+    <span class="countdown-unit"><span id="cd-hours">00</span><small>h</small></span>
+    <span class="countdown-sep">:</span>
+    <span class="countdown-unit"><span id="cd-minutes">00</span><small>m</small></span>
+    <span class="countdown-sep">:</span>
+    <span class="countdown-unit"><span id="cd-seconds">00</span><small>s</small></span>
+  </div>
+  <span class="countdown-suffix">{{ section.settings.countdown_suffix }}</span>
+  {%- if section.settings.countdown_cta_text != blank -%}
+    <a href="{{ section.settings.countdown_cta_link | default: '/collections/all' }}" class="countdown-cta" style="background:{{ section.settings.countdown_cta_bg }}; color:{{ section.settings.countdown_cta_text_color }};">
+      {{ section.settings.countdown_cta_text }}
+    </a>
+  {%- endif -%}
+</div>
+{%- endif -%}
+
+<!-- ===== C. EXIT INTENT POP-UP ===== -->
+{%- if section.settings.show_exit_popup -%}
+<div class="frutos-exit-overlay" id="frutos-exit-overlay"></div>
+<div class="frutos-exit-popup" id="frutos-exit-popup" style="background:{{ section.settings.popup_bg }};">
+  <button class="frutos-exit-close" id="frutos-exit-close" aria-label="Cerrar">✕</button>
+
+  <div class="frutos-exit-content">
+    <div class="frutos-exit-emoji">{{ section.settings.popup_emoji }}</div>
+    <h2 class="frutos-exit-title" style="color:{{ section.settings.popup_title_color }};">{{ section.settings.popup_title }}</h2>
+    <p class="frutos-exit-subtitle" style="color:{{ section.settings.popup_subtitle_color }};">{{ section.settings.popup_subtitle }}</p>
+
+    {%- if section.settings.popup_show_coupon -%}
+      <div class="frutos-exit-coupon" style="border-color:{{ section.settings.popup_accent }}; color:{{ section.settings.popup_accent }};">
+        <span class="coupon-label">Tu código:</span>
+        <span class="coupon-code" id="frutos-coupon-code">{{ section.settings.popup_coupon_code }}</span>
+        <button class="coupon-copy" id="frutos-copy-btn" onclick="frutoscopyCoupon()" style="background:{{ section.settings.popup_accent }}; color:#fff;">Copiar</button>
+      </div>
+    {%- endif -%}
+
+    <form class="frutos-exit-form" id="frutos-exit-form" action="/contact#contact_form" method="post" accept-charset="UTF-8">
+      <input type="hidden" name="form_type" value="customer">
+      <input type="hidden" name="utf8" value="✓">
+      <input type="email" name="contact[email]" class="frutos-exit-email" placeholder="{{ section.settings.popup_placeholder }}" required style="border-color:{{ section.settings.popup_accent }};">
+      <button type="submit" class="frutos-exit-submit" style="background:{{ section.settings.popup_accent }}; color:{{ section.settings.popup_btn_text_color }};">
+        {{ section.settings.popup_btn_text }}
+      </button>
+    </form>
+
+    <p class="frutos-exit-disclaimer">{{ section.settings.popup_disclaimer }}</p>
+  </div>
+</div>
+{%- endif -%}
+
+<!-- ===== F. WHATSAPP BURBUJA EXPANDIDA ===== -->
+{%- if section.settings.show_whatsapp_bubble -%}
+<div class="frutos-wa-wrapper" id="frutos-wa-wrapper">
+  <!-- Mini card de chat -->
+  <div class="frutos-wa-card" id="frutos-wa-card" style="display:none; background:{{ section.settings.wa_card_bg }};">
+    <div class="frutos-wa-card__header" style="background:{{ section.settings.wa_header_bg }};">
+      <div class="frutos-wa-card__avatar">
+        {%- if section.settings.wa_avatar -%}
+          <img src="{{ section.settings.wa_avatar | image_url: width: 80 }}" alt="{{ section.settings.wa_agent_name }}" width="42" height="42">
+        {%- else -%}
+          <span class="frutos-wa-card__avatar-emoji">{{ section.settings.wa_avatar_emoji }}</span>
+        {%- endif -%}
+      </div>
+      <div class="frutos-wa-card__info">
+        <div class="frutos-wa-card__name" style="color:{{ section.settings.wa_header_text }};">{{ section.settings.wa_agent_name }}</div>
+        <div class="frutos-wa-card__status">
+          <span class="frutos-wa-card__dot"></span>
+          {{ section.settings.wa_status_text }}
+        </div>
+      </div>
+      <button class="frutos-wa-card__close" id="frutos-wa-card-close" aria-label="Cerrar chat">✕</button>
+    </div>
+    <div class="frutos-wa-card__body">
+      <div class="frutos-wa-card__bubble" style="background:{{ section.settings.wa_bubble_bg }};">
+        <p style="color:{{ section.settings.wa_bubble_text }};">{{ section.settings.wa_message }}</p>
+        <span class="frutos-wa-card__time">{{ section.settings.wa_time_label }}</span>
+      </div>
+    </div>
+    <a href="https://wa.me/57{{ section.settings.wa_number }}?text={{ section.settings.wa_prefill | url_encode }}"
+       target="_blank" rel="noopener"
+       class="frutos-wa-card__cta"
+       style="background:{{ section.settings.wa_cta_bg }}; color:{{ section.settings.wa_cta_text }};">
+      {{ section.settings.wa_cta_label }}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </a>
+  </div>
+
+  <!-- Botón flotante -->
+  <button class="frutos-wa-btn" id="frutos-wa-btn" aria-label="{{ section.settings.wa_tooltip }}"
+    style="background:{{ section.settings.wa_btn_bg }}; width:{{ section.settings.wa_btn_size }}px; height:{{ section.settings.wa_btn_size }}px; bottom:{{ section.settings.wa_btn_bottom }}px; right:{{ section.settings.wa_btn_right }}px;">
+    <!-- WA icon -->
+    <svg viewBox="0 0 24 24" fill="currentColor" style="width:{{ section.settings.wa_btn_size | times: 0.46 | round }}px; height:{{ section.settings.wa_btn_size | times: 0.46 | round }}px; color:{{ section.settings.wa_btn_icon_color }};"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <!-- Punto de notificación -->
+    {%- if section.settings.wa_show_notification -%}
+      <span class="frutos-wa-notification">{{ section.settings.wa_notification_count }}</span>
+    {%- endif -%}
+  </button>
+</div>
+{%- endif -%}
+
+<!-- ===== ESTILOS ===== -->
+<style>
+
+/* ----- D. CÓMO FUNCIONA ----- */
+.hiw-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+.hiw-eyebrow { display: inline-block; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+.hiw-title { font-family: 'Amatic SC', cursive; font-size: {{ section.settings.hiw_title_size }}rem; font-weight: 700; line-height: 1; margin: 0 0 10px; }
+.hiw-subtitle { font-family: 'Lato', sans-serif; font-size: 1.05rem; margin-bottom: 50px; max-width: 540px; margin-left: auto; margin-right: auto; }
+.hiw-steps { display: flex; align-items: flex-start; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 40px; }
+.hiw-step { flex: 1 1 180px; max-width: 220px; padding: 28px 20px; background: rgba(255,255,255,0.7); border-radius: 16px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
+.hiw-step:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
+.hiw-step__num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem; margin: 0 auto 14px; }
+.hiw-step__icon { font-size: {{ section.settings.hiw_icon_size }}rem; margin-bottom: 12px; line-height: 1; }
+.hiw-step__title { font-family: 'Amatic SC', cursive; font-size: 2.2rem; font-weight: 700; line-height: 1; margin: 0 0 8px; }
+.hiw-step__desc { font-family: 'Lato', sans-serif; font-size: 0.88rem; line-height: 1.6; margin: 0; }
+.hiw-arrow { font-size: 2rem; align-self: center; opacity: 0.4; flex-shrink: 0; margin-top: -20px; }
+.hiw-cta { text-align: center; }
+.hiw-cta-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 36px; border-radius: 50px; font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 700; text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+.hiw-cta-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.2); opacity: 0.9; }
+
+/* ----- B. COUNTDOWN ----- */
+.frutos-countdown-bar { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 600; text-align: center; }
+.countdown-label { font-size: 0.88rem; }
+.countdown-timer { display: flex; align-items: center; gap: 4px; }
+.countdown-unit { display: flex; align-items: baseline; gap: 1px; font-size: 1.3rem; font-weight: 700; background: rgba(0,0,0,0.15); padding: 4px 10px; border-radius: 8px; min-width: 52px; justify-content: center; }
+.countdown-unit small { font-size: 0.6rem; font-weight: 600; opacity: 0.8; }
+.countdown-sep { font-size: 1.3rem; font-weight: 700; margin: 0 2px; }
+.countdown-cta { display: inline-block; padding: 8px 20px; border-radius: 30px; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 700; text-decoration: none; transition: all 0.25s; white-space: nowrap; }
+.countdown-cta:hover { opacity: 0.9; transform: translateY(-2px); }
+
+/* ----- C. EXIT POPUP ----- */
+.frutos-exit-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9998; display: none; animation: fadeIn 0.3s ease; }
+.frutos-exit-overlay.visible { display: block; }
+.frutos-exit-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 9999; border-radius: 20px; padding: 40px 36px 32px; max-width: 460px; width: 90%; box-shadow: 0 24px 60px rgba(0,0,0,0.25); display: none; animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+.frutos-exit-popup.visible { display: block; transform: translate(-50%,-50%) scale(1); }
+@keyframes popIn { from { opacity:0; transform:translate(-50%,-55%) scale(0.85); } to { opacity:1; transform:translate(-50%,-50%) scale(1); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.frutos-exit-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #aaa; line-height: 1; padding: 4px; transition: color 0.2s; }
+.frutos-exit-close:hover { color: #333; }
+.frutos-exit-content { text-align: center; }
+.frutos-exit-emoji { font-size: 3.5rem; margin-bottom: 10px; line-height: 1; }
+.frutos-exit-title { font-family: 'Amatic SC', cursive; font-size: {{ section.settings.popup_title_size }}rem; font-weight: 700; line-height: 1; margin: 0 0 10px; }
+.frutos-exit-subtitle { font-family: 'Lato', sans-serif; font-size: 1rem; line-height: 1.6; margin-bottom: 22px; }
+.frutos-exit-coupon { display: inline-flex; align-items: center; gap: 10px; border: 2px dashed; border-radius: 12px; padding: 12px 18px; margin-bottom: 20px; font-family: 'Montserrat', sans-serif; flex-wrap: wrap; justify-content: center; }
+.coupon-label { font-size: 0.8rem; font-weight: 600; opacity: 0.7; }
+.coupon-code { font-size: 1.4rem; font-weight: 700; letter-spacing: 3px; }
+.coupon-copy { border: none; border-radius: 8px; padding: 6px 14px; font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+.coupon-copy:hover { opacity: 0.85; }
+.frutos-exit-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.frutos-exit-email { padding: 13px 18px; border: 2px solid; border-radius: 10px; font-family: 'Lato', sans-serif; font-size: 1rem; outline: none; transition: box-shadow 0.2s; }
+.frutos-exit-email:focus { box-shadow: 0 0 0 3px rgba(27,94,32,0.15); }
+.frutos-exit-submit { padding: 14px; border: none; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.25s, transform 0.25s; }
+.frutos-exit-submit:hover { opacity: 0.88; transform: translateY(-2px); }
+.frutos-exit-disclaimer { font-family: 'Lato', sans-serif; font-size: 0.75rem; opacity: 0.5; }
+
+/* ----- F. WHATSAPP BURBUJA ----- */
+.frutos-wa-wrapper { position: fixed; z-index: 3000; }
+.frutos-wa-btn { position: fixed; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(0,0,0,0.25); transition: transform 0.3s, box-shadow 0.3s; }
+.frutos-wa-btn:hover { transform: scale(1.1); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+.frutos-wa-notification { position: absolute; top: -2px; right: -2px; background: #FF5722; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.65rem; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
+
+.frutos-wa-card { position: fixed; bottom: {{ section.settings.wa_btn_bottom | plus: 70 }}px; right: {{ section.settings.wa_btn_right }}px; width: 300px; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.2); animation: wa-card-in 0.35s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+@keyframes wa-card-in { from { opacity:0; transform:translateY(20px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
+
+.frutos-wa-card__header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+.frutos-wa-card__avatar { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.frutos-wa-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.frutos-wa-card__avatar-emoji { font-size: 1.5rem; line-height: 1; }
+.frutos-wa-card__info { flex: 1; }
+.frutos-wa-card__name { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 700; line-height: 1; }
+.frutos-wa-card__status { display: flex; align-items: center; gap: 5px; font-family: 'Lato', sans-serif; font-size: 0.75rem; opacity: 0.85; margin-top: 3px; }
+.frutos-wa-card__dot { width: 8px; height: 8px; background: #76ff03; border-radius: 50%; animation: blink-dot 1.5s infinite; flex-shrink: 0; }
+@keyframes blink-dot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.frutos-wa-card__close { background: none; border: none; cursor: pointer; font-size: 1rem; color: rgba(255,255,255,0.7); padding: 4px; line-height: 1; transition: color 0.2s; }
+.frutos-wa-card__close:hover { color: #fff; }
+
+.frutos-wa-card__body { padding: 16px; }
+.frutos-wa-card__bubble { padding: 12px 14px; border-radius: 0 12px 12px 12px; max-width: 85%; position: relative; }
+.frutos-wa-card__bubble p { font-family: 'Lato', sans-serif; font-size: 0.9rem; line-height: 1.5; margin: 0 0 4px; }
+.frutos-wa-card__time { font-family: 'Lato', sans-serif; font-size: 0.7rem; opacity: 0.55; }
+
+.frutos-wa-card__cta { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px; font-family: 'Montserrat', sans-serif; font-size: 0.88rem; font-weight: 700; text-decoration: none; transition: opacity 0.2s; }
+.frutos-wa-card__cta:hover { opacity: 0.88; }
+
+@media (max-width: 480px) {
+  .frutos-wa-card { width: calc(100vw - 32px); right: 16px; bottom: {{ section.settings.wa_btn_bottom | plus: 70 }}px; }
+  .frutos-exit-popup { padding: 32px 20px 24px; }
+  .hiw-steps { gap: 12px; }
+  .hiw-arrow { display: none; }
+}
+</style>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+(function() {
+
+  /* --- B. COUNTDOWN --- */
+  var cdEl = document.getElementById('frutos-countdown-timer');
+  if (cdEl) {
+    function getEndOfDay() {
+      var now = new Date();
+      var end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 0);
+      return end;
+    }
+    function updateCountdown() {
+      var now  = new Date();
+      var diff = Math.max(0, Math.floor((getEndOfDay() - now) / 1000));
+      var h = Math.floor(diff / 3600);
+      var m = Math.floor((diff % 3600) / 60);
+      var s = diff % 60;
+      document.getElementById('cd-hours').textContent   = String(h).padStart(2,'0');
+      document.getElementById('cd-minutes').textContent = String(m).padStart(2,'0');
+      document.getElementById('cd-seconds').textContent = String(s).padStart(2,'0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  }
+
+  /* --- C. EXIT INTENT --- */
+  var popup   = document.getElementById('frutos-exit-popup');
+  var overlay = document.getElementById('frutos-exit-overlay');
+  var closeBtn = document.getElementById('frutos-exit-close');
+
+  if (popup && !sessionStorage.getItem('frutos_exit_shown')) {
+    var triggered = false;
+    function showPopup() {
+      if (triggered) return;
+      triggered = true;
+      sessionStorage.setItem('frutos_exit_shown','1');
+      popup.classList.add('visible');
+      overlay.classList.add('visible');
+    }
+
+    document.addEventListener('mouseleave', function(e) {
+      if (e.clientY <= 0) showPopup();
+    });
+
+    setTimeout(function() {
+      if (!triggered) {
+        document.addEventListener('touchstart', function onTouch(e) {
+          if (e.touches[0].clientY < 60) { showPopup(); document.removeEventListener('touchstart', onTouch); }
+        }, { passive: true });
+      }
+    }, 8000);
+  }
+
+  function closePopup() {
+    if (!popup) return;
+    popup.classList.remove('visible');
+    overlay.classList.remove('visible');
+  }
+
+  if (closeBtn) closeBtn.addEventListener('click', closePopup);
+  if (overlay)  overlay.addEventListener('click', closePopup);
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePopup(); });
+
+  /* --- C. COPIAR CUPÓN --- */
+  window.frutoscopyCoupon = function() {
+    var code = document.getElementById('frutos-coupon-code');
+    var btn  = document.getElementById('frutos-copy-btn');
+    if (!code || !btn) return;
+    navigator.clipboard.writeText(code.textContent.trim()).then(function() {
+      btn.textContent = '¡Copiado!';
+      setTimeout(function() { btn.textContent = 'Copiar'; }, 2000);
+    }).catch(function() {
+      var ta = document.createElement('textarea');
+      ta.value = code.textContent.trim();
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent = '¡Copiado!';
+      setTimeout(function() { btn.textContent = 'Copiar'; }, 2000);
+    });
+  };
+
+  /* --- F. WHATSAPP BURBUJA --- */
+  var waBtn     = document.getElementById('frutos-wa-btn');
+  var waCard    = document.getElementById('frutos-wa-card');
+  var waClose   = document.getElementById('frutos-wa-card-close');
+  var waShown   = false;
+
+  if (waBtn && waCard) {
+    waBtn.addEventListener('click', function() {
+      waShown = !waShown;
+      waCard.style.display = waShown ? 'block' : 'none';
+    });
+    if (waClose) waClose.addEventListener('click', function() {
+      waShown = false; waCard.style.display = 'none';
+    });
+
+    // Auto-abrir después de delay configurable
+    var delay = {{ section.settings.wa_auto_open_delay }};
+    if (delay > 0) {
+      setTimeout(function() {
+        if (!sessionStorage.getItem('frutos_wa_opened')) {
+          waCard.style.display = 'block';
+          waShown = true;
+          sessionStorage.setItem('frutos_wa_opened','1');
+        }
+      }, delay * 1000);
+    }
+  }
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "CRO",
+  "settings": [
+    {
+      "type": "header",
+      "content": "⏱️ B. Countdown de Urgencia"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Mostrar countdown",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "countdown_bg",
+      "label": "Fondo del countdown",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "countdown_text_color",
+      "label": "Color del texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "countdown_label",
+      "label": "Texto antes del timer",
+      "default": "🔥 Oferta del día — termina en:"
+    },
+    {
+      "type": "text",
+      "id": "countdown_suffix",
+      "label": "Texto después del timer"
+    },
+    {
+      "type": "range",
+      "id": "countdown_padding",
+      "label": "Padding del banner",
+      "min": 6,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "text",
+      "id": "countdown_cta_text",
+      "label": "Texto CTA del countdown (vacío para ocultar)",
+      "default": "Aprovechar →"
+    },
+    {
+      "type": "url",
+      "id": "countdown_cta_link",
+      "label": "Enlace CTA"
+    },
+    {
+      "type": "color",
+      "id": "countdown_cta_bg",
+      "label": "Fondo del CTA",
+      "default": "#FFC107"
+    },
+    {
+      "type": "color",
+      "id": "countdown_cta_text_color",
+      "label": "Texto del CTA",
+      "default": "#5D4037"
+    },
+    {
+      "type": "header",
+      "content": "🚪 C. Pop-up Exit Intent"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_exit_popup",
+      "label": "Activar exit intent",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "popup_bg",
+      "label": "Fondo del popup",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "popup_emoji",
+      "label": "Emoji grande",
+      "default": "🌿"
+    },
+    {
+      "type": "text",
+      "id": "popup_title",
+      "label": "Título del popup",
+      "default": "¡Espera! Antes de irte..."
+    },
+    {
+      "type": "color",
+      "id": "popup_title_color",
+      "label": "Color del título",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "popup_title_size",
+      "label": "Tamaño del título",
+      "min": 4,
+      "max": 10,
+      "step": 1,
+      "unit": "rem",
+      "default": 7
+    },
+    {
+      "type": "textarea",
+      "id": "popup_subtitle",
+      "label": "Subtítulo",
+      "default": "Llévate un 10% de descuento en tu primera compra. Solo por suscribirte a nuestra newsletter."
+    },
+    {
+      "type": "color",
+      "id": "popup_subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "popup_accent",
+      "label": "Color de acento (borde cupón, botones)",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "checkbox",
+      "id": "popup_show_coupon",
+      "label": "Mostrar código de cupón",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "popup_coupon_code",
+      "label": "Código de cupón",
+      "default": "BIENVENIDO10"
+    },
+    {
+      "type": "text",
+      "id": "popup_placeholder",
+      "label": "Placeholder del email",
+      "default": "Tu correo electrónico"
+    },
+    {
+      "type": "text",
+      "id": "popup_btn_text",
+      "label": "Texto del botón",
+      "default": "Quiero mi 10% de descuento 🌱"
+    },
+    {
+      "type": "color",
+      "id": "popup_btn_text_color",
+      "label": "Color del texto del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "popup_disclaimer",
+      "label": "Texto disclaimer",
+      "default": "Sin spam. Solo buenas noticias de Frutos de la Raíz."
+    },
+    {
+      "type": "header",
+      "content": "🪜 D. Sección Cómo Funciona"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_how_it_works",
+      "label": "Mostrar sección",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "hiw_bg",
+      "label": "Fondo de la sección",
+      "default": "#f1f8e9"
+    },
+    {
+      "type": "range",
+      "id": "hiw_padding_top",
+      "label": "Padding superior",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "hiw_padding_bottom",
+      "label": "Padding inferior",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "text",
+      "id": "hiw_eyebrow",
+      "label": "Eyebrow",
+      "default": "🛒 Así de fácil"
+    },
+    {
+      "type": "text",
+      "id": "hiw_title",
+      "label": "Título",
+      "default": "¿Cómo Funciona?"
+    },
+    {
+      "type": "color",
+      "id": "hiw_title_color",
+      "label": "Color del título",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "hiw_title_size",
+      "label": "Tamaño del título",
+      "min": 6,
+      "max": 12,
+      "step": 1,
+      "unit": "rem",
+      "default": 10
+    },
+    {
+      "type": "text",
+      "id": "hiw_subtitle",
+      "label": "Subtítulo"
+    },
+    {
+      "type": "color",
+      "id": "hiw_subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "hiw_accent",
+      "label": "Color de acento",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "hiw_icon_size",
+      "label": "Tamaño de emojis",
+      "min": 4,
+      "max": 10,
+      "step": 1,
+      "unit": "rem",
+      "default": 7
+    },
+    {
+      "type": "text",
+      "id": "step1_emoji",
+      "label": "Paso 1 — Emoji",
+      "default": "🛍️"
+    },
+    {
+      "type": "text",
+      "id": "step1_title",
+      "label": "Paso 1 — Título",
+      "default": "Elige tus productos"
+    },
+    {
+      "type": "text",
+      "id": "step1_desc",
+      "label": "Paso 1 — Descripción",
+      "default": "Explora nuestro catálogo y agrega todo lo que necesitas a tu carrito."
+    },
+    {
+      "type": "text",
+      "id": "step2_emoji",
+      "label": "Paso 2 — Emoji",
+      "default": "📦"
+    },
+    {
+      "type": "text",
+      "id": "step2_title",
+      "label": "Paso 2 — Título",
+      "default": "Nosotros empacamos"
+    },
+    {
+      "type": "text",
+      "id": "step2_desc",
+      "label": "Paso 2 — Descripción",
+      "default": "Empacamos tu pedido con cuidado, fresco y listo para ti."
+    },
+    {
+      "type": "text",
+      "id": "step3_emoji",
+      "label": "Paso 3 — Emoji",
+      "default": "🚚"
+    },
+    {
+      "type": "text",
+      "id": "step3_title",
+      "label": "Paso 3 — Título",
+      "default": "Lo entregamos en Bogotá"
+    },
+    {
+      "type": "text",
+      "id": "step3_desc",
+      "label": "Paso 3 — Descripción",
+      "default": "Envíos rápidos al área metropolitana. Gratis desde $120.000."
+    },
+    {
+      "type": "text",
+      "id": "step4_emoji",
+      "label": "Paso 4 — Emoji (vacío para ocultar)"
+    },
+    {
+      "type": "text",
+      "id": "step4_title",
+      "label": "Paso 4 — Título (vacío para ocultar)"
+    },
+    {
+      "type": "text",
+      "id": "step4_desc",
+      "label": "Paso 4 — Descripción"
+    },
+    {
+      "type": "text",
+      "id": "hiw_cta_text",
+      "label": "Texto CTA (vacío para ocultar)",
+      "default": "Empezar a comprar"
+    },
+    {
+      "type": "url",
+      "id": "hiw_cta_link",
+      "label": "Enlace del CTA"
+    },
+    {
+      "type": "color",
+      "id": "hiw_btn_text_color",
+      "label": "Color del texto del CTA",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "💬 F. WhatsApp Burbuja de Chat"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_whatsapp_bubble",
+      "label": "Mostrar burbuja WhatsApp",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "wa_number",
+      "label": "Número WA (sin +57)",
+      "default": "3027045952"
+    },
+    {
+      "type": "text",
+      "id": "wa_prefill",
+      "label": "Mensaje predefinido",
+      "default": "Hola! Me interesa saber más sobre sus productos."
+    },
+    {
+      "type": "image_picker",
+      "id": "wa_avatar",
+      "label": "Foto del agente (opcional)"
+    },
+    {
+      "type": "text",
+      "id": "wa_avatar_emoji",
+      "label": "Emoji avatar (si no hay foto)",
+      "default": "🌿"
+    },
+    {
+      "type": "text",
+      "id": "wa_agent_name",
+      "label": "Nombre del agente",
+      "default": "Frutos de la Raíz"
+    },
+    {
+      "type": "text",
+      "id": "wa_status_text",
+      "label": "Estado (online/horario)",
+      "default": "En línea ahora"
+    },
+    {
+      "type": "textarea",
+      "id": "wa_message",
+      "label": "Mensaje en la burbuja",
+      "default": "¡Hola! 👋 ¿En qué te puedo ayudar hoy? Estamos aquí para orientarte en tus productos naturales."
+    },
+    {
+      "type": "text",
+      "id": "wa_time_label",
+      "label": "Etiqueta de hora",
+      "default": "Ahora"
+    },
+    {
+      "type": "text",
+      "id": "wa_cta_label",
+      "label": "Texto del CTA de la burbuja",
+      "default": "Iniciar conversación"
+    },
+    {
+      "type": "text",
+      "id": "wa_tooltip",
+      "label": "Tooltip del botón",
+      "default": "Chatea con nosotros"
+    },
+    {
+      "type": "checkbox",
+      "id": "wa_show_notification",
+      "label": "Mostrar punto de notificación",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "wa_notification_count",
+      "label": "Número en la notificación",
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "wa_auto_open_delay",
+      "label": "Auto-abrir burbuja después de (segundos, 0 = no)",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "wa_btn_bg",
+      "label": "Fondo del botón flotante",
+      "default": "#25D366"
+    },
+    {
+      "type": "color",
+      "id": "wa_btn_icon_color",
+      "label": "Color del ícono WA",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "wa_btn_size",
+      "label": "Tamaño del botón",
+      "min": 44,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 58
+    },
+    {
+      "type": "range",
+      "id": "wa_btn_bottom",
+      "label": "Distancia desde abajo",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "wa_btn_right",
+      "label": "Distancia desde la derecha",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "wa_header_bg",
+      "label": "Fondo del header de la burbuja",
+      "default": "#25D366"
+    },
+    {
+      "type": "color",
+      "id": "wa_header_text",
+      "label": "Texto del header",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "wa_card_bg",
+      "label": "Fondo del body de la burbuja",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "wa_bubble_bg",
+      "label": "Fondo del globo de mensaje",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "wa_bubble_text",
+      "label": "Texto del globo",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "wa_cta_bg",
+      "label": "Fondo del CTA de la burbuja",
+      "default": "#25D366"
+    },
+    {
+      "type": "color",
+      "id": "wa_cta_text",
+      "label": "Texto del CTA",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CRO Extras (Countdown + Popup + Pasos + WA)",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,851 @@
+{{ 'https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Lato:wght@300;400;700&family=Montserrat:wght@500;600;700&display=swap' | stylesheet_tag }}
+
+<style>
+  /* =============================================
+     PRODUCTOS DESTACADOS - CRO FULL + EDITABLE
+     ============================================= */
+
+  /* Contenedor exterior (100% ancho para el fondo) */
+  .featured-wrapper {
+    width: 100%;
+    padding: 60px 0;
+  }
+
+  /* Contenedor interior (centrado y con límite de ancho) */
+  .featured-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 5%;
+  }
+
+  /* ---- HEADER ---- */
+  .featured-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .featured-eyebrow {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 30px;
+    margin-bottom: 14px;
+  }
+
+  .featured-title {
+    font-family: 'Amatic SC', cursive;
+    font-size: 64px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .featured-subtitle {
+    font-family: 'Lato', sans-serif;
+    color: #666;
+    font-size: 16px;
+  }
+
+  /* ---- GRID ---- */
+  .prod-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 28px;
+  }
+
+  /* ---- CARD ---- */
+  .prod-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.35s, transform 0.35s;
+    width: calc(25% - 21px); /* 4 por fila en desktop */
+    min-width: 260px;
+    max-width: 320px;
+  }
+
+  .prod-card:hover {
+    box-shadow: 0 14px 35px rgba(0,0,0,0.1);
+    transform: translateY(-7px);
+  }
+
+  /* Badges */
+  .badge-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 5px 13px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    z-index: 2;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: .4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .badge-sale  { background: #FF5722; color: #fff; }
+  .badge-new   { background: #1B5E20; color: #fff; }
+  .badge-few   { background: #FFC107; color: #5D4037; }
+  .badge-best  { background: #4285F4; color: #fff; }
+  .badge-custom { color: #fff; }
+
+  /* Segunda badge (wishlist / favorito) */
+  .badge-fav {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 2;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+
+  .badge-fav:hover { transform: scale(1.2); }
+
+  /* Imagen */
+  .prod-img-box {
+    overflow: hidden;
+    background: #f4f4f4;
+    display: block;
+    position: relative;
+    width: 100%;
+  }
+
+  .prod-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.55s;
+    display: block;
+  }
+
+  .prod-card:hover .prod-img-box img { transform: scale(1.07); }
+
+  .prod-img-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+  }
+
+  /* ---- CONTENIDO ---- */
+  .prod-info {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .prod-vendor {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 4px;
+    font-family: 'Lato', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  .prod-name {
+    font-family: 'Montserrat', cursive;
+    font-size: 32px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.1;
+    text-decoration: none;
+    display: block;
+    transition: color 0.3s;
+  }
+
+  .prod-name:hover { color: #1B5E20; }
+
+  /* CRO: Beneficios con emojis */
+  .prod-benefits {
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 14px;
+    line-height: 1.8;
+    border-left: 3px solid #76ff03;
+    background: #f9fff0;
+    border-radius: 0 6px 6px 0;
+    padding: 8px 10px;
+  }
+
+  .prod-benefits span {
+    display: block;
+  }
+
+  /* Precio */
+  .prod-price-box {
+    margin-bottom: 14px;
+    font-family: 'Lato', sans-serif;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .price-compare {
+    text-decoration: line-through;
+    color: #bbb;
+    font-size: 14px;
+  }
+
+  .price-current {
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .price-save-tag {
+    background: #ffebee;
+    color: #FF5722;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 10px;
+  }
+
+  /* Selector de variantes */
+  .variant-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: 'Lato', sans-serif;
+    color: #555;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  /* Botón añadir al carrito */
+  .add-to-cart-btn {
+    width: 100%;
+    border: none;
+    padding: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: opacity 0.3s, transform 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    letter-spacing: .5px;
+  }
+
+  .add-to-cart-btn:hover {
+    opacity: .85;
+    transform: translateY(-2px);
+  }
+
+  .add-to-cart-btn:disabled {
+    background: #e0e0e0 !important;
+    color: #999 !important;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Urgencia / escasez */
+  .prod-urgency {
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  /* Cross-sell */
+  .prod-crosssell {
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    color: #FF5722;
+    font-weight: 700;
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  /* ---- TOAST ---- */
+  .cart-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    padding: 14px 28px;
+    border-radius: 40px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    z-index: 9999;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .cart-toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ---- CTA VER TODOS ---- */
+  .featured-view-all {
+    text-align: center;
+    margin-top: 45px;
+  }
+
+  .featured-view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 35px;
+    border-radius: 40px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .featured-view-all-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  .featured-view-all-btn i { transition: transform 0.3s; }
+  .featured-view-all-btn:hover i { transform: translateX(5px); }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 1024px) {
+    .prod-card { width: calc(33.333% - 19px); }
+  }
+
+  @media (max-width: 768px) {
+    .featured-wrapper { padding: 40px 0; }
+    .featured-title { font-size: 48px; }
+    .prod-card { width: calc(50% - 14px); min-width: 160px; max-width: 100%; }
+    .prod-img-box { height: 180px !important; }
+    .prod-name { font-size: 24px; }
+    .prod-benefits { font-size: 12px; }
+    .prod-grid { gap: 15px; }
+  }
+
+  @media (max-width: 480px) {
+    .prod-card { width: 100%; }
+  }
+</style>
+
+<!-- Toast global -->
+<div
+  class="cart-toast"
+  id="frutos-cart-toast"
+  style="background: {{ section.settings.toast_bg }}; color: {{ section.settings.toast_color }};"
+>
+  {{ section.settings.toast_text }}
+</div>
+
+<!-- CONTENEDOR EXTERIOR (Fondo ancho completo) -->
+<div class="featured-wrapper" style="background-color: {{ section.settings.bg_color }};">
+  
+  <!-- CONTENEDOR INTERIOR (Centrado) -->
+  <div class="featured-inner">
+    
+    <!-- HEADER -->
+    <div class="featured-header">
+      {% if section.settings.eyebrow != blank %}
+        <span class="featured-eyebrow" style="background: {{ section.settings.eyebrow_bg }}; color: {{ section.settings.eyebrow_color }};">
+          {{ section.settings.eyebrow }}
+        </span>
+      {% endif %}
+      {% if section.settings.title != blank %}
+        <h2 class="featured-title" style="color: {{ section.settings.title_color }};">
+          {{ section.settings.title }}
+        </h2>
+      {% endif %}
+      {% if section.settings.subtitle != blank %}
+        <p class="featured-subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    <!-- GRID -->
+    <div class="prod-grid">
+      {% assign prod_list = section.settings.collection.products %}
+      {% for product in prod_list limit: section.settings.products_limit %}
+        <div class="prod-card" style="border: {{ section.settings.card_border_width }}px {{ section.settings.card_border_style }} {{ section.settings.card_border_color }};">
+
+          <!-- Badges automáticos por tags -->
+          {% if product.compare_at_price > product.price %}
+            {% assign savings = product.compare_at_price | minus: product.price %}
+            {% assign savings_pct = savings | times: 100 | divided_by: product.compare_at_price %}
+            <span class="badge-tag badge-sale">-{{ savings_pct }}%</span>
+          {% elsif product.tags contains 'nuevo' or product.tags contains 'new' %}
+            <span class="badge-tag badge-new">✨ Nuevo</span>
+          {% elsif product.tags contains 'pocos' or product.tags contains 'agotando' %}
+            <span class="badge-tag badge-few">⚡ Quedan pocos</span>
+          {% elsif product.tags contains 'top' or product.tags contains 'bestseller' %}
+            <span class="badge-tag badge-best">⭐ Top vendido</span>
+          {% endif %}
+
+          <!-- Imagen -->
+          <a href="{{ product.url }}" class="prod-img-box" style="height: {{ section.settings.img_height }}px;">
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 700 }}"
+                alt="{{ product.title }}"
+                loading="lazy"
+              >
+            {% else %}
+              <div class="prod-img-placeholder" style="height: {{ section.settings.img_height }}px;">
+                Sin imagen
+              </div>
+            {% endif %}
+          </a>
+
+          <!-- Info -->
+          <div class="prod-info">
+
+            {% if section.settings.show_vendor %}
+              <div class="prod-vendor">{{ product.vendor }}</div>
+            {% endif %}
+
+            <a href="{{ product.url }}" class="prod-name">{{ product.title }}</a>
+
+            <!-- CRO: Beneficios con emojis -->
+            {% if section.settings.show_benefits %}
+              <div class="prod-benefits" style="border-left-color: {{ section.settings.benefits_accent }};">
+                {% if section.settings.benefit_1 != blank %}
+                  <span>{{ section.settings.benefit_1 }}</span>
+                {% endif %}
+                {% if section.settings.benefit_2 != blank %}
+                  <span>{{ section.settings.benefit_2 }}</span>
+                {% endif %}
+                {% if section.settings.benefit_3 != blank %}
+                  <span>{{ section.settings.benefit_3 }}</span>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <!-- Precio -->
+            <div class="prod-price-box">
+              {% if product.compare_at_price > product.price %}
+                <span class="price-compare">{{ product.compare_at_price | money }}</span>
+                <span class="price-current" style="color: {{ section.settings.price_color }};">
+                  {{ product.price | money }}
+                </span>
+                <span class="price-save-tag">Ahorras {{ savings | money }}</span>
+              {% else %}
+                <span class="price-current" style="color: {{ section.settings.price_color }};">
+                  {{ product.price | money }}
+                </span>
+              {% endif %}
+            </div>
+
+            <!-- Variantes y botón -->
+            <div class="prod-form" style="margin-top: auto; display: flex; flex-direction: column; gap: 8px;">
+              {% if product.variants.size > 1 %}
+                <select class="variant-select" id="variant-{{ product.id }}">
+                  {% for variant in product.variants %}
+                    <option value="{{ variant.id }}" {% unless variant.available %}disabled{% endunless %}>
+                      {{ variant.title }} — {{ variant.price | money }}
+                      {% unless variant.available %} (Agotado){% endunless %}
+                    </option>
+                  {% endfor %}
+                </select>
+              {% else %}
+                <input type="hidden" id="variant-{{ product.id }}" value="{{ product.variants.first.id }}">
+              {% endif %}
+
+              {% if product.available %}
+                <button
+                  type="button"
+                  class="add-to-cart-btn"
+                  onclick="frutosAddToCart('{{ product.id }}', this)"
+                  style="background: {{ section.settings.btn_bg }}; color: {{ section.settings.btn_color }};"
+                >
+                  {{ section.settings.btn_text }}
+                </button>
+              {% else %}
+                <button type="button" class="add-to-cart-btn" disabled>
+                  {{ section.settings.btn_sold_out_text }}
+                </button>
+              {% endif %}
+            </div>
+
+            <!-- CRO: Urgencia editable -->
+            {% if section.settings.show_urgency %}
+              {% if product.tags contains 'pocos' or product.tags contains 'agotando' %}
+                <div class="prod-urgency" style="color: {{ section.settings.urgency_color }};">
+                  {{ section.settings.urgency_text }}
+                </div>
+              {% endif %}
+            {% endif %}
+
+            <!-- CRO: Cross-sell editable -->
+            {% if section.settings.show_crosssell %}
+              {% if product.tags contains 'combo' or product.tags contains 'crosssell' %}
+                <div class="prod-crosssell">{{ section.settings.crosssell_text }}</div>
+              {% endif %}
+            {% endif %}
+
+          </div>
+        </div>
+      {% else %}
+        <p style="text-align:center;width:100%;grid-column:1/-1;font-family:'Lato',sans-serif;color:#aaa;padding:40px 0;">
+          Selecciona una colección en la configuración de esta sección.
+        </p>
+      {% endfor %}
+    </div>
+
+    <!-- CTA Ver todos -->
+    {% if section.settings.show_view_all %}
+      <div class="featured-view-all">
+        <a
+          href="{{ section.settings.view_all_link | default: '/collections/all' }}"
+          class="featured-view-all-btn"
+          style="border: 2px solid {{ section.settings.title_color }}; color: {{ section.settings.title_color }};"
+        >
+          {{ section.settings.view_all_text }}
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- JS: fetch limpio, sin alert, con toast -->
+<script>
+(function() {
+  function showToast() {
+    var t = document.getElementById('frutos-cart-toast');
+    if (!t) return;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2800);
+  }
+
+  window.frutosAddToCart = function(productId, btn) {
+    var sel = document.getElementById('variant-' + productId);
+    var variantId = sel ? parseInt(sel.value) : null;
+    if (!variantId) return;
+    var orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Agregando...';
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: variantId, quantity: 1 })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function() {
+      btn.innerHTML = '✅ ¡Añadido!';
+      showToast();
+      document.dispatchEvent(new CustomEvent('cart:updated'));
+      setTimeout(function() { btn.disabled = false; btn.innerHTML = orig; }, 2200);
+    })
+    .catch(function(e) {
+      console.error(e);
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    });
+  };
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Productos Destacados CRO",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Apariencia general"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#FAFAF8"
+    },
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto pequeño sobre el título",
+      "default": "Selección especial"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_bg",
+      "label": "Color de fondo del eyebrow",
+      "default": "#e8f5e9"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Color del texto eyebrow",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Favoritos de la Raíz"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Selección especial para tu bienestar diario"
+    },
+    {
+      "type": "header",
+      "content": "Productos"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección a mostrar"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "label": "Número de productos a mostrar",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "img_height",
+      "min": 160,
+      "max": 380,
+      "step": 10,
+      "label": "Altura de la imagen (px)",
+      "default": 260
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Mostrar proveedor / marca",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Estilo de la card"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "label": "Grosor del borde",
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "card_border_style",
+      "label": "Estilo del borde",
+      "options": [
+        { "value": "solid",  "label": "Sólido" },
+        { "value": "dashed", "label": "Punteado" },
+        { "value": "dotted", "label": "Puntos" }
+      ],
+      "default": "dashed"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Color del borde",
+      "default": "#5D4037"
+    },
+    {
+      "type": "header",
+      "content": "Beneficios (CRO) con emojis"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_benefits",
+      "label": "Mostrar beneficios en las cards",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "benefits_accent",
+      "label": "Color de la línea izquierda",
+      "default": "#76ff03"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1",
+      "label": "Beneficio 1",
+      "default": "✅ 100% natural · Sin aditivos"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2",
+      "label": "Beneficio 2",
+      "default": "🌱 Origen consciente y local"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3",
+      "label": "Beneficio 3",
+      "default": "💚 Apoya el comercio de Bosa"
+    },
+    {
+      "type": "header",
+      "content": "Precio"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Color del precio",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "header",
+      "content": "Botón Añadir al carrito"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Texto del botón",
+      "default": "🛒 Añadir al carrito"
+    },
+    {
+      "type": "text",
+      "id": "btn_sold_out_text",
+      "label": "Texto si está agotado",
+      "default": "❌ Agotado"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Color de fondo del botón",
+      "default": "#76ff03"
+    },
+    {
+      "type": "color",
+      "id": "btn_color",
+      "label": "Color del texto del botón",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Toast de confirmación"
+    },
+    {
+      "type": "text",
+      "id": "toast_text",
+      "label": "Texto del toast",
+      "default": "✅ ¡Añadido al carrito!"
+    },
+    {
+      "type": "color",
+      "id": "toast_bg",
+      "label": "Color de fondo del toast",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "toast_color",
+      "label": "Color del texto del toast",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "CRO: Urgencia y Cross-sell"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_urgency",
+      "label": "Mostrar mensaje de urgencia (solo productos con tag 'pocos')",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "urgency_text",
+      "label": "Texto de urgencia",
+      "default": "🔥 ¡Últimas unidades disponibles!"
+    },
+    {
+      "type": "color",
+      "id": "urgency_color",
+      "label": "Color del texto de urgencia",
+      "default": "#FF5722"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_crosssell",
+      "label": "Mostrar sugerencia de combo (solo productos con tag 'combo')",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "crosssell_text",
+      "label": "Texto del cross-sell",
+      "default": "🎁 Llévalo en combo y ahorra más"
+    },
+    {
+      "type": "header",
+      "content": "Botón Ver todos los productos"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Mostrar botón Ver todos",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Texto del botón",
+      "default": "Ver todos los productos"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "Enlace del botón"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Productos Destacados CRO",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

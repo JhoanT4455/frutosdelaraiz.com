@@ -1,0 +1,723 @@
+<style>
+  /* =============================================
+     EVENTOS FRUTOS - DISEÑO TIPO EVENTO REAL
+     SCHEMA 100% EDITABLE DESDE PERSONALIZADOR
+     ============================================= */
+
+  .events-section {
+    padding: 70px 5%;
+    text-align: center;
+  }
+
+  /* ---- HEADER ---- */
+  .events-header {
+    margin-bottom: 55px;
+  }
+
+  .events-eyebrow {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 30px;
+    margin-bottom: 15px;
+  }
+
+  .events-title-main {
+    font-family: 'Amatic SC', cursive;
+    font-size: 5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .events-subtitle {
+    font-family: 'Lato', sans-serif;
+    font-size: 1.05rem;
+    color: #888;
+    max-width: 550px;
+    margin: 0 auto;
+  }
+
+  /* ---- GRID ---- */
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ---- CARD ---- */
+  .event-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    position: relative;
+  }
+
+  .event-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+  }
+
+  /* Imagen de portada del evento */
+  .event-cover {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s;
+  }
+
+  .event-card:hover .event-cover { transform: scale(1.04); }
+
+  .event-cover-placeholder {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+  }
+
+  /* Badge de estado (Próximo / Hoy / Sold out) */
+  .event-status-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    z-index: 2;
+  }
+
+  .event-status-badge.badge-upcoming  { background: #FFC107; color: #5D4037; }
+  .event-status-badge.badge-today     { background: #76ff03; color: #000; }
+  .event-status-badge.badge-soldout   { background: #e53935; color: #fff; }
+  .event-status-badge.badge-free      { background: #1B5E20; color: #fff; }
+
+  /* Cuerpo de la card */
+  .event-body {
+    padding: 24px 24px 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Fila: fecha + hora */
+  .event-meta {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .event-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .82rem;
+    font-weight: 700;
+  }
+
+  .event-meta-item i { font-size: .9rem; }
+
+  /* Lugar */
+  .event-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Lato', sans-serif;
+    font-size: .82rem;
+    color: #888;
+    margin-bottom: 14px;
+  }
+
+  /* Nombre del evento */
+  .event-name {
+    font-family: 'Amatic SC', cursive;
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 10px;
+    text-decoration: none;
+    display: block;
+    transition: color 0.3s;
+  }
+
+  /* Descripción */
+  .event-desc {
+    font-family: 'Lato', sans-serif;
+    font-size: .95rem;
+    line-height: 1.65;
+    color: #666;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
+
+  /* Tags/etiquetas del evento */
+  .event-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 20px;
+  }
+
+  .event-tag {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .7rem;
+    font-weight: 600;
+    padding: 3px 11px;
+    border-radius: 12px;
+    background: #f1f8e9;
+    color: #2E7D32;
+    border: 1px solid #c8e6c9;
+  }
+
+  /* Precio del evento */
+  .event-price {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .9rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+
+  .event-price .price-free {
+    color: #1B5E20;
+    background: #e8f5e9;
+    padding: 3px 12px;
+    border-radius: 12px;
+  }
+
+  .event-price .price-paid { color: #5D4037; }
+
+  /* Acciones */
+  .event-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  .event-btn-primary {
+    flex: 1;
+    text-align: center;
+    padding: 11px 18px;
+    border-radius: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .event-btn-secondary {
+    flex: 1;
+    text-align: center;
+    padding: 11px 18px;
+    border-radius: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: 2px solid;
+  }
+
+  /* Separador de la card en el footer */
+  .event-footer-card {
+    padding: 12px 24px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Lato', sans-serif;
+    font-size: .8rem;
+    color: #aaa;
+  }
+
+  .event-footer-card i { font-size: .85rem; }
+
+  /* ---- CTA GENERAL (VER TODOS) ---- */
+  .events-view-all {
+    margin-top: 45px;
+  }
+
+  .events-view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 35px;
+    border-radius: 40px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .95rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: 2px solid #1B5E20;
+    color: #1B5E20;
+  }
+
+  .events-view-all-btn:hover {
+    background: #1B5E20;
+    color: #76ff03;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(27,94,32,0.2);
+  }
+
+  .events-view-all-btn i { transition: transform 0.3s; }
+  .events-view-all-btn:hover i { transform: translateX(5px); }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .events-title-main { font-size: 4rem; }
+    .events-grid { grid-template-columns: 1fr; }
+    .event-name { font-size: 2.4rem; }
+    .event-actions { flex-direction: column; }
+    .event-btn-primary, .event-btn-secondary { flex: none; width: 100%; }
+  }
+</style>
+
+<div class="events-section" style="background-color: {{ section.settings.bg_color }};">
+
+  <!-- HEADER -->
+  <div class="events-header">
+    {% if section.settings.eyebrow != blank %}
+      <span class="events-eyebrow" style="background: {{ section.settings.eyebrow_bg }}; color: {{ section.settings.eyebrow_color }};">
+        {{ section.settings.eyebrow }}
+      </span>
+    {% endif %}
+
+    {% if section.settings.title != blank %}
+      <h2 class="events-title-main" style="color: {{ section.settings.title_color }};">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+
+    {% if section.settings.subtitle != blank %}
+      <p class="events-subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+  </div>
+
+  <!-- GRID DE EVENTOS -->
+  <div class="events-grid">
+    {% for block in section.blocks %}
+      <div class="event-card" {{ block.shopify_attributes }} style="border-top: 5px solid {{ block.settings.accent_color }};">
+
+        <!-- Imagen de portada -->
+        {% if block.settings.image != blank %}
+          <div style="overflow:hidden;">
+            <img
+              class="event-cover"
+              src="{{ block.settings.image | image_url: width: 800 }}"
+              alt="{{ block.settings.name }}"
+              loading="lazy"
+            >
+          </div>
+        {% elsif block.settings.cover_emoji != blank %}
+          <div class="event-cover-placeholder" style="background: {{ block.settings.accent_color }}20;">
+            {{ block.settings.cover_emoji }}
+          </div>
+        {% endif %}
+
+        <!-- Badge de estado -->
+        {% if block.settings.status != blank %}
+          <span class="event-status-badge badge-{{ block.settings.status }}">
+            {% case block.settings.status %}
+              {% when 'upcoming' %}📅 Próximo
+              {% when 'today' %}🔥 ¡Hoy!
+              {% when 'soldout' %}Sold Out
+              {% when 'free' %}Gratis
+            {% endcase %}
+          </span>
+        {% endif %}
+
+        <!-- Cuerpo -->
+        <div class="event-body">
+
+          <!-- Fecha y hora -->
+          <div class="event-meta">
+            {% if block.settings.date != blank %}
+              <span class="event-meta-item" style="color: {{ block.settings.accent_color }};">
+                <i class="far fa-calendar-alt"></i>
+                {{ block.settings.date }}
+              </span>
+            {% endif %}
+            {% if block.settings.time != blank %}
+              <span class="event-meta-item" style="color: {{ block.settings.accent_color }};">
+                <i class="far fa-clock"></i>
+                {{ block.settings.time }}
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- Lugar -->
+          {% if block.settings.location != blank %}
+            <div class="event-location">
+              <i class="fas fa-map-marker-alt"></i>
+              {{ block.settings.location }}
+            </div>
+          {% endif %}
+
+          <!-- Nombre del evento -->
+          {% if block.settings.info_link != blank %}
+            <a href="{{ block.settings.info_link }}" class="event-name" style="color: {{ block.settings.name_color }};">
+              {{ block.settings.name }}
+            </a>
+          {% else %}
+            <span class="event-name" style="color: {{ block.settings.name_color }};">
+              {{ block.settings.name }}
+            </span>
+          {% endif %}
+
+          <!-- Descripción -->
+          {% if block.settings.description != blank %}
+            <p class="event-desc">{{ block.settings.description }}</p>
+          {% endif %}
+
+          <!-- Tags -->
+          {% if block.settings.tags != blank %}
+            <div class="event-tags">
+              {% assign tag_list = block.settings.tags | split: ',' %}
+              {% for tag in tag_list %}
+                <span class="event-tag">{{ tag | strip }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- Precio -->
+          {% if block.settings.price != blank %}
+            <div class="event-price">
+              {% if block.settings.price == 'Gratis' or block.settings.price == 'gratis' or block.settings.price == 'FREE' %}
+                <span class="price-free">✓ Entrada Gratis</span>
+              {% else %}
+                <span class="price-paid">💰 {{ block.settings.price }}</span>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <!-- Acciones -->
+          <div class="event-actions">
+            {% if block.settings.info_link != blank %}
+              <a
+                href="{{ block.settings.info_link }}"
+                class="event-btn-primary"
+                style="background: {{ block.settings.accent_color }}; color: {{ block.settings.btn_text_color }};"
+              >
+                {{ block.settings.btn_primary_text }}
+              </a>
+            {% endif %}
+            {% if block.settings.products_link != blank %}
+              <a
+                href="{{ block.settings.products_link }}"
+                class="event-btn-secondary"
+                style="border-color: {{ block.settings.accent_color }}; color: {{ block.settings.accent_color }};"
+              >
+                {{ block.settings.btn_secondary_text }}
+              </a>
+            {% endif %}
+          </div>
+
+        </div>
+
+        <!-- Footer de la card: organizador -->
+        {% if block.settings.organizer != blank %}
+          <div class="event-footer-card">
+            <i class="fas fa-user-circle"></i>
+            Organiza: <strong>{{ block.settings.organizer }}</strong>
+          </div>
+        {% endif %}
+
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- VER TODOS LOS EVENTOS -->
+  {% if section.settings.show_view_all %}
+    <div class="events-view-all">
+      <a href="{{ section.settings.view_all_link | default: '/pages/contact' }}" class="events-view-all-btn">
+        {{ section.settings.view_all_text }}
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  {% endif %}
+
+</div>
+
+{% schema %}
+{
+  "name": "Eventos Frutos CRO",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Apariencia de la sección"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo de la sección",
+      "default": "#FAFAF8"
+    },
+    {
+      "type": "header",
+      "content": "Textos del encabezado"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto pequeño sobre el título",
+      "default": "Comunidad Frutos de la Raíz"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_bg",
+      "label": "Color de fondo del eyebrow",
+      "default": "#e8f5e9"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Color del texto eyebrow",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título principal",
+      "default": "PRÓXIMOS ENCUENTROS"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#5D4037"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo (opcional)",
+      "default": "Eventos presenciales en nuestro espacio de Bosa · Bogotá"
+    },
+    {
+      "type": "header",
+      "content": "Botón Ver todos los eventos"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Mostrar botón Ver todos",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Texto del botón",
+      "default": "Ver todos los eventos"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "Enlace del botón"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "evento",
+      "name": "Evento",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Imagen y apariencia"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen del evento (portada)"
+        },
+        {
+          "type": "text",
+          "id": "cover_emoji",
+          "label": "Emoji de portada (si no hay imagen)",
+          "default": "🌿",
+          "info": "Se muestra si no subes imagen. Ej: 🌿 📚 ☕ 🌱"
+        },
+        {
+          "type": "color",
+          "id": "accent_color",
+          "label": "Color de acento (borde, botón, fecha)",
+          "default": "#FFC107"
+        },
+        {
+          "type": "header",
+          "content": "Información del evento"
+        },
+        {
+          "type": "select",
+          "id": "status",
+          "label": "Estado del evento",
+          "options": [
+            { "value": "upcoming", "label": "📅 Próximo" },
+            { "value": "today",    "label": "🔥 Hoy" },
+            { "value": "soldout",  "label": "🚫 Sold Out" },
+            { "value": "free",     "label": "✅ Gratis" }
+          ],
+          "default": "upcoming"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Fecha",
+          "default": "Domingo 28 de Julio"
+        },
+        {
+          "type": "text",
+          "id": "time",
+          "label": "Hora (opcional)",
+          "default": "3:00 pm - 6:00 pm"
+        },
+        {
+          "type": "text",
+          "id": "location",
+          "label": "Lugar (opcional)",
+          "default": "Calle 65g sur #79b - 36, Bosa"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nombre del evento",
+          "default": "Hora de la Aromática"
+        },
+        {
+          "type": "color",
+          "id": "name_color",
+          "label": "Color del nombre",
+          "default": "#5D4037"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Descripción del evento",
+          "default": "Disfruta de una experiencia única probando deliciosas aromáticas, semillas y frutas. Una tarde para deleitarte con la variedad de hierbas y flores."
+        },
+        {
+          "type": "text",
+          "id": "tags",
+          "label": "Etiquetas (separadas por coma)",
+          "default": "Aromáticas, Bienestar, Comunidad",
+          "info": "Ej: Aromáticas, Gratis, Bogotá, Familiar"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Precio de entrada",
+          "default": "Gratis",
+          "info": "Escribe 'Gratis' para mostrar badge verde, o el valor ej: $15.000"
+        },
+        {
+          "type": "text",
+          "id": "organizer",
+          "label": "Nombre del organizador (opcional)",
+          "default": "Frutos de la Raíz"
+        },
+        {
+          "type": "header",
+          "content": "Botones de acción"
+        },
+        {
+          "type": "text",
+          "id": "btn_primary_text",
+          "label": "Texto botón principal",
+          "default": "Más información →"
+        },
+        {
+          "type": "url",
+          "id": "info_link",
+          "label": "Enlace botón principal"
+        },
+        {
+          "type": "color",
+          "id": "btn_text_color",
+          "label": "Color del texto del botón principal",
+          "default": "#ffffff"
+        },
+        {
+          "type": "text",
+          "id": "btn_secondary_text",
+          "label": "Texto botón secundario (CRO)",
+          "default": "🖼️ Ver Flyer",
+          "info": "Enlace al flyer, imagen o página del evento."
+        },
+        {
+          "type": "url",
+          "id": "products_link",
+          "label": "Enlace al Flyer o imagen del evento"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Eventos Frutos CRO",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "evento",
+          "settings": {
+            "cover_emoji": "🌿",
+            "accent_color": "#FFC107",
+            "status": "upcoming",
+            "date": "Domingo 28 de Julio",
+            "time": "3:00 pm - 6:00 pm",
+            "location": "Calle 65g sur #79b - 36, Bosa",
+            "name": "Hora de la Aromática",
+            "description": "Disfruta de una experiencia única probando deliciosas aromáticas, semillas y frutas. Una tarde para deleitarte con la variedad de hierbas y flores.",
+            "tags": "Aromáticas, Bienestar, Comunidad",
+            "price": "Gratis",
+            "organizer": "Frutos de la Raíz",
+            "btn_primary_text": "Más información →",
+            "btn_secondary_text": "🖼️ Ver Flyer"
+          }
+        },
+        {
+          "type": "evento",
+          "settings": {
+            "cover_emoji": "📚",
+            "accent_color": "#1B5E20",
+            "status": "upcoming",
+            "date": "Viernes 19 de Julio",
+            "time": "5:00 pm - 8:00 pm",
+            "location": "Calle 65g sur #79b - 36, Bosa",
+            "name": "Chips de Literatura",
+            "description": "Una tarde de tertulia, literatura y pasabocas nativos como yuca, arracacha y aguacate. Trae fragmentos de textos para compartir.",
+            "tags": "Literatura, Snacks Nativos, Tertulia",
+            "price": "Gratis",
+            "organizer": "Frutos de la Raíz",
+            "btn_primary_text": "Más información →",
+            "btn_secondary_text": "🖼️ Ver Flyer"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

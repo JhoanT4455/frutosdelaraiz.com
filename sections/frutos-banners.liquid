@@ -1,0 +1,887 @@
+{{ 'https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Lato:wght@300;400;700&family=Montserrat:wght@500;600;700&display=swap' | stylesheet_tag }}
+
+<style>
+  /* =============================================
+     BANNERS TEMÁTICOS CRO v2 - FRUTOS DE LA RAÍZ
+     ============================================= */
+
+  .banners-section {
+    padding: {{ section.settings.padding_top }}px 5% {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+  }
+
+  .banners-inner {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  /* ---- ENCABEZADO ---- */
+  .banners-eyebrow {
+    display: block;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    margin-bottom: 8px;
+  }
+
+  .banners-title {
+    font-family: 'Amatic SC', cursive;
+    font-size: {{ section.settings.title_size }}px;
+    color: {{ section.settings.title_color }};
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 8px;
+    line-height: 1;
+  }
+
+  .banners-subtitle {
+    font-family: 'Lato', sans-serif;
+    font-size: {{ section.settings.subtitle_size }}px;
+    color: {{ section.settings.subtitle_color }};
+    text-align: center;
+    margin-bottom: {{ section.settings.header_gap }}px;
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  /* ---- GRID ---- */
+  .banners-grid {
+    display: grid;
+    gap: {{ section.settings.grid_gap }}px;
+    grid-template-columns: repeat({{ section.settings.cols_desktop }}, 1fr);
+  }
+
+  /* Layout asimétrico: primer card más ancho */
+  .banners-grid--asymmetric .banner-card:first-child {
+    grid-column: span 2;
+  }
+
+  @media (max-width: 1024px) {
+    .banners-grid {
+      grid-template-columns: repeat({{ section.settings.cols_tablet }}, 1fr);
+    }
+    .banners-grid--asymmetric .banner-card:first-child {
+      grid-column: span {{ section.settings.cols_tablet }};
+    }
+  }
+
+  @media (max-width: 640px) {
+    .banners-grid {
+      grid-template-columns: 1fr;
+    }
+    .banners-grid--asymmetric .banner-card:first-child {
+      grid-column: span 1;
+    }
+  }
+
+  /* ---- CARD ---- */
+  .banner-card {
+    height: {{ section.settings.card_height }}px;
+    position: relative;
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    text-decoration: none;
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  .banner-card:hover {
+    transform: translateY(-{{ section.settings.hover_lift }}px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  }
+
+  /* Imagen de fondo con zoom */
+  .banner-card__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform {{ section.settings.zoom_speed }}ms ease;
+    will-change: transform;
+  }
+
+  .banner-card:hover .banner-card__bg {
+    transform: scale({{ section.settings.zoom_scale | divided_by: 100.0 | plus: 1 }});
+  }
+
+  /* Overlay gradiente - color configurable */
+  .banner-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      {{ section.settings.overlay_from }} 0%,
+      {{ section.settings.overlay_to }} 65%
+    );
+    z-index: 1;
+    transition: opacity 0.35s;
+  }
+
+  .banner-card:hover .banner-card__overlay {
+    opacity: {{ section.settings.overlay_hover_opacity | divided_by: 100.0 }};
+  }
+
+  /* Overlay de color de hover configurable */
+  .banner-card__overlay-hover {
+    position: absolute;
+    inset: 0;
+    background: {{ section.settings.overlay_hover_color }};
+    opacity: 0;
+    z-index: 1;
+    transition: opacity 0.35s;
+  }
+
+  .banner-card:hover .banner-card__overlay-hover {
+    opacity: {{ section.settings.overlay_hover_opacity | divided_by: 100.0 | times: 0.4 }};
+  }
+
+  /* ---- CONTENIDO ---- */
+  .banner-card__content {
+    position: relative;
+    z-index: 2;
+    padding: {{ section.settings.content_padding }}px;
+    width: 100%;
+  }
+
+  /* Tag de categoría */
+  .banner-tag {
+    display: inline-block;
+    background: {{ section.settings.tag_bg_color }};
+    color: {{ section.settings.tag_text_color }};
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+    transition: transform 0.3s;
+  }
+
+  .banner-card:hover .banner-tag {
+    transform: translateX(4px);
+  }
+
+  /* Título */
+  .banner-card__title {
+    color: #ffffff;
+    font-family: 'Amatic SC', cursive;
+    font-size: {{ section.settings.card_title_size }}px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0 0 8px;
+    text-shadow: 1px 2px 8px rgba(0,0,0,0.4);
+    transition: transform 0.3s;
+  }
+
+  .banner-card:hover .banner-card__title {
+    transform: translateX(4px);
+  }
+
+  /* Descripción */
+  .banner-card__desc {
+    color: rgba(255,255,255,0.88);
+    font-family: 'Lato', sans-serif;
+    font-size: {{ section.settings.card_desc_size }}px;
+    line-height: 1.45;
+    margin-bottom: 18px;
+    max-width: 320px;
+    transition: transform 0.3s;
+  }
+
+  .banner-card:hover .banner-card__desc {
+    transform: translateX(4px);
+  }
+
+  /* Botón CTA */
+  .banner-card__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: 2px solid {{ section.settings.btn_border_color }};
+    color: {{ section.settings.btn_text_color }};
+    background: {{ section.settings.btn_bg_color }};
+    padding: {{ section.settings.btn_padding_y }}px {{ section.settings.btn_padding_x }}px;
+    border-radius: {{ section.settings.btn_radius }}px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: {{ section.settings.btn_font_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.28s ease;
+  }
+
+  .banner-card__btn .btn-arrow {
+    display: inline-block;
+    transition: transform 0.28s ease;
+  }
+
+  .banner-card:hover .banner-card__btn {
+    background: {{ section.settings.btn_hover_bg }};
+    color: {{ section.settings.btn_hover_text }};
+    border-color: {{ section.settings.btn_hover_bg }};
+  }
+
+  .banner-card:hover .banner-card__btn .btn-arrow {
+    transform: translateX(5px);
+  }
+
+  /* ---- BADGE "NUEVO" / "OFERTA" flotante ---- */
+  .banner-card__badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+    background: #FF5722;
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    animation: badge-float 3s ease-in-out infinite;
+  }
+
+  @keyframes badge-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  /* ---- CONTADOR URGENCIA (opcional) ---- */
+  .banner-card__urgency {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #FFC107;
+    margin-bottom: 12px;
+  }
+
+  .banner-card__urgency::before {
+    content: '🔥';
+    font-size: 14px;
+  }
+
+  /* ---- RESPONSIVE ALTURA ---- */
+  @media (max-width: 1024px) {
+    .banner-card {
+      height: {{ section.settings.card_height_tablet }}px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .banner-card {
+      height: {{ section.settings.card_height_mobile }}px;
+    }
+    .banner-card__title {
+      font-size: {{ section.settings.card_title_size | times: 0.78 | round }}px;
+    }
+    .banners-title {
+      font-size: {{ section.settings.title_size | times: 0.72 | round }}px;
+    }
+  }
+</style>
+
+<section class="banners-section">
+  <div class="banners-inner">
+
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="banners-eyebrow">{{ section.settings.eyebrow }}</span>
+    {%- endif -%}
+
+    {%- if section.settings.show_title and section.settings.title != blank -%}
+      <h2 class="banners-title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subtitle != blank -%}
+      <p class="banners-subtitle">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+
+    <div class="banners-grid{% if section.settings.asymmetric %} banners-grid--asymmetric{% endif %}">
+      {%- for block in section.blocks -%}
+        <a
+          href="{{ block.settings.link | default: '/collections/all' }}"
+          class="banner-card"
+          {{ block.shopify_attributes }}
+          {% if block.settings.new_tab %}target="_blank" rel="noopener"{% endif %}
+          aria-label="{{ block.settings.title }}"
+        >
+          <!-- Imagen de fondo -->
+          <div
+            class="banner-card__bg"
+            style="
+              background-image: url('{{ block.settings.image | image_url: width: 1000 }}');
+              background-color: {{ block.settings.fallback_color }};
+              background-position: {{ block.settings.bg_position }};
+            "
+          ></div>
+
+          <!-- Overlays -->
+          <div class="banner-card__overlay"></div>
+          <div class="banner-card__overlay-hover"></div>
+
+          <!-- Badge flotante urgencia -->
+          {%- if block.settings.badge != blank -%}
+            <span class="banner-card__badge">{{ block.settings.badge }}</span>
+          {%- endif -%}
+
+          <!-- Contenido -->
+          <div class="banner-card__content">
+
+            {%- if block.settings.tag != blank -%}
+              <span class="banner-tag">{{ block.settings.tag }}</span>
+            {%- endif -%}
+
+            {%- if block.settings.urgency_text != blank -%}
+              <div class="banner-card__urgency">{{ block.settings.urgency_text }}</div>
+            {%- endif -%}
+
+            <h3 class="banner-card__title">{{ block.settings.title }}</h3>
+
+            {%- if block.settings.description != blank -%}
+              <p class="banner-card__desc">{{ block.settings.description }}</p>
+            {%- endif -%}
+
+            {%- if block.settings.btn_text != blank -%}
+              <span class="banner-card__btn">
+                {{ block.settings.btn_text }}
+                <span class="btn-arrow">→</span>
+              </span>
+            {%- endif -%}
+
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Banners Temáticos CRO v2",
+  "settings": [
+    {
+      "type": "header",
+      "content": "📐 Layout y Espaciado"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo de la sección",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espaciado superior",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espaciado inferior",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo del contenedor",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Espacio entre cards",
+      "min": 8,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "cols_desktop",
+      "label": "Columnas en desktop",
+      "options": [
+        { "value": "1", "label": "1 columna" },
+        { "value": "2", "label": "2 columnas" },
+        { "value": "3", "label": "3 columnas" },
+        { "value": "4", "label": "4 columnas" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "select",
+      "id": "cols_tablet",
+      "label": "Columnas en tablet",
+      "options": [
+        { "value": "1", "label": "1 columna" },
+        { "value": "2", "label": "2 columnas" },
+        { "value": "3", "label": "3 columnas" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "checkbox",
+      "id": "asymmetric",
+      "label": "Layout asimétrico (primer card más ancho)",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "✍️ Encabezado de Sección"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow (texto pequeño sobre título)",
+      "default": "🛍️ Explora nuestra tienda"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Mostrar título",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título de sección",
+      "default": "Nuestras Colecciones"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título (px)",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo (dejar en blanco para ocultar)"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#777777"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Tamaño del subtítulo (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "header_gap",
+      "label": "Espacio entre encabezado y grid",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento (eyebrow)",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "header",
+      "content": "🃏 Cards — Dimensiones"
+    },
+    {
+      "type": "range",
+      "id": "card_height",
+      "label": "Altura de cards (desktop)",
+      "min": 200,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "card_height_tablet",
+      "label": "Altura de cards (tablet)",
+      "min": 180,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "card_height_mobile",
+      "label": "Altura de cards (móvil)",
+      "min": 160,
+      "max": 420,
+      "step": 10,
+      "unit": "px",
+      "default": 260
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio de esquinas",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Padding del contenido interno",
+      "min": 12,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "header",
+      "content": "🎬 Animaciones Hover"
+    },
+    {
+      "type": "range",
+      "id": "hover_lift",
+      "label": "Elevación al hover",
+      "min": 0,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "zoom_scale",
+      "label": "Escala zoom de imagen al hover",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 6,
+      "info": "Ej: 6 equivale a un zoom del 6% (escala 1.06)"
+    },
+    {
+      "type": "range",
+      "id": "zoom_speed",
+      "label": "Velocidad del zoom (ms)",
+      "min": 200,
+      "max": 1000,
+      "step": 50,
+      "unit": "ms",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "🌑 Overlay de las Cards"
+    },
+    {
+      "type": "color",
+      "id": "overlay_from",
+      "label": "Color base del overlay (parte inferior)",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "overlay_to",
+      "label": "Color superior del overlay (transparente)",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "overlay_hover_color",
+      "label": "Color del overlay al hover",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "overlay_hover_opacity",
+      "label": "Intensidad del overlay hover",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "header",
+      "content": "🏷️ Tag de Categoría"
+    },
+    {
+      "type": "color",
+      "id": "tag_bg_color",
+      "label": "Fondo del tag",
+      "default": "#76ff03"
+    },
+    {
+      "type": "color",
+      "id": "tag_text_color",
+      "label": "Texto del tag",
+      "default": "#1B3600"
+    },
+    {
+      "type": "header",
+      "content": "📝 Tipografía de Cards"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Tamaño del título de card (px)",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "card_desc_size",
+      "label": "Tamaño de la descripción (px)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "🔘 Botón de Card"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Fondo del botón",
+      "default": "transparent"
+    },
+    {
+      "type": "color",
+      "id": "btn_border_color",
+      "label": "Borde del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Texto del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Fondo del botón al hover",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_text",
+      "label": "Texto del botón al hover",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_y",
+      "label": "Padding vertical del botón",
+      "min": 6,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 9
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_x",
+      "label": "Padding horizontal del botón",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "btn_radius",
+      "label": "Radio del botón",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "label": "Tamaño de fuente del botón (px)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    }
+  ],
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen de fondo"
+        },
+        {
+          "type": "color",
+          "id": "fallback_color",
+          "label": "Color si no hay imagen",
+          "default": "#1B5E20"
+        },
+        {
+          "type": "select",
+          "id": "bg_position",
+          "label": "Posición de la imagen",
+          "options": [
+            { "value": "center center", "label": "Centro" },
+            { "value": "top center", "label": "Arriba" },
+            { "value": "bottom center", "label": "Abajo" },
+            { "value": "center left", "label": "Izquierda" },
+            { "value": "center right", "label": "Derecha" }
+          ],
+          "default": "center center"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge flotante (ej: 🔥 Nuevo — vacío para ocultar)"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tag de categoría",
+          "default": "Popular"
+        },
+        {
+          "type": "text",
+          "id": "urgency_text",
+          "label": "Texto de urgencia (vacío para ocultar)",
+          "info": "Ej: Solo quedan 5 unidades · Oferta hasta hoy"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título del banner",
+          "default": "Frutos Secos"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Descripción corta",
+          "default": "Deliciosos y nutritivos para tu energía diaria."
+        },
+        {
+          "type": "text",
+          "id": "btn_text",
+          "label": "Texto del botón (vacío para ocultar)",
+          "default": "Ver Colección"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace del banner"
+        },
+        {
+          "type": "checkbox",
+          "id": "new_tab",
+          "label": "Abrir en nueva pestaña",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banners Temáticos CRO v2",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "banner",
+          "settings": {
+            "tag": "⚡ Energía",
+            "title": "Frutos Secos",
+            "description": "Deliciosos y nutritivos para tu energía diaria.",
+            "btn_text": "Ver Colección",
+            "badge": "🔥 Más vendido"
+          }
+        },
+        {
+          "type": "banner",
+          "settings": {
+            "tag": "🌿 Bienestar",
+            "title": "Aromáticas",
+            "description": "Mezclas ancestrales para sanar cuerpo y alma.",
+            "btn_text": "Descubrir",
+            "urgency_text": "Cosecha nueva disponible"
+          }
+        },
+        {
+          "type": "banner",
+          "settings": {
+            "tag": "🎁 Combos",
+            "title": "Kits & Regalos",
+            "description": "El regalo perfecto para quien cuida su bienestar.",
+            "btn_text": "Ver Combos",
+            "badge": "✨ Nuevo"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

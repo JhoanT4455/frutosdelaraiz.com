@@ -1,0 +1,848 @@
+{{ 'https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Lato:wght@300;400;700&family=Montserrat:wght@500;600;700&display=swap' | stylesheet_tag }}
+
+<style>
+  /* =============================================
+     HERO FRUTOS DE LA RAÍZ - CRO OPTIMIZED v2
+     ============================================= */
+
+  .hero-frutos {
+    background-size: {{ section.settings.bg_size }};
+    background-position: {{ section.settings.bg_position }};
+    background-repeat: no-repeat;
+    min-height: {{ section.settings.min_height }}px;
+    display: flex;
+    align-items: {{ section.settings.vertical_align }};
+    justify-content: {{ section.settings.horizontal_align }};
+    text-align: {{ section.settings.text_align }};
+    color: #ffffff;
+    padding: {{ section.settings.padding_y }}px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Overlay degradado configurable */
+  .hero-frutos::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: {{ section.settings.overlay_color }};
+    opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    z-index: 1;
+  }
+
+  /* Efecto parallax suave opcional */
+  .hero-frutos.hero-frutos--parallax {
+    background-attachment: fixed;
+  }
+
+  .hero-content-frutos {
+    position: relative;
+    z-index: 2;
+    max-width: {{ section.settings.content_max_width }}px;
+    width: 100%;
+  }
+
+  /* ---- BADGE ---- */
+  .hero-badge {
+    display: inline-block;
+    background: {{ section.settings.badge_bg_color }};
+    color: {{ section.settings.badge_text_color }};
+    padding: 7px 22px;
+    border-radius: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: {{ section.settings.badge_font_size }}rem;
+    font-weight: 700;
+    margin-bottom: {{ section.settings.badge_margin_bottom }}px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+    {% if section.settings.badge_pulse %}
+    animation: pulse-badge 2.2s ease-in-out infinite;
+    {% endif %}
+  }
+
+  @keyframes pulse-badge {
+    0%, 100% { transform: scale(1); box-shadow: 0 3px 12px rgba(0,0,0,0.2); }
+    50% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+  }
+
+  /* ---- QUOTE ---- */
+  .hero-quote-frutos {
+    display: block;
+    font-family: 'Montserrat', cursive;
+    font-size: {{ section.settings.quote_font_size }}rem;
+    color: {{ section.settings.quote_color }};
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 8px rgba(0,0,0,0.3);
+    font-style: italic;
+  }
+
+  /* ---- TÍTULO ---- */
+  .hero-title-frutos {
+    font-family: 'Amatic SC', cursive;
+    font-size: {{ section.settings.title_font_size }}rem;
+    color: {{ section.settings.title_color }};
+    margin: 0 0 14px;
+    text-shadow: 2px 2px 14px rgba(0,0,0,0.45);
+    line-height: 0.92;
+    font-weight: 700;
+    {% if section.settings.title_animate %}
+    animation: hero-fade-up 0.8s ease both;
+    {% endif %}
+  }
+
+  /* ---- SUBTÍTULO ---- */
+  .hero-text-frutos {
+    font-family: 'Lato', sans-serif;
+    font-size: {{ section.settings.subtitle_font_size }}rem;
+    color: {{ section.settings.subtitle_color }};
+    margin-bottom: 30px;
+    line-height: 1.65;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.3);
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ---- CTAs ---- */
+  .hero-cta-group {
+    display: flex;
+    gap: 14px;
+    justify-content: {{ section.settings.horizontal_align }};
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .hero-btn-primary {
+    background: {{ section.settings.btn1_bg_color }};
+    color: {{ section.settings.btn1_text_color }};
+    padding: {{ section.settings.btn_padding_y }}px {{ section.settings.btn_padding_x }}px;
+    border-radius: 50px;
+    font-family: 'Amatic SC', cursive;
+    font-size: {{ section.settings.btn_font_size }}rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: inline-block;
+    line-height: 1;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    letter-spacing: 0.5px;
+  }
+
+  .hero-btn-primary:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    color: {{ section.settings.btn1_text_color }};
+  }
+
+  .hero-btn-secondary {
+    background: transparent;
+    border: 2px solid {{ section.settings.btn2_border_color }};
+    color: {{ section.settings.btn2_text_color }};
+    padding: {{ section.settings.btn_padding_y }}px {{ section.settings.btn_padding_x }}px;
+    border-radius: 50px;
+    font-family: 'Amatic SC', cursive;
+    font-size: {{ section.settings.btn_font_size }}rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    display: inline-block;
+    line-height: 1;
+  }
+
+  .hero-btn-secondary:hover {
+    background: {{ section.settings.btn2_border_color }};
+    color: #1B5E20;
+    transform: translateY(-2px);
+  }
+
+  /* ---- USP STRIP (3 beneficios con emojis) ---- */
+  .hero-usp-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+
+  .hero-usp-item {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 30px;
+    padding: 6px 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: {{ section.settings.usp_font_size }}rem;
+    font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    text-shadow: none;
+  }
+
+  .hero-usp-item .usp-emoji {
+    font-size: 1.1em;
+    line-height: 1;
+  }
+
+  /* ---- PRUEBA SOCIAL ---- */
+  .hero-social-proof {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-family: 'Lato', sans-serif;
+    font-size: {{ section.settings.proof_font_size }}rem;
+    opacity: 0.92;
+  }
+
+  .hero-proof-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 20px;
+    padding: 5px 14px;
+    backdrop-filter: blur(3px);
+  }
+
+  .hero-proof-stars {
+    color: #FFC107;
+    letter-spacing: -2px;
+    font-size: 1em;
+  }
+
+  /* ---- ANIMACIONES ---- */
+  @keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .hero-frutos {
+      min-height: {{ section.settings.min_height_mobile }}px;
+      background-attachment: scroll !important;
+      padding: 32px 16px;
+    }
+
+    .hero-title-frutos {
+      font-size: {{ section.settings.title_font_size | times: 0.65 }}rem;
+    }
+
+    .hero-quote-frutos {
+      font-size: {{ section.settings.quote_font_size | times: 0.75 }}rem;
+    }
+
+    .hero-btn-primary,
+    .hero-btn-secondary {
+      font-size: {{ section.settings.btn_font_size | times: 0.82 }}rem;
+      padding: 11px 28px;
+    }
+
+    .hero-usp-item {
+      font-size: 0.75rem;
+      padding: 5px 12px;
+    }
+
+    .hero-social-proof {
+      gap: 8px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-title-frutos {
+      font-size: {{ section.settings.title_font_size | times: 0.55 }}rem;
+    }
+
+    .hero-usp-strip {
+      gap: 6px;
+    }
+
+    .hero-usp-item {
+      font-size: 0.7rem;
+    }
+  }
+</style>
+
+<div
+  class="hero-frutos{% if section.settings.parallax %} hero-frutos--parallax{% endif %}"
+  style="
+    background-image: url('{{ section.settings.image | image_url: width: 1800 }}');
+    background-color: {{ section.settings.fallback_color }};
+  "
+>
+  <div class="hero-content-frutos">
+
+    {%- if section.settings.badge_text != blank -%}
+      <span class="hero-badge">{{ section.settings.badge_text }}</span>
+    {%- endif -%}
+
+    {%- if section.settings.quote != blank -%}
+      <span class="hero-quote-frutos">{{ section.settings.quote }}</span>
+    {%- endif -%}
+
+    {%- if section.settings.title != blank -%}
+      <h1 class="hero-title-frutos">{{ section.settings.title }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.subtitle != blank -%}
+      <p class="hero-text-frutos">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+
+    <!-- USP Strip con emojis -->
+    {%- assign has_usp = false -%}
+    {%- if section.settings.usp1_text != blank or section.settings.usp2_text != blank or section.settings.usp3_text != blank -%}
+      {%- assign has_usp = true -%}
+    {%- endif -%}
+
+    {%- if has_usp -%}
+      <div class="hero-usp-strip">
+        {%- if section.settings.usp1_text != blank -%}
+          <div class="hero-usp-item">
+            <span class="usp-emoji">{{ section.settings.usp1_emoji }}</span>
+            {{ section.settings.usp1_text }}
+          </div>
+        {%- endif -%}
+        {%- if section.settings.usp2_text != blank -%}
+          <div class="hero-usp-item">
+            <span class="usp-emoji">{{ section.settings.usp2_emoji }}</span>
+            {{ section.settings.usp2_text }}
+          </div>
+        {%- endif -%}
+        {%- if section.settings.usp3_text != blank -%}
+          <div class="hero-usp-item">
+            <span class="usp-emoji">{{ section.settings.usp3_emoji }}</span>
+            {{ section.settings.usp3_text }}
+          </div>
+        {%- endif -%}
+        {%- if section.settings.usp4_text != blank -%}
+          <div class="hero-usp-item">
+            <span class="usp-emoji">{{ section.settings.usp4_emoji }}</span>
+            {{ section.settings.usp4_text }}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <!-- CTAs -->
+    <div class="hero-cta-group">
+      {%- if section.settings.btn1_text != blank -%}
+        <a href="{{ section.settings.btn1_link }}" class="hero-btn-primary">
+          {{ section.settings.btn1_text }}
+        </a>
+      {%- endif -%}
+      {%- if section.settings.btn2_text != blank -%}
+        <a href="{{ section.settings.btn2_link }}" class="hero-btn-secondary">
+          {{ section.settings.btn2_text }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <!-- Prueba social -->
+    {%- if section.settings.show_social_proof -%}
+      <div class="hero-social-proof">
+        {%- if section.settings.proof1_text != blank -%}
+          <span class="hero-proof-item">
+            <span class="hero-proof-stars">★★★★★</span>
+            {{ section.settings.proof1_text }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.proof2_text != blank -%}
+          <span class="hero-proof-item">
+            {{ section.settings.proof2_emoji }} {{ section.settings.proof2_text }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.proof3_text != blank -%}
+          <span class="hero-proof-item">
+            {{ section.settings.proof3_emoji }} {{ section.settings.proof3_text }}
+          </span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero Frutos CRO v2",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Imagen y Fondo"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen de fondo"
+    },
+    {
+      "type": "color",
+      "id": "fallback_color",
+      "label": "Color si no hay imagen",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "select",
+      "id": "bg_size",
+      "label": "Tamaño de imagen",
+      "options": [
+        { "value": "cover", "label": "Cubrir (recomendado)" },
+        { "value": "contain", "label": "Contener" },
+        { "value": "auto", "label": "Original" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "select",
+      "id": "bg_position",
+      "label": "Posición de imagen",
+      "options": [
+        { "value": "center center", "label": "Centro" },
+        { "value": "top center", "label": "Arriba" },
+        { "value": "bottom center", "label": "Abajo" },
+        { "value": "center left", "label": "Izquierda" },
+        { "value": "center right", "label": "Derecha" }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "checkbox",
+      "id": "parallax",
+      "label": "Efecto parallax (solo desktop)",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "🌑 Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color del overlay",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad del overlay",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 45
+    },
+    {
+      "type": "header",
+      "content": "📐 Dimensiones y Alineación"
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Altura mínima desktop",
+      "min": 300,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 560
+    },
+    {
+      "type": "range",
+      "id": "min_height_mobile",
+      "label": "Altura mínima móvil",
+      "min": 250,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "default": 440
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "label": "Espaciado vertical interno",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 400,
+      "max": 1100,
+      "step": 50,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "select",
+      "id": "vertical_align",
+      "label": "Alineación vertical",
+      "options": [
+        { "value": "flex-start", "label": "Arriba" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Abajo" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_align",
+      "label": "Alineación horizontal",
+      "options": [
+        { "value": "flex-start", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alineación del texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "🏷️ Badge de Urgencia"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Texto del badge",
+      "default": "🌱 Envíos gratis desde $120.000"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Color de fondo del badge",
+      "default": "#FFC107"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Color del texto del badge",
+      "default": "#5D4037"
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "label": "Tamaño de fuente del badge",
+      "min": 0.7,
+      "max": 1.2,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.9
+    },
+    {
+      "type": "range",
+      "id": "badge_margin_bottom",
+      "label": "Espacio debajo del badge",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "badge_pulse",
+      "label": "Animación de pulso en el badge",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "✍️ Textos"
+    },
+    {
+      "type": "text",
+      "id": "quote",
+      "label": "Frase inspiracional",
+      "default": "\"Que tu alimento sea tu medicina\""
+    },
+    {
+      "type": "color",
+      "id": "quote_color",
+      "label": "Color de la frase",
+      "default": "#76ff03"
+    },
+    {
+      "type": "range",
+      "id": "quote_font_size",
+      "label": "Tamaño de la frase",
+      "min": 1.2,
+      "max": 3.5,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 2.2
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título principal (H1)",
+      "default": "Bienestar Natural a tu Puerta"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Tamaño del título",
+      "min": 3.0,
+      "max": 9.0,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 6.5
+    },
+    {
+      "type": "checkbox",
+      "id": "title_animate",
+      "label": "Animación fade-up en el título",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Alimentos conscientes · Compra local en Bosa · Envíos en Bogotá"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Tamaño del subtítulo",
+      "min": 0.9,
+      "max": 1.6,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.1
+    },
+    {
+      "type": "header",
+      "content": "✅ USP Strip (Beneficios con Emojis)"
+    },
+    {
+      "type": "range",
+      "id": "usp_font_size",
+      "label": "Tamaño de fuente de los USPs",
+      "min": 0.7,
+      "max": 1.1,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.8
+    },
+    {
+      "type": "text",
+      "id": "usp1_emoji",
+      "label": "USP 1 — Emoji",
+      "default": "🌿"
+    },
+    {
+      "type": "text",
+      "id": "usp1_text",
+      "label": "USP 1 — Texto",
+      "default": "100% Natural"
+    },
+    {
+      "type": "text",
+      "id": "usp2_emoji",
+      "label": "USP 2 — Emoji",
+      "default": "🚚"
+    },
+    {
+      "type": "text",
+      "id": "usp2_text",
+      "label": "USP 2 — Texto",
+      "default": "Envío gratis desde $120k"
+    },
+    {
+      "type": "text",
+      "id": "usp3_emoji",
+      "label": "USP 3 — Emoji",
+      "default": "📍"
+    },
+    {
+      "type": "text",
+      "id": "usp3_text",
+      "label": "USP 3 — Texto",
+      "default": "Bosa, Bogotá"
+    },
+    {
+      "type": "text",
+      "id": "usp4_emoji",
+      "label": "USP 4 — Emoji (opcional)",
+      "default": "💚"
+    },
+    {
+      "type": "text",
+      "id": "usp4_text",
+      "label": "USP 4 — Texto (opcional)",
+      "default": "Sin conservantes"
+    },
+    {
+      "type": "header",
+      "content": "🔘 Botones CTA"
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "label": "Tamaño de fuente de botones",
+      "min": 1.4,
+      "max": 3.0,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 2.2
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_y",
+      "label": "Padding vertical botones",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_x",
+      "label": "Padding horizontal botones",
+      "min": 20,
+      "max": 70,
+      "step": 2,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "text",
+      "id": "btn1_text",
+      "label": "Botón principal — Texto",
+      "default": "🛒 Comprar Ahora"
+    },
+    {
+      "type": "url",
+      "id": "btn1_link",
+      "label": "Botón principal — Enlace"
+    },
+    {
+      "type": "color",
+      "id": "btn1_bg_color",
+      "label": "Botón principal — Color de fondo",
+      "default": "#76ff03"
+    },
+    {
+      "type": "color",
+      "id": "btn1_text_color",
+      "label": "Botón principal — Color de texto",
+      "default": "#1B3600"
+    },
+    {
+      "type": "text",
+      "id": "btn2_text",
+      "label": "Botón secundario — Texto (dejar vacío para ocultar)",
+      "default": "⭐ Ver más vendidos"
+    },
+    {
+      "type": "url",
+      "id": "btn2_link",
+      "label": "Botón secundario — Enlace"
+    },
+    {
+      "type": "color",
+      "id": "btn2_bg_color",
+      "label": "Botón secundario — Fondo",
+      "default": "#0a2e0a"
+    },
+    {
+      "type": "color",
+      "id": "btn2_border_color",
+      "label": "Botón secundario — Borde y hover",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "btn2_text_color",
+      "label": "Botón secundario — Color de texto",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "header",
+      "content": "⭐ Prueba Social"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_proof",
+      "label": "Mostrar prueba social",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "proof_font_size",
+      "label": "Tamaño de fuente prueba social",
+      "min": 0.7,
+      "max": 1.1,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.9
+    },
+    {
+      "type": "text",
+      "id": "proof1_text",
+      "label": "Prueba social 1 (con estrellas automáticas)",
+      "default": "4.9 en Google"
+    },
+    {
+      "type": "text",
+      "id": "proof2_emoji",
+      "label": "Prueba social 2 — Emoji",
+      "default": "👥"
+    },
+    {
+      "type": "text",
+      "id": "proof2_text",
+      "label": "Prueba social 2 — Texto",
+      "default": "+32 reseñas reales"
+    },
+    {
+      "type": "text",
+      "id": "proof3_emoji",
+      "label": "Prueba social 3 — Emoji",
+      "default": "📍"
+    },
+    {
+      "type": "text",
+      "id": "proof3_text",
+      "label": "Prueba social 3 — Texto",
+      "default": "Bosa, Bogotá"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Frutos CRO v2",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

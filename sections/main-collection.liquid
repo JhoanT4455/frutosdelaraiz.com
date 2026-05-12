@@ -1,0 +1,1262 @@
+{%- comment -%}
+  ============================================================
+  FRUTOS DE LA RAÍZ — sections/frutos-main-collection.liquid
+  v3 — Diseño inspirado en Riovalle.co/shop
+  ============================================================
+{%- endcomment -%}
+
+<script src="{{ 'results-list.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+{% javascript %}
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ── Toast ── */
+  function showToast(msg, type) {
+    var old = document.querySelector('.frc-toast');
+    if (old) old.remove();
+    var t = document.createElement('div');
+    t.className = 'frc-toast' + (type === 'err' ? ' frc-toast--err' : '');
+    t.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + (type === 'err' ? '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>' : '<polyline points="20 6 9 17 4 12"/>') + '</svg><span>' + msg + '</span>';
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.classList.add('frc-toast--show'); });
+    setTimeout(function(){
+      t.classList.remove('frc-toast--show');
+      setTimeout(function(){ t.remove(); }, 400);
+    }, 3000);
+  }
+
+  /* ── AJAX Add to Cart ── */
+  document.querySelectorAll('.frc-btn-add').forEach(function(btn) {
+    btn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      var vid = this.dataset.vid;
+      if (!vid) return;
+      var self = this;
+      self.disabled = true;
+      self.innerHTML = '<span class="frc-spin"></span>';
+      try {
+        var r = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: Number(vid), quantity: 1 })
+        });
+        if (!r.ok) throw new Error();
+        var d = await r.json();
+        showToast('¡' + d.product_title + ' agregado! 🌿');
+        var cr = await (await fetch('/cart.js')).json();
+        document.querySelectorAll('[data-cart-count]').forEach(function(el){
+          el.textContent = cr.item_count;
+        });
+      } catch(err) {
+        showToast('No se pudo agregar. Intenta de nuevo.', 'err');
+      } finally {
+        self.disabled = false;
+        self.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Añadir al carrito';
+      }
+    });
+  });
+
+  /* ── Variant selector ── */
+  document.querySelectorAll('.frc-var-sel').forEach(function(sel) {
+    sel.addEventListener('change', function() {
+      var card  = this.closest('.frc-card');
+      var btn   = card && card.querySelector('.frc-btn-add');
+      var price = card && card.querySelector('.frc-price-current');
+      var cmp   = card && card.querySelector('.frc-price-old');
+      if (btn) btn.dataset.vid = this.value;
+      var opt = this.options[this.selectedIndex];
+      if (price && opt.dataset.price)   price.textContent = opt.dataset.price;
+      if (cmp   && opt.dataset.compare) { cmp.textContent = opt.dataset.compare; cmp.style.display = ''; }
+      else if (cmp) cmp.style.display = 'none';
+    });
+  });
+
+  /* ── Sort ── */
+  var sortSel = document.querySelector('.frc-sort-sel');
+  if (sortSel) sortSel.addEventListener('change', function(){ window.location = this.value; });
+
+  /* ── View toggle ── */
+  document.querySelectorAll('.frc-view-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.frc-view-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      var grid = document.getElementById('FrcGrid');
+      if (grid) grid.setAttribute('data-view', this.dataset.view);
+    });
+  });
+
+  /* ── Mobile filters panel ── */
+  var toggle = document.querySelector('.frc-mob-toggle');
+  var panel  = document.getElementById('FrcMobilePanel');
+  var close  = document.querySelector('.frc-panel-close');
+  var back   = document.querySelector('.frc-panel-back');
+  function openPanel()  { if(panel){ panel.classList.add('open'); document.body.style.overflow='hidden'; } }
+  function closePanel() { if(panel){ panel.classList.remove('open'); document.body.style.overflow=''; } }
+  if (toggle) toggle.addEventListener('click', openPanel);
+  if (close)  close.addEventListener('click',  closePanel);
+  if (back)   back.addEventListener('click',   closePanel);
+
+  /* ── Filter accordions ── */
+  document.querySelectorAll('.frc-fg-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var body = document.getElementById(this.getAttribute('aria-controls'));
+      if (!body) return;
+      var open = body.style.display === 'none' || body.style.display === '';
+      if (body.style.display === '') open = true; // default open
+      body.style.display = open ? 'none' : 'flex';
+      this.setAttribute('aria-expanded', String(!open));
+      var chev = this.querySelector('.frc-chev');
+      if (chev) chev.style.transform = open ? 'rotate(-90deg)' : 'rotate(0deg)';
+    });
+  });
+
+});
+{% endjavascript %}
+
+{%- style -%}
+/* =================================================================
+   FRUTOS DE LA RAÍZ — Main Collection v3 (estilo Riovalle)
+   ================================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+/* Fix custom element overflow */
+results-list, .product-grid-container { display: block !important; overflow: visible !important; }
+
+/* ── Variables ── */
+.frc-page {
+  --g:    #1B5E20;
+  --gm:   #2E7D32;
+  --gl:   #4CAF50;
+  --br:   #5D4037;
+  --ye:   #FFC107;
+  --ne:   #76ff03;
+  --or:   #FF5722;
+  --re:   #E53935;
+  --bg:   #F5F5F0;
+  --wh:   #FFFFFF;
+  --tx:   #1A2E1A;
+  --mu:   #6B7280;
+  --bo:   #DDD8CF;
+  --card-radius: 12px;
+  --btn-radius:  8px;
+  font-family: 'Lato', sans-serif;
+  color: var(--tx);
+  background: var(--bg);
+}
+
+/* ── Wrapper ── */
+.frc-page-inner {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: 0 20px 64px;
+  overflow: visible;
+}
+
+/* ================================================================
+   TOOLBAR — conteo + sort + vistas
+   ================================================================ */
+.frc-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0 14px;
+  border-bottom: 2px solid var(--g);
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.frc-tb-left  { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex: 1; }
+.frc-tb-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+/* Mobile filter button */
+.frc-mob-toggle {
+  display: none;
+  align-items: center; gap: 7px;
+  padding: 9px 15px;
+  background: var(--wh);
+  border: 1.5px solid var(--g);
+  border-radius: var(--btn-radius);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12.5px; font-weight: 700;
+  color: var(--g); cursor: pointer;
+  letter-spacing: .03em;
+  transition: background .2s;
+}
+.frc-mob-toggle:hover { background: rgba(27,94,32,.06); }
+.frc-mob-badge {
+  background: var(--g); color: var(--wh);
+  border-radius: 20px; font-size: 10px;
+  font-weight: 700; padding: 1px 7px;
+}
+
+/* Count */
+.frc-count {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 500; color: var(--mu);
+}
+.frc-count strong { color: var(--g); font-weight: 700; }
+
+/* Active chips */
+.frc-chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.frc-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(27,94,32,.1); border: 1px solid rgba(27,94,32,.3);
+  border-radius: 20px; padding: 4px 10px 4px 12px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11.5px; font-weight: 600; color: var(--g);
+}
+.frc-chip-rm {
+  background: none; border: none; cursor: pointer;
+  color: var(--g); font-size: 14px; opacity: .7;
+  padding: 0; line-height: 1; transition: opacity .2s;
+}
+.frc-chip-rm:hover { opacity: 1; }
+
+/* Sort */
+.frc-sort-wrap { position: relative; }
+.frc-sort-sel {
+  appearance: none;
+  background: var(--wh); border: 1.5px solid var(--bo);
+  border-radius: var(--btn-radius);
+  padding: 8px 34px 8px 12px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12.5px; font-weight: 600; color: var(--tx);
+  cursor: pointer; outline: none;
+  transition: border-color .2s;
+}
+.frc-sort-sel:focus { border-color: var(--g); }
+.frc-sort-wrap::after {
+  content: '';
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-30%);
+  border: 5px solid transparent;
+  border-top-color: var(--mu);
+  pointer-events: none;
+}
+
+/* View toggle */
+.frc-views { display: flex; gap: 3px; }
+.frc-view-btn {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--bo); border-radius: 6px;
+  background: var(--wh); cursor: pointer; color: var(--mu);
+  transition: all .2s;
+}
+.frc-view-btn:hover,
+.frc-view-btn.active { border-color: var(--g); background: var(--g); color: var(--wh); }
+
+/* ================================================================
+   LAYOUT: sidebar + grid
+   ================================================================ */
+.frc-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+.frc-layout--no-sidebar { grid-template-columns: minmax(0, 1fr); }
+
+/* ================================================================
+   SIDEBAR
+   ================================================================ */
+.frc-sidebar {
+  position: sticky;
+  top: 80px;
+  align-self: start;
+  background: var(--wh);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--bo);
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+
+.frc-sb-head {
+  background: var(--g);
+  padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.frc-sb-head h3 {
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--wh); margin: 0;
+  display: flex; align-items: center; gap: 8px;
+}
+.frc-sb-reset {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 700;
+  color: rgba(255,255,255,.7); text-decoration: none;
+  transition: color .2s; letter-spacing: .05em;
+}
+.frc-sb-reset:hover { color: var(--ne); }
+
+/* Category nav links — estilo Riovalle: lista simple */
+.frc-sb-cats {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--bo);
+}
+.frc-sb-cat-title {
+  padding: 10px 18px 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .12em;
+  color: var(--mu);
+}
+.frc-sb-cat-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 18px;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px; font-weight: 400;
+  color: var(--tx); text-decoration: none;
+  transition: background .15s, color .15s;
+  border-left: 3px solid transparent;
+}
+.frc-sb-cat-link:hover {
+  background: rgba(27,94,32,.06);
+  color: var(--g);
+  border-left-color: var(--g);
+}
+.frc-sb-cat-link.is-active {
+  background: rgba(27,94,32,.09);
+  color: var(--g);
+  font-weight: 700;
+  border-left-color: var(--g);
+}
+.frc-sb-cat-link .cat-icon { font-size: 16px; line-height: 1; }
+.frc-sb-cat-cnt {
+  margin-left: auto;
+  font-size: 11.5px; color: var(--mu);
+  background: rgba(0,0,0,.06);
+  border-radius: 20px; padding: 1px 8px;
+  font-family: 'Montserrat', sans-serif; font-weight: 600;
+}
+
+/* Filter groups (native Shopify filters) */
+.frc-fg { border-bottom: 1px solid var(--bo); }
+.frc-fg:last-child { border-bottom: none; }
+.frc-fg-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 12px 18px;
+  background: none; border: none; cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--tx); transition: background .15s;
+}
+.frc-fg-toggle:hover { background: rgba(27,94,32,.05); }
+.frc-chev { display: inline-flex; transition: transform .25s; }
+
+.frc-fg-body {
+  padding: 4px 18px 14px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+
+.frc-chk {
+  display: flex; align-items: center; gap: 9px;
+  cursor: pointer; font-size: 13.5px; color: var(--tx);
+  padding: 4px 0; transition: color .2s;
+}
+.frc-chk:hover { color: var(--g); }
+.frc-chk input[type="checkbox"] {
+  width: 15px; height: 15px;
+  accent-color: var(--g); cursor: pointer; flex-shrink: 0;
+  border-radius: 3px;
+}
+.frc-chk-cnt {
+  margin-left: auto; font-size: 11px; color: var(--mu);
+  background: rgba(0,0,0,.05); border-radius: 20px; padding: 1px 7px;
+}
+
+/* Price filter */
+.frc-price-form { display: flex; flex-direction: column; gap: 8px; padding: 2px 0 4px; }
+.frc-price-inputs { display: flex; gap: 7px; align-items: center; }
+.frc-price-inp {
+  width: 100%; border: 1.5px solid var(--bo); border-radius: 6px;
+  padding: 7px 9px; font-size: 13px; color: var(--tx);
+  outline: none; transition: border-color .2s;
+  font-family: 'Lato', sans-serif;
+}
+.frc-price-inp:focus { border-color: var(--g); }
+.frc-price-sep { color: var(--mu); flex-shrink: 0; }
+.frc-price-apply {
+  width: 100%; padding: 9px;
+  background: var(--g); color: var(--wh);
+  border: none; border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: background .2s; letter-spacing: .04em;
+}
+.frc-price-apply:hover { background: var(--gm); }
+
+/* Clear all */
+.frc-sb-clear {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border-top: 1px solid var(--bo);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700;
+  color: var(--re); text-decoration: none;
+}
+.frc-sb-clear:hover { color: #c62828; }
+
+/* ================================================================
+   MOBILE PANEL
+   ================================================================ */
+.frc-mob-panel {
+  display: none;
+  position: fixed; inset: 0; z-index: 9000;
+}
+.frc-mob-panel.open { display: flex; }
+.frc-panel-back {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.5);
+  animation: frcFade .25s ease;
+}
+@keyframes frcFade { from { opacity: 0; } to { opacity: 1; } }
+.frc-panel-drawer {
+  position: relative; z-index: 1;
+  width: min(300px, 88vw);
+  background: var(--wh);
+  display: flex; flex-direction: column;
+  box-shadow: 4px 0 24px rgba(0,0,0,.2);
+  animation: frcSlide .28s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+@keyframes frcSlide { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.frc-panel-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px; background: var(--g); color: var(--wh); flex-shrink: 0;
+}
+.frc-panel-hd h3 {
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.6rem; font-weight: 700; margin: 0;
+}
+.frc-panel-close {
+  background: none; border: none; color: var(--wh);
+  font-size: 22px; cursor: pointer; padding: 0; line-height: 1; opacity: .85;
+}
+.frc-panel-close:hover { opacity: 1; }
+.frc-panel-body { flex: 1; overflow-y: auto; }
+.frc-panel-ft { padding: 14px 16px; border-top: 1px solid var(--bo); flex-shrink: 0; }
+.frc-panel-cta {
+  display: block; width: 100%; padding: 12px;
+  background: var(--g); color: var(--wh);
+  border: none; border-radius: var(--btn-radius);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  text-align: center; transition: background .2s;
+}
+.frc-panel-cta:hover { background: var(--gm); }
+
+/* ================================================================
+   PRODUCT GRID
+   ================================================================ */
+.frc-main { min-width: 0; }
+
+.frc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  list-style: none; margin: 0; padding: 0;
+}
+
+/* List view */
+.frc-grid[data-view="list"] {
+  grid-template-columns: 1fr;
+}
+.frc-grid[data-view="list"] .frc-card {
+  flex-direction: row;
+  max-height: 200px;
+}
+.frc-grid[data-view="list"] .frc-img-wrap {
+  width: 200px; aspect-ratio: auto; flex-shrink: 0;
+}
+.frc-grid[data-view="list"] .frc-card-body {
+  justify-content: center;
+}
+.frc-grid[data-view="list"] .frc-card-actions { margin-top: auto; }
+.frc-grid[data-view="list"] .frc-hover-actions { display: none; }
+
+/* ================================================================
+   PRODUCT CARD — estilo Riovalle
+   ================================================================ */
+.frc-card {
+  background: var(--wh);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 1px 6px rgba(0,0,0,.07);
+  transition: box-shadow .3s, transform .3s;
+  position: relative;
+}
+.frc-card:hover {
+  box-shadow: 0 8px 32px rgba(27,94,32,.16);
+  transform: translateY(-3px);
+}
+
+/* Image wrapper */
+.frc-img-wrap {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #f0ede7;
+  flex-shrink: 0;
+}
+/* Imagen principal */
+.frc-img-main,
+.frc-img-hover {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity .4s ease, transform .4s ease;
+}
+.frc-img-hover { opacity: 0; }
+.frc-img-ph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, #f0ede7 0%, #e8e2d9 100%);
+}
+/* Hover: swap images */
+.frc-card:hover .frc-img-main  { opacity: 0; transform: scale(1.04); }
+.frc-card:hover .frc-img-hover { opacity: 1; }
+.frc-card:hover .frc-img-ph    { opacity: 0; }
+
+/* Badges */
+.frc-badges {
+  position: absolute; top: 10px; left: 10px;
+  display: flex; flex-direction: column; gap: 4px; z-index: 3;
+}
+.frc-badge {
+  display: inline-block;
+  padding: 3px 10px; border-radius: 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; line-height: 1.5;
+}
+.frc-b-sale  { background: var(--g); color: #fff; }
+.frc-b-new   { background: #0083f7; color: #fff; }
+.frc-b-out   { background: var(--re); color: #fff; }
+.frc-b-stock { background: var(--ye); color: var(--tx); }
+.frc-b-pop   { background: var(--or); color: #fff; }
+.frc-b-org   { background: rgba(27,94,32,.12); color: var(--g); border: 1px solid rgba(27,94,32,.3); }
+
+/* Hover action buttons — Wishlist + Quick View (como Riovalle) */
+.frc-hover-actions {
+  position: absolute; top: 10px; right: 10px;
+  display: flex; flex-direction: column; gap: 7px;
+  z-index: 3;
+  transform: translateX(50px);
+  opacity: 0;
+  transition: transform .28s cubic-bezier(.4,0,.2,1), opacity .28s;
+}
+.frc-card:hover .frc-hover-actions {
+  transform: translateX(0);
+  opacity: 1;
+}
+.frc-action-btn {
+  width: 36px; height: 36px;
+  background: var(--wh);
+  border: 1px solid var(--bo);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--tx);
+  font-size: 15px; text-decoration: none;
+  transition: background .2s, color .2s, border-color .2s, transform .2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+.frc-action-btn:hover { background: var(--g); color: var(--wh); border-color: var(--g); transform: scale(1.1); }
+.frc-action-btn--wish:hover { background: #e53935; border-color: #e53935; }
+
+/* Quick view overlay link at bottom of image */
+.frc-quickview-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(27,94,32,.92);
+  padding: 9px 12px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  color: var(--wh);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: .06em; text-decoration: none;
+  transform: translateY(100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+}
+.frc-card:hover .frc-quickview-bar { transform: translateY(0); }
+
+/* Card body */
+.frc-card-body {
+  padding: 14px 16px 16px;
+  display: flex; flex-direction: column; flex: 1; gap: 6px;
+}
+
+.frc-vendor {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .12em;
+  color: var(--g);
+}
+
+.frc-title-link {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14.5px; font-weight: 600;
+  color: var(--tx); text-decoration: none; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+  transition: color .2s;
+}
+.frc-title-link:hover { color: var(--g); }
+
+/* Short description */
+.frc-desc {
+  font-size: 12.5px; color: var(--mu); line-height: 1.55;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+  margin: 0;
+}
+
+/* Variant selector */
+.frc-vars { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.frc-var-lbl {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--mu); flex-shrink: 0;
+}
+.frc-var-sel {
+  flex: 1; min-width: 90px;
+  border: 1.5px solid var(--bo); border-radius: 6px;
+  padding: 6px 8px; font-size: 12.5px; color: var(--tx);
+  background: var(--wh); cursor: pointer; outline: none;
+  font-family: 'Lato', sans-serif; transition: border-color .2s;
+}
+.frc-var-sel:focus { border-color: var(--g); }
+
+/* Pricing */
+.frc-pricing {
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  margin-top: auto; padding-top: 4px;
+}
+.frc-price-current {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--g);
+}
+.frc-price-old {
+  font-size: .875rem; color: var(--mu);
+  text-decoration: line-through; font-weight: 400;
+}
+.frc-price-save {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10.5px; font-weight: 700; color: var(--or);
+}
+
+/* Card actions */
+.frc-card-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+.frc-btn-add {
+  flex: 1; min-height: 42px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  background: var(--g); color: var(--wh);
+  border: 2px solid var(--g); border-radius: var(--btn-radius);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12.5px; font-weight: 700; letter-spacing: .04em;
+  cursor: pointer; text-decoration: none;
+  transition: background .2s, color .2s, transform .15s;
+}
+.frc-btn-add:hover:not(:disabled) { background: var(--gm); border-color: var(--gm); transform: scale(1.02); }
+.frc-btn-add:disabled { opacity: .65; cursor: not-allowed; }
+.frc-btn-add-out { background: #9E9E9E; border-color: #9E9E9E; cursor: not-allowed; }
+
+.frc-btn-wa {
+  width: 42px; height: 42px; flex-shrink: 0;
+  background: #25D366; color: var(--wh);
+  border: 2px solid #25D366; border-radius: var(--btn-radius);
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none; cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+.frc-btn-wa:hover { background: #22c55e; transform: scale(1.05); }
+
+/* ── Spinner ── */
+.frc-spin {
+  display: inline-block; width: 15px; height: 15px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: #fff; border-radius: 50%;
+  animation: frcSpin .7s linear infinite;
+}
+@keyframes frcSpin { to { transform: rotate(360deg); } }
+
+/* ── Toast ── */
+.frc-toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--g); color: var(--wh);
+  padding: 13px 24px; border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13.5px; font-weight: 600;
+  box-shadow: 0 8px 28px rgba(0,0,0,.22);
+  z-index: 9999; display: flex; align-items: center; gap: 10px;
+  opacity: 0; pointer-events: none;
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s;
+  white-space: nowrap; max-width: 90vw;
+}
+.frc-toast--show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.frc-toast--err  { background: var(--re); }
+
+/* ── Empty state ── */
+.frc-empty {
+  grid-column: 1/-1; padding: 72px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center;
+}
+.frc-empty-ico { font-size: 4.5rem; }
+.frc-empty h2 {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2.2rem; font-weight: 700; color: var(--tx); margin: 0;
+}
+.frc-empty p { font-size: 15px; color: var(--mu); max-width: 360px; line-height: 1.65; margin: 0; }
+.frc-empty-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; background: var(--g); color: var(--wh);
+  border-radius: var(--btn-radius); font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  transition: background .2s;
+}
+.frc-empty-cta:hover { background: var(--gm); }
+
+/* ── Paginación ── */
+.frc-pag {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; padding: 40px 0 8px;
+}
+.frc-pg {
+  min-width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--bo); border-radius: var(--btn-radius);
+  background: var(--wh); color: var(--tx);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 600;
+  text-decoration: none; padding: 0 12px;
+  transition: all .2s;
+}
+.frc-pg:hover      { border-color: var(--g); color: var(--g); background: rgba(27,94,32,.06); }
+.frc-pg--active    { background: var(--g); color: var(--wh); border-color: var(--g); }
+.frc-pg--disabled  { opacity: .35; pointer-events: none; }
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 1024px) {
+  .frc-layout             { grid-template-columns: minmax(0, 1fr); }
+  .frc-sidebar            { display: none; }
+  .frc-mob-toggle         { display: inline-flex; }
+  .frc-grid               { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+}
+@media (max-width: 768px) {
+  .frc-grid               { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .frc-page-inner         { padding: 0 14px 48px; }
+  .frc-toolbar            { flex-wrap: wrap; gap: 10px; }
+  .frc-tb-right           { margin-left: auto; }
+}
+@media (max-width: 480px) {
+  .frc-grid               { grid-template-columns: repeat(2, 1fr); gap: 9px; }
+  .frc-page-inner         { padding: 0 10px 40px; }
+  .frc-card-body          { padding: 10px 11px 12px; gap: 4px; }
+  .frc-title-link         { font-size: 13px; }
+  .frc-price-current      { font-size: 1rem; }
+  .frc-btn-add            { font-size: 11px; gap: 5px; min-height: 38px; }
+  .frc-desc               { display: none; }
+  .frc-grid[data-view="list"] .frc-card { max-height: none; flex-direction: column; }
+  .frc-grid[data-view="list"] .frc-img-wrap { width: 100%; aspect-ratio: 4/3; }
+}
+{%- endstyle -%}
+
+{%- liquid
+  assign show_sidebar   = section.settings.show_sidebar
+  assign show_filters   = section.settings.show_filters
+  assign enable_infscrl = section.settings.enable_infinite_scroll
+  assign prods_per_page = 24
+  if enable_infscrl == false
+    assign prods_per_page = section.settings.products_per_page
+  endif
+  assign wapp_number  = section.settings.whatsapp_number | default: '573027045952'
+  assign color_scheme = section.settings.color_scheme
+
+  assign active_count = 0
+  for filter in collection.filters
+    if filter.type == 'price_range'
+      if filter.min_value.value or filter.max_value.value
+        assign active_count = active_count | plus: 1
+      endif
+    else
+      assign active_count = active_count | plus: filter.active_values.size
+    endif
+  endfor
+-%}
+
+<div class="frc-page section-background color-{{ color_scheme }}">
+<div class="frc-page-inner">
+
+  {%- comment -%} ══ MOBILE PANEL ══ {%- endcomment -%}
+  {%- if show_filters -%}
+  <div class="frc-mob-panel" id="FrcMobilePanel" role="dialog" aria-modal="true" aria-label="Filtros">
+    <div class="frc-panel-back"></div>
+    <div class="frc-panel-drawer">
+      <div class="frc-panel-hd">
+        <h3>🌿 Filtros</h3>
+        <button class="frc-panel-close" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="frc-panel-body">
+        {%- render 'frutos-sidebar-filters', collection: collection, show_price: section.settings.show_price_filter -%}
+      </div>
+      <div class="frc-panel-ft">
+        <button class="frc-panel-cta" onclick="document.getElementById('FrcMobilePanel').classList.remove('open');document.body.style.overflow='';">
+          Ver {{ collection.products_count }} resultado{{ collection.products_count | pluralize: '', 's' }}
+        </button>
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+
+  <results-list
+    class="product-grid-container color-{{ color_scheme }}"
+    section-id="{{ section.id }}"
+    infinite-scroll="{{ enable_infscrl }}"
+  >
+
+  {%- comment -%} ══ TOOLBAR ══ {%- endcomment -%}
+  <div class="frc-toolbar">
+    <div class="frc-tb-left">
+
+      {%- if show_filters -%}
+        <button class="frc-mob-toggle" aria-controls="FrcMobilePanel" aria-expanded="false" aria-label="Abrir filtros">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filtros
+          {%- if active_count > 0 -%}<span class="frc-mob-badge">{{ active_count }}</span>{%- endif -%}
+        </button>
+      {%- endif -%}
+
+      <p class="frc-count" aria-live="polite">
+        <strong>{{ collection.products_count }}</strong> producto{{ collection.products_count | pluralize: '', 's' }}
+      </p>
+
+      {%- if active_count > 0 -%}
+        <div class="frc-chips">
+          {%- for filter in collection.filters -%}
+            {%- if filter.type == 'list' -%}
+              {%- for val in filter.active_values -%}
+                <span class="frc-chip">
+                  {{ val.label }}
+                  <a href="{{ val.url_to_remove }}" class="frc-chip-rm" aria-label="Quitar {{ val.label }}">✕</a>
+                </span>
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <a href="{{ collection.url }}" style="font-family:'Montserrat',sans-serif;font-size:11.5px;font-weight:700;color:#E53935;text-decoration:none;padding:4px 6px;">Limpiar todo</a>
+        </div>
+      {%- endif -%}
+
+    </div>
+
+    <div class="frc-tb-right">
+      <div class="frc-sort-wrap">
+        <select class="frc-sort-sel" aria-label="Ordenar productos">
+          {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+          {%- for opt in collection.sort_options -%}
+            <option value="{{ collection.url }}?sort_by={{ opt.value }}"{% if opt.value == sort_by %} selected{% endif %}>{{ opt.name }}</option>
+          {%- endfor -%}
+        </select>
+      </div>
+      <div class="frc-views" role="group" aria-label="Vista">
+        <button class="frc-view-btn active" data-view="grid" title="Cuadrícula" aria-label="Cuadrícula">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="frc-view-btn" data-view="list" title="Lista" aria-label="Lista">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} ══ LAYOUT (sidebar + grid) ══ {%- endcomment -%}
+  <div class="frc-layout{% unless show_sidebar and show_filters %} frc-layout--no-sidebar{% endunless %}">
+
+    {%- comment -%} ── SIDEBAR DESKTOP ── {%- endcomment -%}
+    {%- if show_sidebar and show_filters -%}
+    <aside class="frc-sidebar" aria-label="Filtros">
+
+      <div class="frc-sb-head">
+        <h3>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filtrar
+        </h3>
+        {%- if active_count > 0 -%}
+          <a href="{{ collection.url }}" class="frc-sb-reset">✕ Limpiar</a>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Categorías como nav links (siempre visibles) {%- endcomment -%}
+      <div class="frc-sb-cats">
+        <p class="frc-sb-cat-title">Categorías</p>
+        {%- assign cat_handles = 'all,panaderia,frutos-secos,bebidas,especias,harinas-cereales-granos,toppings,aceites,aromaticas' | split: ',' -%}
+        {%- assign cat_names   = 'Todos,Panadería,Frutos Secos,Bebidas,Especias,Harinas & Cereales,Toppings,Aceites,Aromáticas' | split: ',' -%}
+        {%- assign cat_emojis  = '🌿,🍞,🥜,🧃,🌶️,🌾,✨,🫙,🍵' | split: ',' -%}
+        {%- for ch in cat_handles -%}
+          {%- liquid
+            assign is_active = false
+            if collection.handle == ch
+              assign is_active = true
+            elsif ch == 'all' and collection.handle == 'all'
+              assign is_active = true
+            endif
+            if ch == 'all'
+              assign cat_url = routes.all_products_collection_url
+            else
+              assign cat_url = '/collections/' | append: ch
+            endif
+          -%}
+          <a href="{{ cat_url }}" class="frc-sb-cat-link{% if is_active %} is-active{% endif %}"{% if is_active %} aria-current="page"{% endif %}>
+            <span class="cat-icon">{{ cat_emojis[forloop.index0] }}</span>
+            {{ cat_names[forloop.index0] }}
+          </a>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} Filtros nativos Shopify {%- endcomment -%}
+      {%- render 'frutos-sidebar-filters', collection: collection, show_price: section.settings.show_price_filter, hide_cats: true -%}
+
+    </aside>
+    {%- endif -%}
+
+    {%- comment -%} ── GRID PRINCIPAL ── {%- endcomment -%}
+    <main class="frc-main" id="MainCollection" aria-label="Productos de {{ collection.title | escape }}">
+
+      {%- paginate collection.products by prods_per_page -%}
+
+        {%- if collection.products_count == 0 -%}
+          <div class="frc-empty" role="status">
+            <span class="frc-empty-ico">🌱</span>
+            <h2>No encontramos productos</h2>
+            <p>Prueba con otros filtros o explora toda nuestra tienda.</p>
+            <a href="{{ routes.all_products_collection_url }}" class="frc-empty-cta">Ver todos los productos</a>
+          </div>
+
+        {%- else -%}
+
+          <ul id="FrcGrid" class="frc-grid" data-view="grid" role="list">
+
+            {%- for product in collection.products -%}
+              {%- liquid
+                assign fv = product.variants.first
+
+                assign has_cmp = false
+                if fv.compare_at_price > fv.price
+                  assign has_cmp = true
+                endif
+
+                assign is_out = false
+                if product.available == false
+                  assign is_out = true
+                endif
+
+                assign low_stock = false
+                if fv.inventory_quantity > 0 and fv.inventory_quantity <= 5
+                  assign low_stock = true
+                endif
+
+                assign is_new = false
+                if product.tags contains 'nuevo' or product.tags contains 'new'
+                  assign is_new = true
+                endif
+
+                assign is_org = false
+                if product.tags contains 'organico' or product.tags contains 'organic' or product.tags contains '100% natural'
+                  assign is_org = true
+                endif
+
+                assign is_pop = false
+                if product.tags contains 'popular' or product.tags contains 'destacado'
+                  assign is_pop = true
+                endif
+
+                assign save_pct = 0
+                if has_cmp
+                  assign save_pct = fv.compare_at_price | minus: fv.price | times: 100 | divided_by: fv.compare_at_price
+                endif
+
+                assign wapp_msg = product.title | url_encode
+                assign second_img = product.images[1]
+              -%}
+
+              <li
+                id="{{ section.id }}-{{ product.id }}"
+                class="product-grid__item"
+                data-product-id="{{ product.id }}"
+                data-page="{{ paginate.current_page }}"
+              >
+                <article class="frc-card" aria-label="{{ product.title | escape }}">
+
+                  {%- comment -%} ── IMAGE WRAP ── {%- endcomment -%}
+                  <div class="frc-img-wrap">
+
+                    {%- comment -%} Badges {%- endcomment -%}
+                    <div class="frc-badges" aria-hidden="true">
+                      {%- if is_out -%}
+                        <span class="frc-badge frc-b-out">Agotado</span>
+                      {%- elsif has_cmp -%}
+                        <span class="frc-badge frc-b-sale">-{{ save_pct }}%</span>
+                      {%- endif -%}
+                      {%- if is_new and is_out == false -%}
+                        <span class="frc-badge frc-b-new">Nuevo</span>
+                      {%- endif -%}
+                      {%- if low_stock and is_out == false -%}
+                        <span class="frc-badge frc-b-stock">⚡ Pocos</span>
+                      {%- endif -%}
+                      {%- if is_pop -%}
+                        <span class="frc-badge frc-b-pop">Destacado</span>
+                      {%- endif -%}
+                    </div>
+
+                    {%- comment -%} Hover action buttons {%- endcomment -%}
+                    <div class="frc-hover-actions" aria-hidden="true">
+                      <button class="frc-action-btn frc-action-btn--wish" aria-label="Guardar en wishlist" title="Guardar">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                      </button>
+                      <a href="{{ product.url | within: collection }}" class="frc-action-btn" aria-label="Ver {{ product.title | escape }}" title="Vista rápida">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      </a>
+                    </div>
+
+                    {%- comment -%} Images {%- endcomment -%}
+                    {%- if product.featured_image -%}
+                      <a href="{{ product.url | within: collection }}" tabindex="-1" aria-hidden="true">
+                        <img
+                          class="frc-img-main"
+                          src="{{ product.featured_image | image_url: width: 600 }}"
+                          alt="{{ product.featured_image.alt | escape | default: product.title }}"
+                          width="600" height="600"
+                          {%- if forloop.index <= 6 %} loading="eager" fetchpriority="high"
+                          {%- else %} loading="lazy"{%- endif %}
+                        >
+                        {%- if second_img -%}
+                          <img
+                            class="frc-img-hover"
+                            src="{{ second_img | image_url: width: 600 }}"
+                            alt="{{ second_img.alt | escape | default: product.title }}"
+                            width="600" height="600"
+                            loading="lazy"
+                          >
+                        {%- endif -%}
+                      </a>
+                    {%- else -%}
+                      <div class="frc-img-ph" aria-hidden="true">🌿</div>
+                    {%- endif -%}
+
+                    {%- comment -%} Quick view bar {%- endcomment -%}
+                    <a href="{{ product.url | within: collection }}" class="frc-quickview-bar">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      Vista rápida
+                    </a>
+
+                  </div>
+
+                  {%- comment -%} ── CARD BODY ── {%- endcomment -%}
+                  <div class="frc-card-body">
+
+                    {%- if product.vendor != blank -%}
+                      <p class="frc-vendor">{{ product.vendor }}</p>
+                    {%- endif -%}
+
+                    <h3>
+                      <a href="{{ product.url | within: collection }}" class="frc-title-link">{{ product.title }}</a>
+                    </h3>
+
+                    {%- if product.description != blank -%}
+                      <p class="frc-desc">{{ product.description | strip_html | truncate: 90 }}</p>
+                    {%- endif -%}
+
+                    {%- if product.variants.size > 1 -%}
+                      <div class="frc-vars">
+                        <span class="frc-var-lbl">Peso:</span>
+                        <select class="frc-var-sel" aria-label="Variante de {{ product.title | escape }}">
+                          {%- for v in product.variants -%}
+                            <option
+                              value="{{ v.id }}"
+                              data-price="{{ v.price | money }}"
+                              {%- if v.compare_at_price > v.price %} data-compare="{{ v.compare_at_price | money }}"{% endif %}
+                              {%- if v.available == false %} disabled{%- endif -%}
+                            >
+                              {{ v.title }}{% if v.available == false %} — Agotado{% endif %}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                      </div>
+                    {%- endif -%}
+
+                    <div class="frc-pricing">
+                      <span class="frc-price-current">{{ fv.price | money }}</span>
+                      {%- if has_cmp -%}
+                        <span class="frc-price-old">{{ fv.compare_at_price | money }}</span>
+                        <span class="frc-price-save">Ahorras {{ save_pct }}%</span>
+                      {%- endif -%}
+                    </div>
+
+                    <div class="frc-card-actions">
+                      {%- if is_out -%}
+                        <button class="frc-btn-add frc-btn-add-out" disabled aria-label="Agotado">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                          Agotado
+                        </button>
+                      {%- else -%}
+                        <button
+                          class="frc-btn-add"
+                          data-vid="{{ fv.id }}"
+                          aria-label="Añadir {{ product.title | escape }} al carrito"
+                        >
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                          Añadir al carrito
+                        </button>
+                        {%- if section.settings.show_whatsapp_btn -%}
+                          <a
+                            href="https://wa.me/{{ wapp_number }}?text=Hola!%20Me%20interesa%3A%20{{ wapp_msg }}"
+                            target="_blank" rel="noopener noreferrer"
+                            class="frc-btn-wa"
+                            aria-label="Consultar por WhatsApp"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                          </a>
+                        {%- endif -%}
+                      {%- endif -%}
+                    </div>
+
+                  </div>
+                </article>
+              </li>
+
+            {%- endfor -%}
+          </ul>
+
+          {%- if enable_infscrl == false and paginate.pages > 1 -%}
+            <nav class="frc-pag" aria-label="Paginación">
+              {%- if paginate.previous -%}
+                <a href="{{ paginate.previous.url }}" class="frc-pg" aria-label="Anterior">‹</a>
+              {%- else -%}
+                <span class="frc-pg frc-pg--disabled">‹</span>
+              {%- endif -%}
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}" class="frc-pg">{{ part.title }}</a>
+                {%- elsif part.title == paginate.current_page -%}
+                  <span class="frc-pg frc-pg--active" aria-current="page">{{ part.title }}</span>
+                {%- else -%}
+                  <span class="frc-pg frc-pg--disabled">{{ part.title }}</span>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if paginate.next -%}
+                <a href="{{ paginate.next.url }}" class="frc-pg" aria-label="Siguiente">›</a>
+              {%- else -%}
+                <span class="frc-pg frc-pg--disabled">›</span>
+              {%- endif -%}
+            </nav>
+          {%- endif -%}
+
+        {%- endif -%}
+
+      {%- endpaginate -%}
+    </main>
+
+  </div>{%- comment -%} /frc-layout {%- endcomment -%}
+  </results-list>
+
+</div>{%- comment -%} /frc-page-inner {%- endcomment -%}
+</div>{%- comment -%} /frc-page {%- endcomment -%}
+
+{% schema %}
+{
+  "name": "Frutos \u2014 Col. Grid",
+  "class": "frutos-main-col",
+  "enabled_on": { "templates": ["collection"] },
+  "settings": [
+    {
+      "type": "header",
+      "content": "\ud83d\udce6 Productos"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_infinite_scroll",
+      "label": "Scroll infinito",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Productos por p\u00e1gina",
+      "min": 8, "max": 48, "step": 4, "default": 24
+    },
+    {
+      "type": "header",
+      "content": "\ud83d\udd0d Filtros"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Mostrar filtros",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sidebar",
+      "label": "Sidebar en desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price_filter",
+      "label": "Filtro de precio",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "\ud83d\uded2 Tarjetas"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_whatsapp_btn",
+      "label": "Bot\u00f3n WhatsApp en tarjetas",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "N\u00famero WhatsApp",
+      "default": "573027045952"
+    },
+    {
+      "type": "header",
+      "content": "\ud83c\udfa8 Apariencia"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Padding superior",
+      "min": 0, "max": 80, "step": 4, "unit": "px", "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Padding inferior",
+      "min": 0, "max": 80, "step": 4, "unit": "px", "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Frutos \u2014 Col. Grid",
+      "category": "Frutos de la Raiz"
+    }
+  ]
+}
+{% endschema %}

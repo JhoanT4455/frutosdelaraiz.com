@@ -1,0 +1,819 @@
+{{ 'https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Lato:wght@300;400;700&family=Montserrat:wght@500;600;700&display=swap' | stylesheet_tag }}
+
+{% assign is_centered = false %}
+{% if section.settings.text_align == 'center' %}
+  {% assign is_centered = true %}
+{% endif %}
+
+{% assign is_split = false %}
+{% if section.settings.layout == 'split' %}
+  {% assign is_split = true %}
+{% endif %}
+
+<style>
+  .ubicacion-section {
+    padding: {{ section.settings.padding_top }}px 5% {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.bg_color }};
+    color: {{ section.settings.text_color }};
+    text-align: {{ section.settings.text_align }};
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ubicacion-inner {
+    position: relative;
+    z-index: 2;
+    max-width: {{ section.settings.content_max_width }}px;
+    margin: 0 auto;
+  }
+
+  {% if is_split %}
+  .ubicacion-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    text-align: left;
+  }
+  {% endif %}
+
+  .ubicacion-eyebrow {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    margin-bottom: 10px;
+  }
+
+  .ubicacion-icon {
+    font-size: {{ section.settings.icon_size }}rem;
+    margin-bottom: 14px;
+    line-height: 1;
+    display: block;
+  }
+
+  .ubicacion-title {
+    font-family: 'Amatic SC', cursive;
+    font-size: {{ section.settings.title_size }}rem;
+    color: {{ section.settings.title_color }};
+    font-weight: 700;
+    line-height: 1;
+    margin: 0 0 18px;
+  }
+
+  .ubicacion-open-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: {{ section.settings.badge_bg }};
+    border: 1px solid {{ section.settings.badge_border }};
+    color: {{ section.settings.badge_text_color }};
+    padding: 7px 20px;
+    border-radius: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+
+  .open-dot {
+    width: 9px;
+    height: 9px;
+    background: {{ section.settings.badge_dot_color }};
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: blink-dot 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.3; transform: scale(0.8); }
+  }
+
+  .ubicacion-usp-strip {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: {{ section.settings.text_align }};
+    margin-bottom: 24px;
+  }
+
+  .ubicacion-usp-pill {
+    background: {{ section.settings.usp_bg }};
+    border: 1px solid {{ section.settings.usp_border }};
+    color: {{ section.settings.usp_text }};
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 30px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ubicacion-details {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.details_gap }}px;
+    margin-bottom: 28px;
+    {% if is_centered %}align-items: center;{% endif %}
+  }
+
+  .ubicacion-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Lato', sans-serif;
+    font-size: {{ section.settings.detail_font_size }}rem;
+    font-weight: 300;
+    color: {{ section.settings.detail_text_color }};
+    background: {{ section.settings.detail_bg }};
+    padding: {{ section.settings.detail_padding }}px 18px;
+    border-radius: 12px;
+    border-left: 3px solid {{ section.settings.accent_color }};
+    max-width: 480px;
+    {% if is_centered %}margin-left: auto; margin-right: auto;{% endif %}
+    transition: transform 0.2s ease;
+  }
+
+  .ubicacion-detail-item:hover { transform: translateX(4px); }
+
+  .ubicacion-detail-emoji { font-size: 1.2rem; flex-shrink: 0; }
+
+  .ubicacion-detail-item strong {
+    color: {{ section.settings.accent_color }};
+    font-weight: 700;
+    margin-right: 4px;
+  }
+
+  .ubicacion-detail-item a {
+    color: {{ section.settings.accent_color }};
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .ubicacion-detail-item a:hover { text-decoration: underline; }
+
+  .ubicacion-cta-group {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: {{ section.settings.text_align }};
+    margin-bottom: 20px;
+  }
+
+  .ubicacion-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_text_color }};
+    padding: {{ section.settings.btn_padding_y }}px {{ section.settings.btn_padding_x }}px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: {{ section.settings.btn_font_size }}rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s, color 0.3s;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.12);
+  }
+
+  .ubicacion-btn-primary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+    background: {{ section.settings.btn_hover_bg }};
+    color: {{ section.settings.btn_hover_text }};
+  }
+
+  .ubicacion-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 2px solid {{ section.settings.btn_secondary_border }};
+    color: {{ section.settings.btn_secondary_text }};
+    padding: {{ section.settings.btn_padding_y }}px {{ section.settings.btn_padding_x }}px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: {{ section.settings.btn_font_size }}rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .ubicacion-btn-secondary:hover {
+    background: {{ section.settings.btn_secondary_border }};
+    color: {{ section.settings.bg_color }};
+    transform: translateY(-3px);
+  }
+
+  .ubicacion-subtext {
+    font-family: 'Lato', sans-serif;
+    font-size: {{ section.settings.subtext_size }}rem;
+    opacity: 0.6;
+    line-height: 1.5;
+    margin-top: 8px;
+    color: {{ section.settings.text_color }};
+  }
+
+  .ubicacion-map-embed {
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    height: 360px;
+  }
+
+  .ubicacion-map-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  @media (max-width: 900px) {
+    .ubicacion-inner {
+      display: block !important;
+      text-align: {{ section.settings.text_align }} !important;
+    }
+    .ubicacion-details { align-items: center; }
+    .ubicacion-cta-group { justify-content: center; }
+    .ubicacion-detail-item { margin-left: auto; margin-right: auto; }
+  }
+
+  @media (max-width: 640px) {
+    .ubicacion-title { font-size: {{ section.settings.title_size | times: 0.7 }}rem; }
+    .ubicacion-detail-item {
+      flex-direction: column;
+      text-align: center;
+      border-left: none;
+      border-top: 3px solid {{ section.settings.accent_color }};
+      font-size: {{ section.settings.detail_font_size | times: 0.9 }}rem;
+    }
+    .ubicacion-btn-primary,
+    .ubicacion-btn-secondary {
+      font-size: 0.9rem;
+      padding: 13px 26px;
+    }
+    .ubicacion-usp-strip { justify-content: center; }
+  }
+</style>
+
+<section class="ubicacion-section">
+  <div class="ubicacion-inner">
+
+    <div class="ubicacion-text-col">
+
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="ubicacion-eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+
+      {%- if section.settings.icon != blank -%}
+        <span class="ubicacion-icon">{{ section.settings.icon }}</span>
+      {%- endif -%}
+
+      <h2 class="ubicacion-title">{{ section.settings.title }}</h2>
+
+      {%- if section.settings.show_open_badge -%}
+        <div class="ubicacion-open-badge">
+          <span class="open-dot"></span>
+          {{ section.settings.open_badge_text }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.usp1 != blank or section.settings.usp2 != blank or section.settings.usp3 != blank -%}
+        <div class="ubicacion-usp-strip">
+          {%- if section.settings.usp1 != blank -%}<span class="ubicacion-usp-pill">{{ section.settings.usp1 }}</span>{%- endif -%}
+          {%- if section.settings.usp2 != blank -%}<span class="ubicacion-usp-pill">{{ section.settings.usp2 }}</span>{%- endif -%}
+          {%- if section.settings.usp3 != blank -%}<span class="ubicacion-usp-pill">{{ section.settings.usp3 }}</span>{%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="ubicacion-details">
+        {%- if section.settings.address != blank -%}
+          <div class="ubicacion-detail-item">
+            <span class="ubicacion-detail-emoji">{{ section.settings.address_emoji }}</span>
+            <span><strong>Dirección:</strong> {{ section.settings.address }}</span>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.hours != blank -%}
+          <div class="ubicacion-detail-item">
+            <span class="ubicacion-detail-emoji">{{ section.settings.hours_emoji }}</span>
+            <span><strong>Horario:</strong> {{ section.settings.hours }}</span>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.hours2 != blank -%}
+          <div class="ubicacion-detail-item">
+            <span class="ubicacion-detail-emoji">{{ section.settings.hours_emoji }}</span>
+            <span><strong>Domingos:</strong> {{ section.settings.hours2 }}</span>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.phone != blank -%}
+          <div class="ubicacion-detail-item">
+            <span class="ubicacion-detail-emoji">{{ section.settings.phone_emoji }}</span>
+            <span><strong>WhatsApp:</strong>
+              <a href="https://wa.me/57{{ section.settings.phone | remove: ' ' | remove: '-' }}" target="_blank">
+                {{ section.settings.phone }}
+              </a>
+            </span>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.extra_detail != blank -%}
+          <div class="ubicacion-detail-item">
+            <span class="ubicacion-detail-emoji">{{ section.settings.extra_emoji }}</span>
+            <span>{{ section.settings.extra_detail }}</span>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="ubicacion-cta-group">
+        {%- if section.settings.btn_text != blank -%}
+          <a href="{{ section.settings.map_link }}" target="_blank" rel="noopener" class="ubicacion-btn-primary">
+            {{ section.settings.btn_emoji }} {{ section.settings.btn_text }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.btn2_text != blank -%}
+          <a href="{{ section.settings.btn2_link }}" target="_blank" rel="noopener" class="ubicacion-btn-secondary">
+            {{ section.settings.btn2_emoji }} {{ section.settings.btn2_text }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.subtext != blank -%}
+        <p class="ubicacion-subtext">{{ section.settings.subtext }}</p>
+      {%- endif -%}
+
+    </div>
+
+    {%- if is_split and section.settings.map_embed != blank -%}
+      <div class="ubicacion-map-embed">
+        {{ section.settings.map_embed }}
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Ubicación CRO v2",
+  "settings": [
+    {
+      "type": "header",
+      "content": "📐 Layout y Fondo"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "centered", "label": "Centrado (solo texto)" },
+        { "value": "split",    "label": "Split (texto + mapa)"  }
+      ],
+      "default": "centered"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alineación del texto",
+      "options": [
+        { "value": "center", "label": "Centro"     },
+        { "value": "left",   "label": "Izquierda"  }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#FAFAF8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto base",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espaciado superior",
+      "min": 20,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espaciado inferior",
+      "min": 20,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 500,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio del mapa (layout split)",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "✍️ Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow (pequeño sobre el título)",
+      "default": "📍 Encuéntranos"
+    },
+    {
+      "type": "text",
+      "id": "icon",
+      "label": "Emoji icono grande",
+      "default": "🗺️"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Tamaño del icono",
+      "min": 2,
+      "max": 6,
+      "step": 2,
+      "unit": "rem",
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título principal",
+      "default": "Visítanos en Nuestro Espacio"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título",
+      "min": 3,
+      "max": 7,
+      "step": 2,
+      "unit": "rem",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "🟢 Badge Abierto Ahora"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_open_badge",
+      "label": "Mostrar badge de abierto",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "open_badge_text",
+      "label": "Texto del badge",
+      "default": "Abierto ahora · Visítanos hoy"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Fondo del badge",
+      "default": "#e8f5e9"
+    },
+    {
+      "type": "color",
+      "id": "badge_border",
+      "label": "Borde del badge",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Texto del badge",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "badge_dot_color",
+      "label": "Color del punto parpadeante",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "header",
+      "content": "✅ USP Pills"
+    },
+    {
+      "type": "text",
+      "id": "usp1",
+      "label": "USP 1 (vacío para ocultar)",
+      "default": "🌿 Productos 100% naturales"
+    },
+    {
+      "type": "text",
+      "id": "usp2",
+      "label": "USP 2",
+      "default": "🚚 Envíos a toda Bogotá"
+    },
+    {
+      "type": "text",
+      "id": "usp3",
+      "label": "USP 3",
+      "default": "💚 Compra local y consciente"
+    },
+    {
+      "type": "color",
+      "id": "usp_bg",
+      "label": "Fondo de las pills",
+      "default": "#e8f5e9"
+    },
+    {
+      "type": "color",
+      "id": "usp_border",
+      "label": "Borde de las pills",
+      "default": "#c8e6c9"
+    },
+    {
+      "type": "color",
+      "id": "usp_text",
+      "label": "Texto de las pills",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "header",
+      "content": "📌 Detalles de Contacto"
+    },
+    {
+      "type": "range",
+      "id": "detail_font_size",
+      "label": "Tamaño de fuente detalles",
+      "min": 0.8,
+      "max": 1.4,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.1
+    },
+    {
+      "type": "range",
+      "id": "details_gap",
+      "label": "Espacio entre detalles",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "detail_padding",
+      "label": "Padding interno de cada detalle",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "detail_bg",
+      "label": "Fondo de cada detalle",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "detail_text_color",
+      "label": "Texto de cada detalle",
+      "default": "#333333"
+    },
+    {
+      "type": "text",
+      "id": "address_emoji",
+      "label": "Emoji dirección",
+      "default": "📍"
+    },
+    {
+      "type": "text",
+      "id": "address",
+      "label": "Dirección",
+      "default": "Calle 65g sur #79b - 36, Bosa, Bogotá"
+    },
+    {
+      "type": "text",
+      "id": "hours_emoji",
+      "label": "Emoji horario",
+      "default": "🕐"
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Horario principal",
+      "default": "Lunes a Sábado: 9:00 am - 7:00 pm"
+    },
+    {
+      "type": "text",
+      "id": "hours2",
+      "label": "Horario adicional (vacío para ocultar)"
+    },
+    {
+      "type": "text",
+      "id": "phone_emoji",
+      "label": "Emoji teléfono",
+      "default": "📱"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Teléfono / WhatsApp",
+      "default": "3027045952"
+    },
+    {
+      "type": "text",
+      "id": "extra_emoji",
+      "label": "Emoji detalle extra",
+      "default": "🏪"
+    },
+    {
+      "type": "text",
+      "id": "extra_detail",
+      "label": "Detalle extra (vacío para ocultar)"
+    },
+    {
+      "type": "header",
+      "content": "🔘 Botones CTA"
+    },
+    {
+      "type": "text",
+      "id": "btn_emoji",
+      "label": "Emoji botón principal",
+      "default": "🗺️"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Texto botón principal",
+      "default": "Cómo Llegar — Google Maps"
+    },
+    {
+      "type": "text",
+      "id": "map_link",
+      "label": "Enlace Google Maps",
+      "default": "https://share.google/nf37FhTc6ScfRpYw2"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Fondo botón principal",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Texto botón principal",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Fondo hover botón principal",
+      "default": "#145214"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_text",
+      "label": "Texto hover botón principal",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "btn2_emoji",
+      "label": "Emoji botón secundario",
+      "default": "💬"
+    },
+    {
+      "type": "text",
+      "id": "btn2_text",
+      "label": "Texto botón secundario (vacío para ocultar)",
+      "default": "Escribir por WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "btn2_link",
+      "label": "Enlace botón secundario",
+      "default": "https://wa.me/573027045952"
+    },
+    {
+      "type": "color",
+      "id": "btn_secondary_border",
+      "label": "Borde botón secundario",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "btn_secondary_text",
+      "label": "Texto botón secundario",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_y",
+      "label": "Padding vertical botones",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_x",
+      "label": "Padding horizontal botones",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "label": "Tamaño de fuente botones",
+      "min": 0.8,
+      "max": 1.2,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.0
+    },
+    {
+      "type": "header",
+      "content": "🗺️ Mapa Embebido (solo layout Split)"
+    },
+    {
+      "type": "html",
+      "id": "map_embed",
+      "label": "Código iframe del mapa",
+      "info": "Pega el iframe de Google Maps. Solo visible en layout Split."
+    },
+    {
+      "type": "header",
+      "content": "📝 Texto Secundario"
+    },
+    {
+      "type": "text",
+      "id": "subtext",
+      "label": "Texto debajo de los botones",
+      "default": "Compra online o visítanos en el local · Te esperamos con una sonrisa 🌱"
+    },
+    {
+      "type": "range",
+      "id": "subtext_size",
+      "label": "Tamaño del texto secundario",
+      "min": 0.7,
+      "max": 1.1,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.9
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ubicación CRO v2",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+
+

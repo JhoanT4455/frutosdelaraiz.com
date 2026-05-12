@@ -1,0 +1,1332 @@
+{%- comment -%}
+  ============================================================
+  FRUTOS DE LA RAÍZ — sections/frutos-collection-header.liquid
+  v3 — Estilo Riovalle.co adaptado a la marca Frutos de la Raíz
+  Incluye:
+  · Announcement bar (ticker)
+  · Header sticky con logo, nav, búsqueda, carrito, cuenta
+  · Dropdown de categorías en "Tienda"
+  · Menú móvil deslizante
+  · Banner de colección con imagen, título y breadcrumb
+  · Barra de quick-filters por categoría
+  · Barra de stats/USPs
+  ============================================================
+{%- endcomment -%}
+
+{%- liquid
+  assign show_announcement = section.settings.show_announcement
+  assign announcement_text = section.settings.announcement_text
+  assign show_banner       = section.settings.show_banner
+  assign show_breadcrumb   = section.settings.show_breadcrumb
+  assign show_desc         = section.settings.show_description
+  assign show_count        = section.settings.show_product_count
+  assign show_stats        = section.settings.show_stats_bar
+  assign show_qfilters     = section.settings.show_quick_filters
+  assign banner_height     = section.settings.banner_height
+  assign overlay_op        = section.settings.overlay_opacity | divided_by: 100.0
+  assign wapp_num          = section.settings.whatsapp_number | default: '573027045952'
+-%}
+
+{%- style -%}
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+/* ================================================================
+   VARIABLES
+   ================================================================ */
+:root {
+  --fh-green:       #1B5E20;
+  --fh-green-dark:  #0d3b10;
+  --fh-green-mid:   #2E7D32;
+  --fh-green-top:   #155518;
+  --fh-accent:      #76ff03;
+  --fh-yellow:      #FFC107;
+  --fh-white:       #ffffff;
+  --fh-text-light:  rgba(255,255,255,0.88);
+  --fh-border:      rgba(255,255,255,0.12);
+  --fh-shadow:      0 4px 24px rgba(0,0,0,0.22);
+  --fh-radius:      10px;
+  --fh-header-h:    68px;
+}
+
+/* ================================================================
+   1. ANNOUNCEMENT BAR (ticker)
+   ================================================================ */
+.fh-announce {
+  background: #C62828;
+  color: var(--fh-white);
+  padding: 0;
+  overflow: hidden;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+.fh-announce__track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: fhTicker 30s linear infinite;
+  gap: 0;
+}
+.fh-announce:hover .fh-announce__track { animation-play-state: paused; }
+@keyframes fhTicker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.fh-announce__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 40px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+.fh-announce__dot {
+  width: 4px; height: 4px;
+  background: rgba(255,255,255,.5);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   2. TOP BAR (encima del header principal)
+   ================================================================ */
+.fh-topbar {
+  background: var(--fh-green-top);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--fh-border);
+}
+.fh-topbar__inner {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.fh-topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.fh-topbar__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--fh-text-light);
+  text-decoration: none;
+  transition: color .2s;
+  letter-spacing: .02em;
+}
+.fh-topbar__item:hover { color: var(--fh-accent); }
+.fh-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.fh-topbar__social {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fh-topbar__social a {
+  color: var(--fh-text-light);
+  transition: color .2s;
+  display: flex;
+}
+.fh-topbar__social a:hover { color: var(--fh-accent); }
+
+/* ================================================================
+   3. MAIN HEADER
+   ================================================================ */
+.fh-header {
+  background: var(--fh-green);
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  box-shadow: var(--fh-shadow);
+  transition: background .3s;
+}
+.fh-header__inner {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: 0 20px;
+  height: var(--fh-header-h);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Logo */
+.fh-logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: opacity .2s;
+}
+.fh-logo:hover { opacity: .88; }
+.fh-logo img {
+  height: 46px;
+  width: auto;
+  display: block;
+}
+.fh-logo__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.fh-logo__name {
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--fh-white);
+  letter-spacing: .01em;
+}
+.fh-logo__tag {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color: var(--fh-accent);
+}
+
+/* Nav principal */
+.fh-nav {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.fh-nav__item {
+  position: relative;
+}
+.fh-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fh-text-light);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background .2s, color .2s;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.fh-nav__link:hover,
+.fh-nav__link.active {
+  background: rgba(255,255,255,.1);
+  color: var(--fh-white);
+}
+.fh-nav__link--current { color: var(--fh-accent); }
+.fh-nav__chevron {
+  display: inline-flex;
+  transition: transform .25s;
+}
+.fh-nav__item:hover .fh-nav__chevron { transform: rotate(180deg); }
+
+/* Dropdown */
+.fh-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 220px;
+  background: var(--fh-white);
+  border-radius: var(--fh-radius);
+  box-shadow: 0 12px 40px rgba(0,0,0,.18);
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(-8px);
+  transition: opacity .22s, visibility .22s, transform .22s;
+  z-index: 100;
+  border-top: 3px solid var(--fh-green);
+}
+.fh-nav__item:hover .fh-dropdown,
+.fh-nav__item:focus-within .fh-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+/* Wide dropdown para Tienda */
+.fh-dropdown--wide {
+  min-width: 580px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 16px;
+  gap: 4px;
+}
+.fh-dropdown__section-title {
+  grid-column: 1 / -1;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: #9E9E9E;
+  padding: 4px 8px 10px;
+  border-bottom: 1px solid #F0F0F0;
+  margin-bottom: 6px;
+}
+.fh-dropdown__link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  font-family: 'Lato', sans-serif;
+  font-size: 13.5px;
+  font-weight: 400;
+  color: #1A2E1A;
+  text-decoration: none;
+  transition: background .15s, color .15s;
+}
+.fh-dropdown__link:hover {
+  background: rgba(27,94,32,.08);
+  color: var(--fh-green);
+  font-weight: 600;
+}
+.fh-dropdown__link .dd-icon { font-size: 17px; flex-shrink: 0; }
+.fh-dropdown__link--all {
+  grid-column: 1 / -1;
+  background: rgba(27,94,32,.07);
+  font-weight: 700;
+  color: var(--fh-green);
+  margin-top: 8px;
+  justify-content: center;
+  border: 1px dashed rgba(27,94,32,.3);
+}
+.fh-dropdown__link--all:hover { background: rgba(27,94,32,.14); }
+
+/* Simple dropdown */
+.fh-dropdown--simple .fh-dropdown__link {
+  padding: 10px 18px;
+}
+
+/* Header right: search + account + cart */
+.fh-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.fh-icon-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.1);
+  border: 1px solid var(--fh-border);
+  border-radius: 8px;
+  color: var(--fh-white);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .2s;
+}
+.fh-icon-btn:hover { background: rgba(255,255,255,.18); }
+.fh-cart-count {
+  position: absolute;
+  top: -5px; right: -5px;
+  width: 18px; height: 18px;
+  background: var(--fh-accent);
+  color: var(--fh-green-dark);
+  border-radius: 50%;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Search bar inline */
+.fh-search-wrap {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,.12);
+  border: 1px solid var(--fh-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: background .2s, border-color .2s;
+  width: 220px;
+}
+.fh-search-wrap:focus-within {
+  background: rgba(255,255,255,.2);
+  border-color: rgba(255,255,255,.4);
+}
+.fh-search-inp {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 9px 14px;
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  color: var(--fh-white);
+  min-width: 0;
+}
+.fh-search-inp::placeholder { color: rgba(255,255,255,.55); }
+.fh-search-btn {
+  background: none;
+  border: none;
+  padding: 0 12px;
+  color: var(--fh-text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color .2s;
+}
+.fh-search-btn:hover { color: var(--fh-accent); }
+
+/* Mobile hamburger */
+.fh-hamburger {
+  display: none;
+  width: 40px; height: 40px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.1);
+  border: 1px solid var(--fh-border);
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--fh-white);
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   4. MOBILE MENU
+   ================================================================ */
+.fh-mob-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+}
+.fh-mob-menu.open { display: flex; }
+.fh-mob-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  animation: fhFadeIn .25s ease;
+}
+@keyframes fhFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.fh-mob-drawer {
+  position: relative;
+  z-index: 1;
+  width: min(300px, 85vw);
+  background: var(--fh-green-dark);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fhSlide .28s cubic-bezier(.4,0,.2,1);
+  box-shadow: 4px 0 32px rgba(0,0,0,.3);
+}
+@keyframes fhSlide { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.fh-mob-head {
+  background: var(--fh-green);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.fh-mob-head .fh-logo__name { font-size: 1.5rem; }
+.fh-mob-close {
+  background: none;
+  border: none;
+  color: var(--fh-white);
+  font-size: 22px;
+  cursor: pointer;
+  opacity: .8;
+  line-height: 1;
+}
+.fh-mob-close:hover { opacity: 1; }
+.fh-mob-search {
+  padding: 14px 16px;
+  background: rgba(0,0,0,.2);
+  flex-shrink: 0;
+}
+.fh-mob-search form {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,.1);
+  border: 1px solid var(--fh-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.fh-mob-search input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--fh-white);
+  font-family: 'Lato', sans-serif;
+}
+.fh-mob-search input::placeholder { color: rgba(255,255,255,.5); }
+.fh-mob-search button {
+  background: none;
+  border: none;
+  padding: 0 12px;
+  color: var(--fh-text-light);
+  cursor: pointer;
+}
+.fh-mob-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+.fh-mob-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fh-text-light);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  transition: background .15s, color .15s;
+  cursor: pointer;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  width: 100%;
+  text-align: left;
+}
+.fh-mob-link:hover,
+.fh-mob-link.open { background: rgba(255,255,255,.08); color: var(--fh-white); }
+.fh-mob-link.open .fh-mob-chev { transform: rotate(180deg); }
+.fh-mob-chev { transition: transform .25s; display: inline-flex; }
+.fh-mob-submenu {
+  background: rgba(0,0,0,.25);
+  display: none;
+  flex-direction: column;
+}
+.fh-mob-submenu.open { display: flex; }
+.fh-mob-sublink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 28px;
+  font-family: 'Lato', sans-serif;
+  font-size: 13.5px;
+  color: rgba(255,255,255,.75);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  transition: color .15s, background .15s;
+}
+.fh-mob-sublink:hover { color: var(--fh-accent); background: rgba(255,255,255,.05); }
+.fh-mob-ft {
+  padding: 16px;
+  border-top: 1px solid var(--fh-border);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fh-mob-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: #25D366;
+  color: var(--fh-white);
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .2s;
+}
+.fh-mob-cta:hover { background: #22c55e; }
+
+/* ================================================================
+   5. BANNER DE COLECCIÓN
+   ================================================================ */
+.fh-col-banner {
+  position: relative;
+  min-height: {{ banner_height }}px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--fh-green) 0%, var(--fh-green-mid) 60%, #33691E 100%);
+}
+.fh-col-banner__img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+.fh-col-banner__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(13,59,16,{{ overlay_op }}) 0%,
+    rgba(13,59,16,{{ overlay_op | times: 0.55 }}) 55%,
+    rgba(13,59,16,{{ overlay_op | times: 0.2 }}) 100%
+  );
+  z-index: 1;
+}
+.fh-col-banner__pattern {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='35' fill='none' stroke='white' stroke-width='.8'/%3E%3Cellipse cx='40' cy='40' rx='15' ry='35' fill='none' stroke='white' stroke-width='.8'/%3E%3Cellipse cx='40' cy='40' rx='35' ry='15' fill='none' stroke='white' stroke-width='.8'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+.fh-col-banner__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: 28px 20px 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.fh-col-banner__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--fh-accent);
+  margin-bottom: 8px;
+}
+.fh-col-banner__title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+  font-weight: 700;
+  color: var(--fh-white);
+  line-height: 1.08;
+  margin: 0 0 8px;
+  text-shadow: 0 2px 10px rgba(0,0,0,.3);
+}
+.fh-col-banner__desc {
+  font-family: 'Lato', sans-serif;
+  font-size: 14.5px;
+  font-weight: 300;
+  color: rgba(255,255,255,.82);
+  max-width: 460px;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.fh-col-banner__right { flex-shrink: 0; }
+.fh-col-banner__pill {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.22);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 14px 22px;
+  min-width: 88px;
+  text-align: center;
+}
+.fh-col-banner__pill-num {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--fh-accent);
+  line-height: 1;
+}
+.fh-col-banner__pill-lbl {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.75);
+  margin-top: 3px;
+}
+
+/* ================================================================
+   6. BREADCRUMB
+   ================================================================ */
+.fh-breadcrumb {
+  background: rgba(27,94,32,.07);
+  border-bottom: 1px solid rgba(27,94,32,.12);
+  padding: 10px 0;
+}
+.fh-breadcrumb__inner {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: 0 20px;
+}
+.fh-breadcrumb__list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  margin: 0; padding: 0;
+  flex-wrap: wrap;
+}
+.fh-breadcrumb__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B7280;
+}
+.fh-breadcrumb__item a {
+  color: var(--fh-green);
+  text-decoration: none;
+  transition: color .2s;
+}
+.fh-breadcrumb__item a:hover { text-decoration: underline; }
+.fh-breadcrumb__sep { color: #D1C4B0; }
+.fh-breadcrumb__current { color: #333; font-weight: 600; }
+
+/* ================================================================
+   7. STATS BAR (USPs)
+   ================================================================ */
+.fh-stats {
+  background: var(--fh-green);
+  padding: 9px 0;
+}
+.fh-stats__inner {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  flex-wrap: wrap;
+}
+.fh-stat {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,.9);
+  letter-spacing: .02em;
+}
+.fh-stat svg { color: var(--fh-accent); flex-shrink: 0; }
+
+/* ================================================================
+   8. QUICK FILTERS
+   ================================================================ */
+.fh-qfilters {
+  background: #ffffff;
+  border-bottom: 2px solid var(--fh-green);
+}
+.fh-qfilters__inner {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.fh-qfilters__inner::-webkit-scrollbar { display: none; }
+.fh-qfilter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6B7280;
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color .2s, border-color .2s, background .2s;
+  letter-spacing: .02em;
+}
+.fh-qfilter:hover,
+.fh-qfilter.active {
+  color: var(--fh-green);
+  border-bottom-color: var(--fh-green);
+  background: rgba(27,94,32,.04);
+}
+.fh-qfilter .qi { font-size: 15px; }
+.fh-qfilter__badge {
+  background: var(--fh-yellow);
+  color: #333;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 10px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.fh-qfilter__sep {
+  width: 1px;
+  background: #E5E7EB;
+  align-self: stretch;
+  margin: 6px 0;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 1024px) {
+  .fh-nav, .fh-search-wrap, .fh-topbar { display: none; }
+  .fh-hamburger { display: flex; }
+  .fh-header__inner { gap: 12px; }
+  .fh-col-banner__right { display: none; }
+}
+@media (max-width: 767px) {
+  :root { --fh-header-h: 60px; }
+  .fh-logo__name  { font-size: 1.35rem; }
+  .fh-col-banner  { min-height: 160px; }
+  .fh-col-banner__content { padding: 20px 16px 18px; }
+  .fh-col-banner__title   { font-size: 2.2rem; }
+  .fh-col-banner__desc    { font-size: 13px; }
+  .fh-stats__inner { gap: 16px; }
+  .fh-stat  { font-size: 11px; }
+  .fh-qfilter { padding: 11px 14px; font-size: 12px; }
+  .fh-breadcrumb__inner { padding: 0 14px; }
+}
+{%- endstyle -%}
+
+{%- comment -%} ══════════════════════════════════════════════
+   1. ANNOUNCEMENT BAR
+══════════════════════════════════════════════ {%- endcomment -%}
+{%- if show_announcement and announcement_text != blank -%}
+<div class="fh-announce" role="marquee" aria-label="Anuncio">
+  <div class="fh-announce__track">
+    {%- for i in (1..6) -%}
+      <span class="fh-announce__item">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17 8C8 10 5.9 16.17 3.82 19.29c-.47.64.32 1.3.91.85C6 19 6.5 19 7 20h10c0-2.67 1-5 3-6.9V10c0-1.1-.9-2-2-2z"/></svg>
+        {{ announcement_text }}
+      </span>
+      <span class="fh-announce__dot" aria-hidden="true"></span>
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+
+{%- comment -%} ══════════════════════════════════════════════
+   2. TOP BAR
+══════════════════════════════════════════════ {%- endcomment -%}
+<div class="fh-topbar">
+  <div class="fh-topbar__inner">
+    <div class="fh-topbar__left">
+      <a href="tel:{{ section.settings.phone | default: '+573027045952' }}" class="fh-topbar__item">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1.17h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.9a16 16 0 0 0 6 6l.77-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.17 16z"/></svg>
+        {{ section.settings.phone | default: '+57 302 704 5952' }}
+      </a>
+      <a href="https://wa.me/{{ wapp_num }}" target="_blank" rel="noopener" class="fh-topbar__item">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Escríbenos
+      </a>
+      <span class="fh-topbar__item">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Bosa, Bogotá
+      </span>
+    </div>
+    <div class="fh-topbar__right">
+      <div class="fh-topbar__social">
+        <a href="{{ section.settings.instagram_url | default: '#' }}" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://wa.me/{{ wapp_num }}" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} ══════════════════════════════════════════════
+   3. MAIN HEADER
+══════════════════════════════════════════════ {%- endcomment -%}
+<header class="fh-header" role="banner" id="FrutosHeader">
+  <div class="fh-header__inner">
+
+    {%- comment -%} Hamburger mobile {%- endcomment -%}
+    <button class="fh-hamburger" id="FhMobOpen" aria-label="Abrir menú" aria-expanded="false" aria-controls="FhMobMenu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    {%- comment -%} Logo {%- endcomment -%}
+    <a href="{{ routes.root_url }}" class="fh-logo" aria-label="Frutos de la Raíz — Inicio">
+      {%- if section.settings.logo -%}
+        <img
+          src="{{ section.settings.logo | image_url: height: 92 }}"
+          alt="{{ shop.name | escape }}"
+          height="46"
+          width="{{ section.settings.logo.width | times: 46 | divided_by: section.settings.logo.height }}"
+          loading="eager"
+        >
+      {%- else -%}
+        <div class="fh-logo__text">
+          <span class="fh-logo__name">🌿 Frutos de la Raíz</span>
+          <span class="fh-logo__tag">Alimentación Consciente</span>
+        </div>
+      {%- endif -%}
+    </a>
+
+    {%- comment -%} Nav desktop {%- endcomment -%}
+    <nav class="fh-nav" aria-label="Navegación principal">
+
+      <div class="fh-nav__item">
+        <a href="{{ routes.root_url }}" class="fh-nav__link{% if request.page_type == 'index' %} active{% endif %}">Inicio</a>
+      </div>
+
+      {%- comment -%} Tienda con megadropdown {%- endcomment -%}
+      <div class="fh-nav__item">
+        <a href="{{ routes.all_products_collection_url }}"
+           class="fh-nav__link{% if request.page_type == 'collection' %} active fh-nav__link--current{% endif %}"
+           aria-haspopup="true" aria-expanded="false">
+          Tienda
+          <span class="fh-nav__chevron" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </a>
+        <div class="fh-dropdown fh-dropdown--wide" role="menu">
+          <span class="fh-dropdown__section-title">Explorar por categoría</span>
+          <a href="/collections/panaderia"              class="fh-dropdown__link" role="menuitem"><span class="dd-icon">🍞</span> Panadería</a>
+          <a href="/collections/frutos-secos"           class="fh-dropdown__link" role="menuitem"><span class="dd-icon">🥜</span> Frutos Secos</a>
+          <a href="/collections/bebidas"                class="fh-dropdown__link" role="menuitem"><span class="dd-icon">🧃</span> Bebidas</a>
+          <a href="/collections/especias"               class="fh-dropdown__link" role="menuitem"><span class="dd-icon">🌶️</span> Especias</a>
+          <a href="/collections/harinas-cereales-granos" class="fh-dropdown__link" role="menuitem"><span class="dd-icon">🌾</span> Harinas & Cereales</a>
+          <a href="/collections/toppings"               class="fh-dropdown__link" role="menuitem"><span class="dd-icon">✨</span> Toppings</a>
+          <a href="/collections/aceites"                class="fh-dropdown__link" role="menuitem"><span class="dd-icon">🫙</span> Aceites</a>
+          <a href="/collections/aromaticas"             class="fh-dropdown__link" role="menuitem"><span class="dd-icon">🍵</span> Aromáticas</a>
+          <a href="{{ routes.all_products_collection_url }}" class="fh-dropdown__link fh-dropdown__link--all" role="menuitem">
+            Ver todos los productos →
+          </a>
+        </div>
+      </div>
+
+      <div class="fh-nav__item">
+        <a href="/pages/eventos" class="fh-nav__link">Eventos</a>
+      </div>
+
+      <div class="fh-nav__item">
+        <a href="/blogs/recetas" class="fh-nav__link">Recetas</a>
+      </div>
+
+      <div class="fh-nav__item">
+        <a href="/pages/nosotros" class="fh-nav__link">Nosotros</a>
+      </div>
+
+      <div class="fh-nav__item">
+        <a href="/pages/contacto" class="fh-nav__link">Contacto</a>
+      </div>
+
+    </nav>
+
+    {%- comment -%} Search {%- endcomment -%}
+    <form action="{{ routes.search_url }}" method="get" class="fh-search-wrap" role="search">
+      <input
+        type="search"
+        name="q"
+        class="fh-search-inp"
+        placeholder="¿Qué estás buscando?"
+        aria-label="Buscar productos"
+        autocomplete="off"
+      >
+      <button type="submit" class="fh-search-btn" aria-label="Buscar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </form>
+
+    {%- comment -%} Account + Cart {%- endcomment -%}
+    <div class="fh-header__actions">
+      <a href="{{ routes.account_url }}" class="fh-icon-btn" aria-label="Mi cuenta">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="{{ routes.cart_url }}" class="fh-icon-btn" aria-label="Carrito" id="FhCartBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="fh-cart-count" data-cart-count aria-label="Artículos en carrito">0</span>
+      </a>
+    </div>
+
+  </div>
+</header>
+
+{%- comment -%} ══════════════════════════════════════════════
+   4. MOBILE MENU
+══════════════════════════════════════════════ {%- endcomment -%}
+<div class="fh-mob-menu" id="FhMobMenu" role="dialog" aria-modal="true" aria-label="Menú">
+  <div class="fh-mob-backdrop" id="FhMobBack"></div>
+  <div class="fh-mob-drawer">
+    <div class="fh-mob-head">
+      <div class="fh-logo__text">
+        <span class="fh-logo__name">🌿 Frutos de la Raíz</span>
+        <span class="fh-logo__tag">Alimentación Consciente</span>
+      </div>
+      <button class="fh-mob-close" id="FhMobClose" aria-label="Cerrar menú">✕</button>
+    </div>
+    <div class="fh-mob-search">
+      <form action="{{ routes.search_url }}" method="get" role="search">
+        <input type="search" name="q" placeholder="¿Qué estás buscando?" aria-label="Buscar">
+        <button type="submit" aria-label="Buscar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </form>
+    </div>
+    <nav class="fh-mob-nav" aria-label="Menú móvil">
+      <a href="{{ routes.root_url }}" class="fh-mob-link">Inicio</a>
+      <button class="fh-mob-link" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open');" aria-expanded="false">
+        Tienda
+        <span class="fh-mob-chev" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </button>
+      <div class="fh-mob-submenu">
+        <a href="{{ routes.all_products_collection_url }}" class="fh-mob-sublink"><span>🌿</span> Todos los productos</a>
+        <a href="/collections/panaderia"               class="fh-mob-sublink"><span>🍞</span> Panadería</a>
+        <a href="/collections/frutos-secos"            class="fh-mob-sublink"><span>🥜</span> Frutos Secos</a>
+        <a href="/collections/bebidas"                 class="fh-mob-sublink"><span>🧃</span> Bebidas</a>
+        <a href="/collections/especias"                class="fh-mob-sublink"><span>🌶️</span> Especias</a>
+        <a href="/collections/harinas-cereales-granos" class="fh-mob-sublink"><span>🌾</span> Harinas & Cereales</a>
+        <a href="/collections/toppings"                class="fh-mob-sublink"><span>✨</span> Toppings</a>
+        <a href="/collections/aceites"                 class="fh-mob-sublink"><span>🫙</span> Aceites</a>
+        <a href="/collections/aromaticas"              class="fh-mob-sublink"><span>🍵</span> Aromáticas</a>
+      </div>
+      <a href="/pages/eventos"   class="fh-mob-link">Eventos</a>
+      <a href="/blogs/recetas"   class="fh-mob-link">Recetas</a>
+      <a href="/pages/nosotros"  class="fh-mob-link">Nosotros</a>
+      <a href="/pages/contacto"  class="fh-mob-link">Contacto</a>
+    </nav>
+    <div class="fh-mob-ft">
+      <a href="https://wa.me/{{ wapp_num }}?text=Hola!%20Quiero%20hacer%20un%20pedido%20%F0%9F%8C%BF"
+         target="_blank" rel="noopener" class="fh-mob-cta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Pedir por WhatsApp
+      </a>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} ══════════════════════════════════════════════
+   5. BANNER DE COLECCIÓN
+══════════════════════════════════════════════ {%- endcomment -%}
+{%- if show_banner -%}
+<div class="fh-col-banner">
+  {%- if collection.image -%}
+    <img class="fh-col-banner__img"
+      src="{{ collection.image | image_url: width: 1600 }}"
+      alt="{{ collection.image.alt | escape | default: collection.title }}"
+      loading="eager" fetchpriority="high"
+      width="{{ collection.image.width }}" height="{{ collection.image.height }}">
+  {%- elsif section.settings.fallback_image -%}
+    <img class="fh-col-banner__img"
+      src="{{ section.settings.fallback_image | image_url: width: 1600 }}"
+      alt="{{ collection.title | escape }}"
+      loading="eager" fetchpriority="high">
+  {%- endif -%}
+  <div class="fh-col-banner__pattern" aria-hidden="true"></div>
+  <div class="fh-col-banner__overlay" aria-hidden="true"></div>
+  <div class="fh-col-banner__content">
+    <div>
+      <p class="fh-col-banner__eyebrow" aria-hidden="true">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17 8C8 10 5.9 16.17 3.82 19.29c-.47.64.32 1.3.91.85C6 19 6.5 19 7 20h10c0-2.67 1-5 3-6.9V10c0-1.1-.9-2-2-2z"/></svg>
+        {{ section.settings.eyebrow_text | default: 'Alimentación Consciente · 100% Natural' }}
+      </p>
+      <h1 class="fh-col-banner__title">
+        {%- if collection.handle == 'all' -%}
+          {{ section.settings.all_title | default: 'Todos los Productos' }}
+        {%- else -%}
+          {{ collection.title }}
+        {%- endif -%}
+      </h1>
+      {%- if show_desc -%}
+        {%- assign col_desc = collection.description | strip_html | truncate: 160 -%}
+        {%- if col_desc != blank -%}
+          <p class="fh-col-banner__desc">{{ col_desc }}</p>
+        {%- elsif collection.handle == 'all' -%}
+          <p class="fh-col-banner__desc">{{ section.settings.all_desc | default: 'Productos naturales, orgánicos y artesanales. Sin aditivos, sin conservantes.' }}</p>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+    {%- if show_count -%}
+    <div class="fh-col-banner__right">
+      <div class="fh-col-banner__pill">
+        <span class="fh-col-banner__pill-num">{{ collection.products_count }}</span>
+        <span class="fh-col-banner__pill-lbl">{{ collection.products_count | pluralize: 'Producto', 'Productos' }}</span>
+      </div>
+    </div>
+    {%- endif -%}
+  </div>
+</div>
+{%- endif -%}
+
+{%- comment -%} ── Breadcrumb ── {%- endcomment -%}
+{%- if show_breadcrumb -%}
+<nav class="fh-breadcrumb" aria-label="Ruta de navegación">
+  <div class="fh-breadcrumb__inner">
+    <ol class="fh-breadcrumb__list">
+      <li class="fh-breadcrumb__item">
+        <a href="{{ routes.root_url }}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Inicio
+        </a>
+      </li>
+      <li class="fh-breadcrumb__item"><span class="fh-breadcrumb__sep">›</span></li>
+      <li class="fh-breadcrumb__item"><a href="{{ routes.all_products_collection_url }}">Tienda</a></li>
+      {%- unless collection.handle == 'all' -%}
+        <li class="fh-breadcrumb__item"><span class="fh-breadcrumb__sep">›</span></li>
+        <li class="fh-breadcrumb__item"><span class="fh-breadcrumb__current">{{ collection.title }}</span></li>
+      {%- endunless -%}
+    </ol>
+  </div>
+</nav>
+{%- endif -%}
+
+{%- comment -%} ── Stats bar ── {%- endcomment -%}
+{%- if show_stats -%}
+<div class="fh-stats" aria-hidden="true">
+  <div class="fh-stats__inner">
+    <div class="fh-stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      100% Natural · Sin Aditivos
+    </div>
+    <div class="fh-stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      Envío gratis +$120k Bogotá
+    </div>
+    <div class="fh-stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      +500 Clientes Satisfechos
+    </div>
+    <div class="fh-stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      4.9 ⭐ en Google Reviews
+    </div>
+  </div>
+</div>
+{%- endif -%}
+
+{%- comment -%} ── Quick filters ── {%- endcomment -%}
+{%- if show_qfilters -%}
+<nav class="fh-qfilters" aria-label="Filtrar por categoría">
+  <div class="fh-qfilters__inner">
+    <a href="{{ routes.all_products_collection_url }}"
+       class="fh-qfilter{% if collection.handle == 'all' %} active{% endif %}">
+      <span class="qi">🌿</span> Todos
+    </a>
+    {%- assign qcat_h = 'panaderia,frutos-secos,bebidas,especias,harinas-cereales-granos,toppings,aceites,aromaticas' | split: ',' -%}
+    {%- assign qcat_n = 'Panadería,Frutos Secos,Bebidas,Especias,Harinas & Cereales,Toppings,Aceites,Aromáticas' | split: ',' -%}
+    {%- assign qcat_i = '🍞,🥜,🧃,🌶️,🌾,✨,🫙,🍵' | split: ',' -%}
+    {%- assign featured_handle = section.settings.featured_filter_handle | default: 'frutos-secos' -%}
+    {%- for ch in qcat_h -%}
+      <span class="fh-qfilter__sep" aria-hidden="true"></span>
+      <a href="/collections/{{ ch }}"
+         class="fh-qfilter{% if collection.handle == ch %} active{% endif %}"
+         {% if collection.handle == ch %}aria-current="page"{% endif %}>
+        <span class="qi">{{ qcat_i[forloop.index0] }}</span>
+        {{ qcat_n[forloop.index0] }}
+        {%- if ch == featured_handle -%}
+          <span class="fh-qfilter__badge">Popular</span>
+        {%- endif -%}
+      </a>
+    {%- endfor -%}
+  </div>
+</nav>
+{%- endif -%}
+
+{% javascript %}
+(function() {
+  /* ── Cart count on load ── */
+  fetch('/cart.js').then(function(r){ return r.json(); }).then(function(c){
+    document.querySelectorAll('[data-cart-count]').forEach(function(el){
+      el.textContent = c.item_count;
+    });
+  });
+
+  /* ── Mobile menu ── */
+  var openBtn  = document.getElementById('FhMobOpen');
+  var closeBtn = document.getElementById('FhMobClose');
+  var backdrop = document.getElementById('FhMobBack');
+  var menu     = document.getElementById('FhMobMenu');
+
+  function openMenu()  { menu.classList.add('open'); document.body.style.overflow = 'hidden'; openBtn.setAttribute('aria-expanded','true'); }
+  function closeMenu() { menu.classList.remove('open'); document.body.style.overflow = ''; openBtn.setAttribute('aria-expanded','false'); }
+
+  if (openBtn)  openBtn.addEventListener('click', openMenu);
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+  if (backdrop) backdrop.addEventListener('click', closeMenu);
+
+  /* Close on ESC */
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Frutos \u2014 Col. Header",
+  "class": "frutos-col-header",
+  "enabled_on": { "templates": ["collection"] },
+  "settings": [
+    {
+      "type": "header",
+      "content": "\ud83d\udce3 Announcement Bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Mostrar barra de anuncio",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Texto del anuncio",
+      "default": "\ud83d\ude9a Env\u00edo gratis en Bogot\u00e1 en compras mayores a $120.000 \u2022 \ud83c\udf3f Productos 100% naturales, sin aditivos \u2022 \u2b50 4.9 en Google Reviews \u2022 \ud83d\udcde Soporte por WhatsApp"
+    },
+    {
+      "type": "header",
+      "content": "\ud83c\udfe0 Logo & Contacto"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo (opcional)"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Tel\u00e9fono visible en topbar",
+      "default": "+57 302 704 5952"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "N\u00famero WhatsApp (sin + ni espacios)",
+      "default": "573027045952"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "URL Instagram"
+    },
+    {
+      "type": "header",
+      "content": "\ud83d\uddbc\ufe0f Banner de Colecci\u00f3n"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_banner",
+      "label": "Mostrar banner",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Imagen por defecto (si la colecci\u00f3n no tiene imagen)"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "label": "Altura del banner",
+      "min": 120, "max": 440, "step": 8, "unit": "px", "default": 240
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad del overlay",
+      "min": 20, "max": 90, "step": 5, "unit": "%", "default": 65
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Texto eyebrow del banner",
+      "default": "Alimentaci\u00f3n Consciente \u00b7 100% Natural"
+    },
+    {
+      "type": "text",
+      "id": "all_title",
+      "label": "T\u00edtulo colecci\u00f3n 'Todos'",
+      "default": "Todos los Productos"
+    },
+    {
+      "type": "textarea",
+      "id": "all_desc",
+      "label": "Descripci\u00f3n colecci\u00f3n 'Todos'",
+      "default": "Productos naturales, org\u00e1nicos y artesanales. Sin aditivos, sin conservantes."
+    },
+    {
+      "type": "header",
+      "content": "\ud83d\udcca Elementos visibles"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumb",
+      "label": "Breadcrumb",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Descripci\u00f3n de la colecci\u00f3n",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Contador de productos",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stats_bar",
+      "label": "Barra de USPs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_filters",
+      "label": "Filtros r\u00e1pidos por categor\u00eda",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "featured_filter_handle",
+      "label": "Handle del filtro 'Popular'",
+      "default": "frutos-secos"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Frutos \u2014 Col. Header",
+      "category": "Frutos de la Raiz"
+    }
+  ]
+}
+{% endschema %}

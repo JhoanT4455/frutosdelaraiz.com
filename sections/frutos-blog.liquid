@@ -1,0 +1,186 @@
+<style>
+  .blog-wrapper-frutos { 
+    background: #ffffff; 
+    padding: 60px 5%; 
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .blog-header-frutos {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  
+  .blog-title-main {
+    font-family: 'Amatic SC', cursive;
+    font-size: 4.5rem;
+    color: #1B5E20;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .blog-grid-frutos {
+    display: grid;
+    /* Ajuste para que se adapte bien si hay 2, 3 o 4 artículos */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+  }
+
+  .blog-card-frutos {
+    border: 1px solid #eee; 
+    border-radius: 8px; 
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .blog-card-frutos:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  }
+
+  .blog-img-frutos { 
+    height: 220px; 
+    background: #f4f4f4; 
+    overflow: hidden;
+  }
+  
+  .blog-img-frutos img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transition: transform 0.5s;
+  }
+
+  .blog-card-frutos:hover .blog-img-frutos img {
+    transform: scale(1.05);
+  }
+
+  .blog-content-frutos { 
+    padding: 25px; 
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .blog-date-frutos { 
+    font-size: 0.85rem; 
+    color: #999; 
+    margin-bottom: 8px; 
+    font-family: 'Lato', sans-serif; 
+  }
+
+  .blog-title-frutos { 
+    font-family: 'Amatic SC', cursive; 
+    font-weight: 700; 
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: #1B5E20;
+    text-decoration: none;
+  }
+
+  .blog-title-frutos:hover {
+    color: #5D4037;
+  }
+
+  .blog-excerpt-frutos {
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .blog-link-frutos { 
+    color: #1B5E20; 
+    text-decoration: none; 
+    font-weight: 700; 
+    font-family: 'Lato', sans-serif; 
+    margin-top: auto;
+    font-size: 0.9rem;
+  }
+  
+  .blog-link-frutos:hover {
+    text-decoration: underline;
+  }
+
+  @media(max-width: 768px) {
+    .blog-title-main { font-size: 3.5rem; }
+    .blog-img-frutos { height: 180px; }
+  }
+</style>
+
+<div class="blog-wrapper-frutos">
+  <div class="blog-header-frutos">
+    <h2 class="blog-title-main">{{ section.settings.title }}</h2>
+  </div>
+
+  <div class="blog-grid-frutos">
+    {% assign blog = blogs[section.settings.blog] %}
+    
+    {% if blog != blank and blog.articles_count > 0 %}
+      {% for article in blog.articles limit: section.settings.post_limit %}
+        <article class="blog-card-frutos">
+          <a href="{{ article.url }}" class="blog-img-frutos">
+            {% if article.image %}
+              <img src="{{ article.image | image_url: width: 600 }}" alt="{{ article.title | escape }}" loading="lazy">
+            {% else %}
+              <div style="width: 100%; height: 100%; background: #1B5E20; display:flex; align-items:center; justify-content:center; color:white;"><i class="fas fa-leaf fa-3x"></i></div>
+            {% endif %}
+          </a>
+          <div class="blog-content-frutos">
+            <div class="blog-date-frutos">{{ article.published_at | date: "%d de %B, %Y" }}</div>
+            <a href="{{ article.url }}" class="blog-title-frutos">{{ article.title }}</a>
+            <div class="blog-excerpt-frutos">
+              {% if article.excerpt.size > 0 %}
+                {{ article.excerpt | strip_html | truncatewords: 20 }}
+              {% else %}
+                {{ article.content | strip_html | truncatewords: 20 }}
+              {% endif %}
+            </div>
+            <a href="{{ article.url }}" class="blog-link-frutos">Leer más &rarr;</a>
+          </div>
+        </article>
+      {% endfor %}
+    {% else %}
+      <p style="text-align: center; width: 100%;">Selecciona un blog con artículos en la configuración de la sección.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog Frutos",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título de la sección",
+      "default": "NUESTRO BLOG DE BIENESTAR"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Seleccionar Blog"
+    },
+    {
+      "type": "range",
+      "id": "post_limit",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Número de artículos a mostrar",
+      "default": 3
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog Frutos de la Raíz",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+

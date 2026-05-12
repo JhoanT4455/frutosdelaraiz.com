@@ -1,0 +1,637 @@
+{{ 'https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Lato:wght@400;700&family=Montserrat:wght@500;600;700&display=swap' | stylesheet_tag }}
+
+<style>
+  /* =============================================
+     NECESIDADES FRUTOS DE LA RAÍZ - CRO v2
+     ============================================= */
+
+  .need-section {
+    padding: {{ section.settings.padding_top }}px 5% {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+    text-align: center;
+    position: relative;
+  }
+
+  /* Línea decorativa superior opcional */
+  .need-section::before {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: {{ section.settings.accent_color }};
+    border-radius: 4px;
+    margin: 0 auto {{ section.settings.padding_top | divided_by: 3 }}px;
+    {% unless section.settings.show_top_line %}display: none;{% endunless %}
+  }
+
+  /* ---- ENCABEZADO ---- */
+  .need-eyebrow {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    margin-bottom: 10px;
+  }
+
+  .need-title {
+    font-family: 'Amatic SC', cursive;
+    font-size: {{ section.settings.title_size }}px;
+    color: {{ section.settings.title_color }};
+    font-weight: 700;
+    margin: 0 0 10px;
+    line-height: 1;
+  }
+
+  .need-subtitle {
+    font-family: 'Lato', sans-serif;
+    color: {{ section.settings.subtitle_color }};
+    font-size: {{ section.settings.subtitle_size }}px;
+    margin-bottom: {{ section.settings.grid_gap | times: 2 }}px;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  /* ---- GRID DE BOTONES ---- */
+  .need-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ section.settings.grid_gap }}px;
+    justify-content: center;
+    max-width: {{ section.settings.grid_max_width }}px;
+    margin: 0 auto {{ section.settings.grid_gap | times: 2 }}px;
+  }
+
+  /* ---- BOTÓN BASE ---- */
+  .need-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: {{ section.settings.emoji_gap }}px;
+    padding: {{ section.settings.btn_padding_y }}px {{ section.settings.btn_padding_x }}px;
+    border-radius: {{ section.settings.btn_radius }}px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: {{ section.settings.btn_font_size }}px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  /* Estilo outline (default) */
+  .need-btn--outline {
+    border: {{ section.settings.btn_border_width }}px solid {{ section.settings.btn_border_color }};
+    color: {{ section.settings.btn_text_color }};
+    background: {{ section.settings.btn_bg_color }};
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .need-btn--outline:hover {
+    background: {{ section.settings.btn_hover_bg }};
+    color: {{ section.settings.btn_hover_text }};
+    border-color: {{ section.settings.btn_hover_bg }};
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(27, 94, 32, 0.22);
+  }
+
+  /* Estilo filled */
+  .need-btn--filled {
+    border: {{ section.settings.btn_border_width }}px solid {{ section.settings.btn_hover_bg }};
+    color: {{ section.settings.btn_hover_text }};
+    background: {{ section.settings.btn_hover_bg }};
+    box-shadow: 0 2px 10px rgba(27,94,32,0.15);
+  }
+
+  .need-btn--filled:hover {
+    background: {{ section.settings.btn_text_color }};
+    color: {{ section.settings.btn_hover_bg }};
+    border-color: {{ section.settings.btn_hover_bg }};
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(27, 94, 32, 0.25);
+  }
+
+  /* Estilo pill suave (fondo tenue) */
+  .need-btn--soft {
+    border: none;
+    color: {{ section.settings.btn_hover_bg }};
+    background: {{ section.settings.btn_hover_bg }}18;
+    box-shadow: none;
+  }
+
+  .need-btn--soft:hover {
+    background: {{ section.settings.btn_hover_bg }};
+    color: {{ section.settings.btn_hover_text }};
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(27, 94, 32, 0.2);
+  }
+
+  /* Ripple effect al click */
+  .need-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: inherit;
+  }
+
+  .need-btn:active::after {
+    opacity: 1;
+  }
+
+  /* ---- EMOJI ---- */
+  .need-emoji {
+    font-size: {{ section.settings.emoji_size }}px;
+    line-height: 1;
+    transition: transform 0.3s ease;
+  }
+
+  .need-btn:hover .need-emoji {
+    transform: scale(1.25) rotate(-5deg);
+  }
+
+  /* ---- BADGE "POPULAR" opcional en bloque ---- */
+  .need-btn-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .need-popular-badge {
+    position: absolute;
+    top: -10px;
+    right: -8px;
+    background: #FF5722;
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 1;
+    white-space: nowrap;
+  }
+
+  /* ---- TEXTO INFERIOR CRO ---- */
+  .need-footer-text {
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: {{ section.settings.subtitle_color }};
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  .need-footer-text a {
+    color: {{ section.settings.accent_color }};
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .need-footer-text a:hover {
+    text-decoration: underline;
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .need-title {
+      font-size: {{ section.settings.title_size | times: 0.72 | round }}px;
+    }
+    .need-btn {
+      font-size: {{ section.settings.btn_font_size | times: 0.9 | round }}px;
+      padding: {{ section.settings.btn_padding_y | minus: 2 }}px {{ section.settings.btn_padding_x | minus: 6 }}px;
+    }
+    .need-grid {
+      gap: {{ section.settings.grid_gap | minus: 4 }}px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .need-title {
+      font-size: {{ section.settings.title_size | times: 0.6 | round }}px;
+    }
+    .need-grid {
+      gap: 8px;
+    }
+  }
+</style>
+
+<section class="need-section">
+
+  {%- if section.settings.eyebrow != blank -%}
+    <span class="need-eyebrow">{{ section.settings.eyebrow }}</span>
+  {%- endif -%}
+
+  {%- if section.settings.title != blank -%}
+    <h2 class="need-title">{{ section.settings.title }}</h2>
+  {%- endif -%}
+
+  {%- if section.settings.subtitle != blank -%}
+    <p class="need-subtitle">{{ section.settings.subtitle }}</p>
+  {%- endif -%}
+
+  <div class="need-grid">
+    {%- for block in section.blocks -%}
+      <div class="need-btn-wrap" {{ block.shopify_attributes }}>
+        <a
+          href="{{ block.settings.link }}"
+          class="need-btn need-btn--{{ section.settings.btn_style }}"
+          {% if block.settings.new_tab %}target="_blank" rel="noopener"{% endif %}
+        >
+          {%- if block.settings.emoji != blank -%}
+            <span class="need-emoji">{{ block.settings.emoji }}</span>
+          {%- endif -%}
+          {{ block.settings.label }}
+        </a>
+        {%- if block.settings.popular_badge != blank -%}
+          <span class="need-popular-badge">{{ block.settings.popular_badge }}</span>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+
+  {%- if section.settings.footer_text != blank -%}
+    <p class="need-footer-text">{{ section.settings.footer_text }}</p>
+  {%- endif -%}
+
+</section>
+
+{% schema %}
+{
+  "name": "Necesidades CRO v2",
+  "settings": [
+    {
+      "type": "header",
+      "content": "📐 Espaciado y Fondo"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo de la sección",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espaciado superior",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espaciado inferior",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_line",
+      "label": "Mostrar línea decorativa superior",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento (línea, eyebrow, links)",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "header",
+      "content": "✍️ Textos del Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto pequeño sobre el título (eyebrow)",
+      "default": "🌿 Encuentra tu producto ideal"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título principal",
+      "default": "¿Qué necesitas hoy?"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título (px)",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Encuentra el producto perfecto para tu bienestar"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#777777"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Tamaño del subtítulo (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Texto inferior CRO (acepta HTML simple)",
+      "default": "¿No sabes por dónde empezar? <a href='/collections/all'>Ver todos los productos</a>"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Estilo de los Botones"
+    },
+    {
+      "type": "select",
+      "id": "btn_style",
+      "label": "Estilo visual de los botones",
+      "options": [
+        {
+          "value": "outline",
+          "label": "Contorno (outline)"
+        },
+        {
+          "value": "filled",
+          "label": "Relleno (filled)"
+        },
+        {
+          "value": "soft",
+          "label": "Suave / pill tenue"
+        }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Fondo del botón (estado normal)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Color del texto (estado normal)",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "btn_border_color",
+      "label": "Color del borde (estado normal)",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Fondo al hover",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_text",
+      "label": "Texto al hover",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "btn_border_width",
+      "label": "Grosor del borde",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "btn_radius",
+      "label": "Radio de esquinas del botón",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_y",
+      "label": "Padding vertical del botón",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_x",
+      "label": "Padding horizontal del botón",
+      "min": 12,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "label": "Tamaño de fuente del botón (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "😀 Emojis"
+    },
+    {
+      "type": "range",
+      "id": "emoji_size",
+      "label": "Tamaño del emoji (px)",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "emoji_gap",
+      "label": "Espacio entre emoji y texto",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "📏 Grid"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Espacio entre botones",
+      "min": 6,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "grid_max_width",
+      "label": "Ancho máximo del grid",
+      "min": 500,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 900
+    }
+  ],
+  "blocks": [
+    {
+      "type": "necesidad",
+      "name": "Necesidad",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji",
+          "default": "🌙"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Texto del botón",
+          "default": "Dormir mejor"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace"
+        },
+        {
+          "type": "text",
+          "id": "popular_badge",
+          "label": "Badge encima del botón (ej: 🔥 Popular)",
+          "info": "Dejar vacío para no mostrar badge"
+        },
+        {
+          "type": "checkbox",
+          "id": "new_tab",
+          "label": "Abrir en nueva pestaña",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Necesidades CRO v2",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "necesidad",
+          "settings": {
+            "emoji": "🌙",
+            "label": "Dormir mejor",
+            "popular_badge": ""
+          }
+        },
+        {
+          "type": "necesidad",
+          "settings": {
+            "emoji": "🌿",
+            "label": "Mejor digestión",
+            "popular_badge": "🔥 Popular"
+          }
+        },
+        {
+          "type": "necesidad",
+          "settings": {
+            "emoji": "⚡",
+            "label": "Energía natural",
+            "popular_badge": ""
+          }
+        },
+        {
+          "type": "necesidad",
+          "settings": {
+            "emoji": "🧘",
+            "label": "Alimentación consciente",
+            "popular_badge": ""
+          }
+        },
+        {
+          "type": "necesidad",
+          "settings": {
+            "emoji": "🛒",
+            "label": "Mercado semanal",
+            "popular_badge": "✅ Ahorra más"
+          }
+        },
+        {
+          "type": "necesidad",
+          "settings": {
+            "emoji": "🎁",
+            "label": "Combos y regalos",
+            "popular_badge": ""
+          }
+        },
+        {
+          "type": "necesidad",
+          "settings": {
+            "emoji": "💆",
+            "label": "Reducir estrés",
+            "popular_badge": ""
+          }
+        },
+        {
+          "type": "necesidad",
+          "settings": {
+            "emoji": "🏃",
+            "label": "Rendimiento físico",
+            "popular_badge": ""
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

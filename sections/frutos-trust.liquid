@@ -1,0 +1,438 @@
+<style>
+  /* =============================================
+     TRUST SIGNALS - CRO MEJORADO + EDITABLE
+     ============================================= */
+  .trust-section {
+    padding: 50px 5%;
+  }
+
+  /* Título opcional de la sección */
+  .trust-section-title {
+    font-family: 'Amatic SC', cursive;
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 35px;
+  }
+
+  .trust-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ---- ESTILOS POR VARIANTE ---- */
+
+  /* Variante: Clásica (ícono + texto) */
+  .trust-item {
+    text-align: center;
+    flex: 1 1 180px;
+    max-width: 230px;
+    padding: 20px 15px;
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: default;
+    position: relative;
+  }
+
+  .trust-item:hover {
+    transform: translateY(-5px);
+  }
+
+  /* Variante Card con borde */
+  .trust-item.style-card {
+    border: 1px solid #e8f5e9;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+  }
+
+  .trust-item.style-card:hover {
+    box-shadow: 0 10px 28px rgba(27,94,32,0.1);
+    border-color: #c8e6c9;
+  }
+
+  /* Variante minimal (solo ícono y texto, sin fondo) */
+  .trust-item.style-minimal { background: transparent; }
+
+  /* Variante filled */
+  .trust-item.style-filled { background: #f9fbe7; }
+
+  /* Ícono circular */
+  .trust-icon-wrap {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 1.65rem;
+    transition: background 0.3s, color 0.3s, transform 0.3s;
+    position: relative;
+  }
+
+  .trust-item:hover .trust-icon-wrap {
+    transform: scale(1.12) rotate(-5deg);
+  }
+
+  /* Línea decorativa bajo el ícono */
+  .trust-icon-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  .trust-item:hover .trust-icon-wrap::after {
+    width: 40px;
+  }
+
+  /* Texto */
+  .trust-item-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .88rem;
+    color: #333;
+    margin-bottom: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    line-height: 1.2;
+  }
+
+  .trust-item-desc {
+    font-family: 'Lato', sans-serif;
+    font-size: .82rem;
+    color: #777;
+    line-height: 1.5;
+  }
+
+  /* CRO FIX: Badge de valor clave */
+  .trust-item-badge {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .68rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+    margin-top: 8px;
+    letter-spacing: .3px;
+  }
+
+  /* CRO FIX: Enlace opcional en el item */
+  .trust-item-link {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    z-index: 1;
+  }
+
+  /* ---- DIVISOR HORIZONTAL (variante) ---- */
+  .trust-divider {
+    width: 1px;
+    background: #e0e0e0;
+    align-self: stretch;
+    margin: 10px 0;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 900px) { .trust-divider { display: none; } }
+
+  @media (max-width: 768px) {
+    .trust-item { flex: 1 1 45%; max-width: none; }
+    .trust-section-title { font-size: 3rem; }
+  }
+
+  @media (max-width: 480px) {
+    .trust-item { flex: 1 1 100%; max-width: none; flex-direction: row; text-align: left; gap: 15px; align-items: center; display: flex; }
+    .trust-icon-wrap { flex-shrink: 0; margin: 0; }
+  }
+</style>
+
+<div class="trust-section" style="background-color: {{ section.settings.bg_color }}; border-top: {{ section.settings.border_width }}px solid {{ section.settings.border_color }}; border-bottom: {{ section.settings.border_width }}px solid {{ section.settings.border_color }};">
+
+  {% if section.settings.title != blank %}
+    <h2 class="trust-section-title" style="color: {{ section.settings.title_color }};">
+      {{ section.settings.title }}
+    </h2>
+  {% endif %}
+
+  <div class="trust-grid">
+    {% for block in section.blocks %}
+
+      {% if block.type == 'divider' %}
+        <div class="trust-divider"></div>
+
+      {% elsif block.type == 'trust_item' %}
+        <div
+          class="trust-item style-{{ section.settings.card_style }}"
+          {{ block.shopify_attributes }}
+          style="background-color: {{ block.settings.item_bg_color }};"
+        >
+          {% if block.settings.link != blank %}
+            <a href="{{ block.settings.link }}" class="trust-item-link" aria-label="{{ block.settings.title }}"></a>
+          {% endif %}
+
+          <!-- Ícono -->
+          <div
+            class="trust-icon-wrap"
+            style="background-color: {{ block.settings.icon_bg_color }}; color: {{ block.settings.icon_color }};"
+          >
+            {% if block.settings.emoji != blank %}
+              {{ block.settings.emoji }}
+            {% else %}
+              <i class="{{ block.settings.icon }}"></i>
+            {% endif %}
+          </div>
+
+          <!-- Título -->
+          <div class="trust-item-title" style="color: {{ block.settings.title_color }};">
+            {{ block.settings.title }}
+          </div>
+
+          <!-- Descripción -->
+          {% if block.settings.description != blank %}
+            <div class="trust-item-desc">{{ block.settings.description }}</div>
+          {% endif %}
+
+          <!-- CRO FIX: Badge de valor -->
+          {% if block.settings.badge_text != blank %}
+            <span
+              class="trust-item-badge"
+              style="background: {{ block.settings.badge_bg }}; color: {{ block.settings.badge_color }};"
+            >
+              {{ block.settings.badge_text }}
+            </span>
+          {% endif %}
+
+        </div>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Trust Signals CRO",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Apariencia general"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "label": "Grosor del borde superior e inferior",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color del borde",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Estilo de los items",
+      "options": [
+        { "value": "minimal", "label": "Minimal (sin fondo)" },
+        { "value": "card",    "label": "Card (con borde y sombra)" },
+        { "value": "filled",  "label": "Filled (fondo suave)" }
+      ],
+      "default": "card"
+    },
+    {
+      "type": "header",
+      "content": "Título de la sección (opcional)"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "info": "Déjalo vacío para no mostrar título"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#1B5E20"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust_item",
+      "name": "✅ Garantía / Trust",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Ícono"
+        },
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji (tiene prioridad sobre el ícono)",
+          "info": "Ej: 🚚 🛡️ 🌿 💬 ✅ 🎁 — Déjalo vacío para usar ícono FontAwesome"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Clase ícono FontAwesome",
+          "default": "fas fa-check-circle",
+          "info": "fas fa-truck · fas fa-shield-alt · fas fa-leaf · fab fa-whatsapp · fas fa-smile · fas fa-medal · fas fa-hand-holding-heart"
+        },
+        {
+          "type": "color",
+          "id": "icon_bg_color",
+          "label": "Color de fondo del ícono",
+          "default": "#e8f5e9"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Color del ícono",
+          "default": "#1B5E20"
+        },
+        {
+          "type": "header",
+          "content": "Texto"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Garantía"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Color del título",
+          "default": "#333333"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Descripción corta",
+          "default": "Descripción del beneficio"
+        },
+        {
+          "type": "header",
+          "content": "Badge (resaltado de valor)"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Texto del badge (opcional)",
+          "info": "Ej: Gratis, +500 pedidos, 100% seguro — déjalo vacío para no mostrar"
+        },
+        {
+          "type": "color",
+          "id": "badge_bg",
+          "label": "Color de fondo del badge",
+          "default": "#e8f5e9"
+        },
+        {
+          "type": "color",
+          "id": "badge_color",
+          "label": "Color del texto del badge",
+          "default": "#1B5E20"
+        },
+        {
+          "type": "header",
+          "content": "Fondo y enlace del item"
+        },
+        {
+          "type": "color",
+          "id": "item_bg_color",
+          "label": "Color de fondo del item (sobreescribe el estilo general)",
+          "default": "#ffffff"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace al hacer clic (opcional)",
+          "info": "Ej: /policies/shipping-policy"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "│ Divisor vertical",
+      "limit": 4,
+      "settings": []
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust Signals CRO",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "trust_item",
+          "settings": {
+            "emoji": "🚚",
+            "title": "Envíos Gratuitos",
+            "description": "Por compras mayores a $120.000 en Bogotá",
+            "badge_text": "Gratis desde $120K"
+          }
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "emoji": "🛡️",
+            "title": "Pago Seguro",
+            "description": "Transacciones 100% protegidas",
+            "badge_text": "100% Seguro"
+          }
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "emoji": "🌿",
+            "title": "100% Natural",
+            "description": "Sin aditivos ni conservantes artificiales",
+            "badge_text": "Sin químicos"
+          }
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "emoji": "💬",
+            "title": "Soporte Directo",
+            "description": "Chatea con nosotros al instante por WhatsApp",
+            "badge_text": "Respuesta inmediata"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+

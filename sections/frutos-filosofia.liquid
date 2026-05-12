@@ -1,0 +1,222 @@
+<style>
+  /* =============================================
+     FILOSOFÍA / STORYTELLING - CRO SALES
+     ============================================= */
+  .filo-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #5D4037;
+    color: white;
+    min-height: 420px;
+  }
+
+  .filo-img {
+    flex: 1 1 50%;
+    min-height: 420px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  /* Overlay suave sobre la imagen */
+  .filo-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(93, 64, 55, 0.3);
+  }
+
+  .filo-content {
+    flex: 1 1 50%;
+    padding: 80px 6%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .filo-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #76ff03;
+    margin-bottom: 15px;
+  }
+
+  .filo-title {
+    font-family: 'Amatic SC', cursive;
+    font-size: 5rem;
+    color: #FFC107;
+    margin-bottom: 20px;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  .filo-text {
+    font-family: 'Lato', sans-serif;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    color: #f4e4d9;
+  }
+
+  /* CRO FIX: Datos de confianza */
+  .filo-stats {
+    display: flex;
+    gap: 30px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+  }
+
+  .filo-stat {
+    text-align: center;
+  }
+
+  .filo-stat-num {
+    font-family: 'Amatic SC', cursive;
+    font-size: 3.5rem;
+    color: #76ff03;
+    font-weight: 700;
+    line-height: 1;
+    display: block;
+  }
+
+  .filo-stat-label {
+    font-family: 'Lato', sans-serif;
+    font-size: .85rem;
+    color: #d7ccc8;
+  }
+
+  /* CRO FIX: CTA de venta (no institucional) */
+  .filo-btn {
+    align-self: flex-start;
+    background-color: #76ff03;
+    color: #000000;
+    padding: 14px 35px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+    border-radius: 40px;
+    transition: all 0.3s;
+    letter-spacing: .5px;
+    margin-top: 10px;
+  }
+
+  .filo-btn:hover {
+    background-color: #FFC107;
+    color: #5D4037;
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 768px) {
+    .filo-img { min-height: 280px; flex: 1 1 100%; }
+    .filo-content { padding: 45px 5%; flex: 1 1 100%; }
+    .filo-title { font-size: 4rem; }
+    .filo-btn { align-self: stretch; text-align: center; }
+  }
+</style>
+
+<div class="filo-wrapper">
+  <div class="filo-img" style="background-image: url('{{ section.settings.image | image_url: width: 1000 }}');"></div>
+
+  <div class="filo-content">
+    {% if section.settings.eyebrow != blank %}
+      <span class="filo-eyebrow">{{ section.settings.eyebrow }}</span>
+    {% endif %}
+
+    <h2 class="filo-title">{{ section.settings.title }}</h2>
+    <div class="filo-text">{{ section.settings.text }}</div>
+
+    <!-- CRO FIX: Datos que generan confianza -->
+    <div class="filo-stats">
+      {% for block in section.blocks %}
+        <div class="filo-stat" {{ block.shopify_attributes }}>
+          <span class="filo-stat-num">{{ block.settings.number }}</span>
+          <span class="filo-stat-label">{{ block.settings.label }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <a href="{{ section.settings.btn_link }}" class="filo-btn">
+      {{ section.settings.btn_text }}
+    </a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Filosofía Frutos CRO",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen (local, ingredientes, equipo)"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto pequeño sobre el título",
+      "default": "Nuestra Historia"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "VOLVER A LA RAÍZ"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Texto",
+      "default": "<p>Más que una tienda, somos un espacio para la alimentación consciente y el intercambio cultural en Bosa. Cada producto que encuentras aquí fue elegido pensando en tu bienestar y en apoyar el comercio local.</p>"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Texto del botón (CTA de venta)",
+      "default": "Comprar consciente"
+    },
+    {
+      "type": "text",
+      "id": "btn_link",
+      "label": "Enlace del botón",
+      "default": "/collections/all"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Dato de confianza",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Número / Dato",
+          "default": "+500"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Descripción",
+          "default": "clientes felices"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Filosofía Frutos CRO",
+      "category": "Custom",
+      "blocks": [
+        { "type": "stat", "settings": { "number": "+500", "label": "Clientes felices" } },
+        { "type": "stat", "settings": { "number": "4.9⭐", "label": "en Google" } },
+        { "type": "stat", "settings": { "number": "6+", "label": "Años en Bosa" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
