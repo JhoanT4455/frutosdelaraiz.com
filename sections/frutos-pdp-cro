@@ -1,0 +1,323 @@
+{% comment %}
+  ============================================================
+  FRUTOS PDP CRO — Todo inline (CSS + JS dentro del .liquid)
+  ============================================================
+{% endcomment %}
+
+{%- assign cv = product.selected_or_first_available_variant -%}
+{%- assign benefits = product.metafields.custom.benefits.value -%}
+{%- assign how_to_use = product.metafields.custom.how_to_use -%}
+{%- assign ingredients = product.metafields.custom.ingredients -%}
+{%- assign nutritional_info = product.metafields.custom.nutritional_info -%}
+{%- assign faq_content = product.metafields.custom.faq_content.value -%}
+{%- assign cross_sell_handles = product.metafields.custom.cross_sell_handles.value -%}
+
+{%- style -%}
+{% comment %} === CSS ENCAPSULADO — solo afecta elementos con prefijo frc-pdp === {% endcomment %}
+.frc-pdp-wrap { --g:#1B5E20; --gm:#2E7D32; --gl:#4CAF50; --ye:#FFC107; --or:#FF9800; --re:#E53935; --bg:#F5F5F0; --wh:#FFFFFF; --tx:#1A2E1A; --tx2:#6B7280; --bo:#DDD8CF; --b2:#E8F5E9; --b3:#FFF3E0; --b4:#FDEDEC; --wa:#25D366; --rd:12px; --rds:8px; }
+
+/* Breadcrumbs */
+.frc-pdp-bc { font-size:12.5px; color:var(--tx2); padding:14px 0 8px; border-bottom:1px solid var(--bo); margin-bottom:12px; font-family:var(--font-body-family), 'Lato', sans-serif; }
+.frc-pdp-bc ol { list-style:none; margin:0; padding:0; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.frc-pdp-bc li { display:flex; align-items:center; gap:6px; }
+.frc-pdp-bc li:not(:last-child)::after { content:'›'; color:var(--tx2); font-size:14px; font-weight:700; }
+.frc-pdp-bc a { color:var(--g); text-decoration:none; font-weight:600; }
+.frc-pdp-bc a:hover { color:var(--gm); text-decoration:underline; }
+.frc-pdp-bc li:last-child { color:var(--tx2); font-weight:500; }
+
+/* Rating */
+.frc-pdp-rating { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 0 6px; }
+.frc-pdp-stars { display:flex; gap:2px; color:var(--ye); font-size:18px; }
+.frc-pdp-score { font-size:15px; font-weight:700; color:var(--tx); }
+.frc-pdp-rev { font-size:13px; color:var(--tx2); }
+.frc-pdp-rev strong { color:var(--g); }
+.frc-pdp-verified { font-size:11px; font-weight:600; color:var(--gl); background:var(--b2); padding:3px 10px; border-radius:20px; }
+
+/* Trust pills */
+.frc-pdp-pills { display:flex; gap:8px; flex-wrap:wrap; padding:8px 0 14px; }
+.frc-pdp-pill { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:5px 12px; background:var(--b2); color:var(--g); border-radius:20px; border:1px solid rgba(27,94,32,.12); font-family:var(--font-body-family), 'Lato', sans-serif; }
+
+/* Urgency */
+.frc-pdp-urg { display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:var(--rds); font-size:14px; margin-bottom:14px; animation:frcPdpUrg 2s ease-in-out infinite; }
+@keyframes frcPdpUrg { 0%,100%{box-shadow:0 0 0 0 rgba(255,87,34,0);} 50%{box-shadow:0 0 0 4px rgba(255,87,34,.12);} }
+.frc-pdp-urg--hi { background:var(--b4); color:#C0392B; border:1px solid #F5B7B1; }
+.frc-pdp-urg--md { background:var(--b3); color:#E67E22; border:1px solid #F0B27A; }
+.frc-pdp-urg strong { font-weight:700; }
+
+/* Benefits */
+.frc-pdp-ben { list-style:none; margin:0 0 18px; padding:16px; background:var(--bg); border-radius:var(--rds); border-left:3px solid var(--g); }
+.frc-pdp-ben li { display:flex; align-items:flex-start; gap:10px; padding:5px 0; font-size:14.5px; color:var(--tx); line-height:1.5; }
+.frc-pdp-ben .chk { color:var(--gl); font-size:16px; flex-shrink:0; font-weight:700; }
+
+/* WhatsApp */
+.frc-pdp-wa { display:flex; align-items:center; gap:12px; padding:12px 16px; background:linear-gradient(135deg,#e8f5e9,#f1f8e9); border:1.5px solid rgba(37,211,102,.25); border-radius:var(--rds); text-decoration:none; color:var(--tx); font-size:14px; margin-bottom:14px; transition:all .25s ease; }
+.frc-pdp-wa:hover { border-color:var(--wa); box-shadow:0 4px 14px rgba(37,211,102,.15); transform:translateY(-1px); }
+.frc-pdp-wa .ico { font-size:22px; flex-shrink:0; }
+.frc-pdp-wa .txt { display:flex; flex-direction:column; }
+.frc-pdp-wa .txt strong { font-size:13px; font-weight:600; }
+.frc-pdp-wa .txt small { font-size:12px; color:var(--tx2); }
+
+/* Tabs */
+.frc-pdp-tabs { margin:28px 0 36px; }
+.frc-pdp-tabs .nav { display:flex; gap:0; border-bottom:2px solid var(--bo); overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.frc-pdp-tabs .tab { padding:14px 20px; background:none; border:none; border-bottom:2.5px solid transparent; margin-bottom:-2px; font-size:13px; font-weight:600; color:var(--tx2); white-space:nowrap; cursor:pointer; transition:all .2s; text-transform:uppercase; letter-spacing:.06em; font-family:inherit; }
+.frc-pdp-tabs .tab:hover { color:var(--gm); }
+.frc-pdp-tabs .tab.on { color:var(--g); border-bottom-color:var(--g); }
+.frc-pdp-tabs .panel { display:none; padding:24px 0; font-size:15px; line-height:1.7; color:var(--tx); animation:frcPdpFade .35s ease; }
+.frc-pdp-tabs .panel.on { display:block; }
+@keyframes frcPdpFade { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
+.frc-pdp-tabs .panel ul { margin:0; padding-left:20px; }
+.frc-pdp-tabs .panel li { margin-bottom:6px; }
+
+/* Cross-sell */
+.frc-pdp-cross { margin-top:40px; }
+.frc-pdp-cross .t { font-family:'Amatic SC', cursive; font-size:2.8rem; color:var(--g); margin:0 0 4px; text-align:center; }
+.frc-pdp-cross .st { font-size:15px; color:var(--tx2); text-align:center; margin-bottom:24px; }
+.frc-pdp-cross .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; }
+.frc-pdp-cross .card { background:var(--wh); border-radius:var(--rd); border:1px solid var(--bo); overflow:hidden; transition:all .25s ease; display:flex; flex-direction:column; }
+.frc-pdp-cross .card:hover { box-shadow:0 8px 24px rgba(0,0,0,.1); transform:translateY(-3px); }
+.frc-pdp-cross .card a { text-decoration:none; color:var(--tx); display:block; }
+.frc-pdp-cross .card img { width:100%; aspect-ratio:1; object-fit:contain; background:var(--bg); padding:16px; }
+.frc-pdp-cross .card h4 { font-size:14px; font-weight:600; margin:0; padding:12px 14px 4px; line-height:1.35; }
+.frc-pdp-cross .card .pr { padding:0 14px 12px; font-size:16px; font-weight:700; color:var(--g); }
+.frc-pdp-cross .card .btn { display:block; width:calc(100% - 28px); margin:0 14px 14px; padding:10px; background:var(--g); color:var(--wh); border:none; border-radius:var(--rds); font-size:13px; font-weight:600; cursor:pointer; transition:background .2s; margin-top:auto; text-align:center; text-decoration:none; }
+.frc-pdp-cross .card .btn:hover { background:var(--gm); }
+
+/* FAQ */
+.frc-pdp-faq { margin-top:40px; }
+.frc-pdp-faq .t { font-family:'Amatic SC', cursive; font-size:2.8rem; color:var(--g); margin:0 0 20px; }
+.frc-pdp-faq .item { margin-bottom:8px; border:1px solid var(--bo); border-radius:var(--rds); overflow:hidden; background:var(--wh); }
+.frc-pdp-faq .q { width:100%; display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:none; border:none; font-size:15px; font-weight:700; color:var(--tx); cursor:pointer; text-align:left; transition:background .2s; font-family:inherit; }
+.frc-pdp-faq .q:hover { background:var(--b2); }
+.frc-pdp-faq .q .ico { font-size:20px; color:var(--g); transition:transform .3s; flex-shrink:0; margin-left:12px; }
+.frc-pdp-faq .item.open .q .ico { transform:rotate(45deg); }
+.frc-pdp-faq .a { max-height:0; overflow:hidden; transition:max-height .35s ease; }
+.frc-pdp-faq .item.open .a { max-height:400px; }
+.frc-pdp-faq .a .in { padding:0 20px 18px; font-size:14.5px; line-height:1.7; color:var(--tx2); }
+
+/* Shipping */
+.frc-pdp-ship { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:20px; background:var(--bg); border-radius:var(--rd); margin:24px 0; }
+.frc-pdp-ship .it { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--tx2); }
+.frc-pdp-ship .it strong { color:var(--tx); display:block; }
+
+/* Guarantee */
+.frc-pdp-guar { text-align:center; padding:48px 32px; background:linear-gradient(135deg,var(--b2),var(--bg)); border-radius:var(--rd); border:1px solid rgba(27,94,32,.1); margin-top:40px; }
+.frc-pdp-guar .ico { font-size:48px; margin-bottom:12px; }
+.frc-pdp-guar h3 { font-family:'Amatic SC', cursive; font-size:2.4rem; color:var(--tx); margin:0 0 10px; }
+.frc-pdp-guar p { font-size:15px; color:var(--tx2); max-width:540px; margin:0 auto 24px; line-height:1.6; }
+.frc-pdp-guar .bad { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+.frc-pdp-guar .bad span { padding:8px 16px; background:var(--wh); border-radius:20px; font-size:12px; font-weight:500; color:var(--tx2); box-shadow:0 2px 8px rgba(0,0,0,.06); }
+
+/* Social proof bar */
+.frc-pdp-soc { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; padding:16px; background:var(--b2); border-radius:var(--rds); margin:16px 0; }
+.frc-pdp-soc span { font-size:12px; font-weight:600; color:var(--g); }
+
+/* Mobile sticky */
+.frc-pdp-sticky { display:none; position:fixed; bottom:0; left:0; right:0; background:var(--wh); box-shadow:0 -4px 20px rgba(0,0,0,.12); padding:10px 16px; z-index:999; align-items:center; gap:10px; }
+.frc-pdp-sticky .pr { font-size:16px; font-weight:700; color:var(--g); white-space:nowrap; }
+.frc-pdp-sticky .btn { flex:1; padding:12px; background:var(--g); color:var(--wh); border:none; border-radius:var(--rds); font-size:14px; font-weight:700; cursor:pointer; text-align:center; text-decoration:none; }
+
+/* Responsive */
+@media(max-width:749px){
+  .frc-pdp-cross .t, .frc-pdp-faq .t, .frc-pdp-guar h3 { font-size:2.2rem; }
+  .frc-pdp-guar { padding:32px 20px; }
+  .frc-pdp-ship { grid-template-columns:1fr; }
+  .frc-pdp-tabs .tab { padding:12px 14px; font-size:12px; }
+  .frc-pdp-sticky { display:flex; }
+}
+@media(min-width:750px){ .frc-pdp-cross .grid { grid-template-columns:repeat(4,1fr); } }
+{%- endstyle -%}
+
+<div class="frc-pdp-wrap page-width">
+
+  {%- comment -%} ===== BREADCRUMBS ===== {%- endcomment -%}
+  {%- if section.settings.show_breadcrumbs -%}
+  <nav class="frc-pdp-bc" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Inicio</a></li>
+      <li><a href="/collections/all">Catalogo</a></li>
+      {%- if collection -%}<li><a href="{{ collection.url }}">{{ collection.title }}</a></li>{%- endif -%}
+      <li>{{ product.title | truncatewords: 6 }}</li>
+    </ol>
+  </nav>
+  {%- endif -%}
+
+  {%- comment -%} ===== RATING ===== {%- endcomment -%}
+  {%- if section.settings.show_rating -%}
+  <div class="frc-pdp-rating">
+    <div class="frc-pdp-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+    <span class="frc-pdp-score">4.9</span>
+    <span class="frc-pdp-rev"><strong>32 resenas verificadas</strong> en Google</span>
+    <span class="frc-pdp-verified">&#10003; Compra verificada</span>
+  </div>
+  {%- endif -%}
+
+  {%- comment -%} ===== TRUST PILLS ===== {%- endcomment -%}
+  {%- if section.settings.show_trust_pills -%}
+  <div class="frc-pdp-pills">
+    <span class="frc-pdp-pill">&#127807; 100% Natural</span>
+    <span class="frc-pdp-pill">&#128666; Envio gratis +$200k</span>
+    <span class="frc-pdp-pill">&#128205; Bosa, Bogota</span>
+    <span class="frc-pdp-pill">&#9989; Sin conservantes</span>
+  </div>
+  {%- endif -%}
+
+  {%- comment -%} ===== URGENCIA ===== {%- endcomment -%}
+  {%- if section.settings.show_urgency -%}
+    {%- if cv.inventory_quantity > 0 and cv.inventory_quantity <= 5 -%}
+      <div class="frc-pdp-urg frc-pdp-urg--hi"><span>&#9889;</span> <span><strong>Solo quedan {{ cv.inventory_quantity }} unidades</strong> — {{ cv.inventory_quantity | times: 6 }} personas lo estan viendo ahora</span></div>
+    {%- elsif cv.inventory_quantity > 5 and cv.inventory_quantity <= 15 -%}
+      <div class="frc-pdp-urg frc-pdp-urg--md"><span>&#128293;</span> <span><strong>Producto muy solicitado</strong> — Stock limitado</span></div>
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- comment -%} ===== BENEFITS ===== {%- endcomment -%}
+  {%- if section.settings.show_benefits -%}
+  <ul class="frc-pdp-ben">
+    {%- if benefits -%}{%- for benefit in benefits limit: 5 -%}<li><span class="chk">&#10003;</span> {{ benefit }}</li>{%- endfor -%}
+    {%- else -%}
+      <li><span class="chk">&#10003;</span> 100% natural sin aditivos ni conservantes</li>
+      <li><span class="chk">&#10003;</span> Origen consciente y comercio local de Colombia</li>
+      <li><span class="chk">&#10003;</span> Apoya productores locales de Bosa, Bogota</li>
+      <li><span class="chk">&#10003;</span> Calidad verificada por Frutos de la Raiz</li>
+      <li><span class="chk">&#10003;</span> Entrega en 24-48h en Bogota</li>
+    {%- endif -%}
+  </ul>
+  {%- endif -%}
+
+  {%- comment -%} ===== WHATSAPP ===== {%- endcomment -%}
+  {%- if section.settings.show_whatsapp -%}
+  <a href="https://wa.me/573027045952?text=Hola!%20Veo%20el%20{{ product.title | url_encode }}%20en%20frutosdelaraiz.com%20y%20tengo%20una%20pregunta" target="_blank" rel="noopener" class="frc-pdp-wa">
+    <span class="ico">&#128172;</span>
+    <span class="txt"><strong>Tienes dudas? Escribenos por WhatsApp</strong><small>Te respondemos en minutos — 302 704 5952</small></span>
+  </a>
+  {%- endif -%}
+
+  {%- comment -%} ===== TABS ===== {%- endcomment -%}
+  {%- if section.settings.show_tabs -%}
+  <div class="frc-pdp-tabs" data-pdp-tabs>
+    <div class="nav">
+      <button class="tab on" data-tab="desc">Descripcion</button>
+      {%- if benefits -%}<button class="tab" data-tab="ben">Beneficios</button>{%- endif -%}
+      {%- if how_to_use -%}<button class="tab" data-tab="uso">Modo de Uso</button>{%- endif -%}
+      {%- if ingredients -%}<button class="tab" data-tab="ing">Ingredientes</button>{%- endif -%}
+      {%- if nutritional_info -%}<button class="tab" data-tab="nut">Info. Nutricional</button>{%- endif -%}
+    </div>
+    <div>
+      <div class="panel on" data-panel="desc">{{ product.description | default: '<p>' | append: product.title | append: ' — Producto 100% natural de Frutos de la Raiz.</p>' }}</div>
+      {%- if benefits -%}<div class="panel" data-panel="ben"><ul>{%- for b in benefits -%}<li><strong>&#10003; {{ b }}</strong></li>{%- endfor -%}</ul></div>{%- endif -%}
+      {%- if how_to_use -%}<div class="panel" data-panel="uso">{{ how_to_use | metafield_tag }}</div>{%- endif -%}
+      {%- if ingredients -%}<div class="panel" data-panel="ing">{{ ingredients | metafield_tag }}</div>{%- endif -%}
+      {%- if nutritional_info -%}<div class="panel" data-panel="nut">{{ nutritional_info | metafield_tag }}</div>{%- endif -%}
+    </div>
+  </div>
+  {%- endif -%}
+
+  {%- comment -%} ===== CROSS-SELL INTELIGENTE ===== {%- endcomment -%}
+  {%- if section.settings.show_cross_sell -%}
+    {%- assign cross_products = "" -%}
+    {%- if collection and collection.products.size > 1 -%}
+      {%- assign cross_products = collection.products -%}
+    {%- elsif product.collections.first and product.collections.first.products.size > 1 -%}
+      {%- assign cross_products = product.collections.first.products -%}
+    {%- endif -%}
+    {%- if cross_products != "" -%}
+    <div class="frc-pdp-cross">
+      <h2 class="t">&#127873; Complementa tu compra</h2>
+      <p class="st">Productos que van bien con {{ product.title }}</p>
+      <div class="grid">
+        {%- assign shown = 0 -%}
+        {%- for cp in cross_products limit: 8 -%}
+          {%- if cp.id != product.id and cp.available and shown < 4 -%}{%- assign shown = shown | plus: 1 -%}
+            <div class="card">
+              <a href="{{ cp.url }}"><img src="{{ cp.featured_media | image_url: width: 400 }}" alt="{{ cp.title | escape }}" loading="lazy" width="400" height="400"><h4>{{ cp.title }}</h4><div class="pr">{{ cp.price | money }}</div></a>
+              <form method="post" action="/cart/add" style="margin:0;"><input type="hidden" name="id" value="{{ cp.selected_or_first_available_variant.id }}"><button type="submit" class="btn">&#128722; Anadir al carrito</button></form>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- comment -%} ===== SHIPPING INFO ===== {%- endcomment -%}
+  {%- if section.settings.show_shipping -%}
+  <div class="frc-pdp-ship">
+    <div class="it">&#128666;<span><strong>Envio GRATIS</strong>en Bogota por +$200k</span></div>
+    <div class="it">&#9200;<span><strong>24-48 horas</strong>de entrega en Bogota</span></div>
+    <div class="it">&#128176;<span><strong>Pago contra entrega</strong>disponible</span></div>
+  </div>
+  {%- endif -%}
+
+  {%- comment -%} ===== SOCIAL PROOF ===== {%- endcomment -%}
+  {%- if section.settings.show_social_proof -%}
+  <div class="frc-pdp-soc"><span>&#128722; +500 clientes felices</span><span>&#11088; 4.9 en Google</span><span>&#128666; Envios en Bogota</span><span>&#127807; 100% Natural</span></div>
+  {%- endif -%}
+
+  {%- comment -%} ===== FAQ ===== {%- endcomment -%}
+  {%- if section.settings.show_faq -%}
+  <div class="frc-pdp-faq">
+    <h2 class="t">Preguntas frecuentes</h2>
+    {%- if faq_content -%}{%- for faq in faq_content -%}
+      <div class="item" data-faq><button class="q"><span>{{ faq.question }}</span><span class="ico">+</span></button><div class="a"><div class="in">{{ faq.answer }}</div></div></div>
+    {%- endfor -%}{%- else -%}
+      <div class="item" data-faq><button class="q"><span>Es 100% natural?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>Si, todos nuestros productos son <strong>100% naturales</strong>, sin aditivos ni conservantes quimicos.</p></div></div></div>
+      <div class="item" data-faq><button class="q"><span>Como se conserva?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>En lugar <strong>fresco y seco</strong>, protegido de la luz solar directa.</p></div></div></div>
+      <div class="item" data-faq><button class="q"><span>Envian a domicilio?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>Si! El envio es <strong>GRATIS</strong> por compras superiores a $200.000 COP.</p></div></div></div>
+      <div class="item" data-faq><button class="q"><span>Tiempo de entrega?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>Entregamos en <strong>24-48 horas habiles</strong> en Bogota.</p></div></div></div>
+      <div class="item" data-faq><button class="q"><span>Tienda fisica?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>Si! <strong>Calle 65g sur #79b-36, Bosa, Bogota</strong>.</p></div></div></div>
+    {%- endif -%}
+  </div>
+  {%- endif -%}
+
+  {%- comment -%} ===== GARANTIA ===== {%- endcomment -%}
+  {%- if section.settings.show_guarantee -%}
+  <div class="frc-pdp-guar">
+    <div class="ico">&#128170;</div>
+    <h3>Garantia de Satisfaccion</h3>
+    <p>Si no estas 100% satisfecho, contactanos por WhatsApp al <strong>302 704 5952</strong> y te ayudamos con la devolucion.</p>
+    <div class="bad"><span>&#128722; +500 clientes</span><span>&#11088; 4.9 en Google</span><span>&#128666; Envios Bogota</span><span>&#128154; Alimentacion consciente</span></div>
+  </div>
+  {%- endif -%}
+
+  {%- comment -%} ===== MOBILE STICKY ===== {%- endcomment -%}
+  <div class="frc-pdp-sticky">
+    <span class="pr">{{ cv.price | money }}</span>
+    <a href="#ProductInfo" class="btn">&#128722; Comprar Ahora</a>
+  </div>
+
+</div>
+
+{%- javascript -%}
+(function(){
+  var wrap=document.querySelector('[data-pdp-tabs]');
+  if(wrap){
+    var tabs=wrap.querySelectorAll('[data-tab]'), panels=wrap.querySelectorAll('[data-panel]');
+    tabs.forEach(function(t){t.addEventListener('click',function(){var x=this.dataset.tab;tabs.forEach(function(a){a.classList.remove('on')});panels.forEach(function(a){a.classList.remove('on')});this.classList.add('on');var p=wrap.querySelector('[data-panel="'+x+'"]');if(p)p.classList.add('on');});});
+  }
+  document.querySelectorAll('[data-faq]').forEach(function(it){var q=it.querySelector('.q');if(q)q.addEventListener('click',function(){var o=it.classList.contains('open');document.querySelectorAll('[data-faq]').forEach(function(z){if(z!==it)z.classList.remove('open');});it.classList.toggle('open',!o);});});
+})();
+{%- endjavascript -%}
+
+{% schema %}
+{
+  "name": "PDP CRO Frutos",
+  "tag": "section",
+  "class": "frutos-pdp-cro",
+  "settings": [
+    {"type":"checkbox","id":"show_breadcrumbs","default":true,"label":"Breadcrumbs"},
+    {"type":"checkbox","id":"show_rating","default":true,"label":"Rating Google"},
+    {"type":"checkbox","id":"show_trust_pills","default":true,"label":"Trust pills"},
+    {"type":"checkbox","id":"show_urgency","default":true,"label":"Urgencia stock"},
+    {"type":"checkbox","id":"show_benefits","default":true,"label":"Benefits bullets"},
+    {"type":"checkbox","id":"show_whatsapp","default":true,"label":"WhatsApp CTA"},
+    {"type":"checkbox","id":"show_tabs","default":true,"label":"Tabs contenido"},
+    {"type":"checkbox","id":"show_cross_sell","default":true,"label":"Cross-sell inteligente"},
+    {"type":"checkbox","id":"show_shipping","default":true,"label":"Info envio"},
+    {"type":"checkbox","id":"show_social_proof","default":true,"label":"Social proof bar"},
+    {"type":"checkbox","id":"show_faq","default":true,"label":"FAQ acordeon"},
+    {"type":"checkbox","id":"show_guarantee","default":true,"label":"Garantia"}
+  ],
+  "presets": [{"name":"PDP CRO Frutos","category":"Frutos de la Raiz"}]
+}
+{% endschema %}
