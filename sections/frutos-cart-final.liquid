@@ -1,0 +1,1938 @@
+{%- comment -%}
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  FRUTOS CART FINAL — frutos-cart-final.liquid               ║
+  ║  CRO-Optimized Shopping Cart for Frutos de la Raíz          ║
+  ║  frutosdelaraiz.com — Shopify Theme                         ║
+  ╚══════════════════════════════════════════════════════════════╝
+
+  INTEGRACIÓN:
+    • Se usa con « frutos-header » al inicio de la página
+    • Se usa con « footer-frutos » al final de la página
+    • Template JSON con order: ["header", "cart", "footer"]
+
+  FUNCIONALIDAD:
+    • Lista de productos con imagen, info, cantidad, precio
+    • Selector de cantidad (+/-) con actualización AJAX
+    • Botón eliminar item con animación fade-out
+    • Barra de progreso para envío gratis
+    • Acordeón: Nota del pedido + Código de descuento
+    • Resumen sticky: subtotal, descuentos, envío, total
+    • Checkout con pago acelerado (PayPal, Google Pay…)
+    • Trust badges de seguridad
+    • Cross-sell "Complementa tu pedido"
+    • Estado vacío con CTA a seguir comprando
+
+  TODAS las clases usan prefijo « frc-cart » para encapsulamiento.
+  JavaScript vanilla, auto-contenido, namespace window.FC.
+{%- endcomment -%}
+
+{%- style -%}
+/* ══════════════════════════════════════════════════════════════
+   FRUTOS CART FINAL — CSS Encapsulado
+   Prefijo: .frc-cart
+   ══════════════════════════════════════════════════════════════ */
+
+.frc-cart {
+  --fc-green-dark:   #1B5E20;
+  --fc-green-med:    #2E7D32;
+  --fc-green:        #4CAF50;
+  --fc-yellow:       #FFC107;
+  --fc-orange:       #FF5722;
+  --fc-red:          #E53935;
+  --fc-bg:           #F5F5F0;
+  --fc-border:       #DDD8CF;
+  --fc-white:        #FFFFFF;
+  --fc-black:        #1A1A1A;
+  --fc-gray:         #757575;
+  --fc-gray-light:   #BDBDBD;
+
+  --fc-font-title:   'Amatic SC', cursive;
+  --fc-font-ui:      'Montserrat', sans-serif;
+  --fc-font-body:    'Lato', sans-serif;
+
+  --fc-radius:       12px;
+  --fc-radius-sm:    8px;
+  --fc-shadow:       0 2px 12px rgba(27,94,32,0.08);
+  --fc-shadow-hover: 0 6px 24px rgba(27,94,32,0.14);
+  --fc-transition:   all 0.3s cubic-bezier(0.4,0,0.2,1);
+
+  font-family: var(--fc-font-body);
+  color: var(--fc-black);
+  background: var(--fc-bg);
+  padding: 24px 0 48px;
+  min-height: 60vh;
+}
+
+/* ── Container ── */
+.frc-cart__container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ── Título del carrito ── */
+.frc-cart__header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.frc-cart__title {
+  font-family: var(--fc-font-title);
+  font-size: clamp(2.8rem, 5vw, 3.8rem);
+  color: var(--fc-green-dark);
+  margin: 0;
+  line-height: 1.1;
+}
+.frc-cart__subtitle {
+  font-family: var(--fc-font-ui);
+  font-size: 0.95rem;
+  color: var(--fc-gray);
+  margin-top: 6px;
+}
+.frc-cart__subtitle-count {
+  color: var(--fc-green-med);
+  font-weight: 700;
+}
+
+/* ── Layout 2 columnas ── */
+.frc-cart__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+@media screen and (min-width: 990px) {
+  .frc-cart__layout {
+    grid-template-columns: 1.85fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+}
+
+/* ── Barra de progreso envío gratis ── */
+.frc-cart__shipping-bar {
+  background: var(--fc-white);
+  border: 1px solid var(--fc-border);
+  border-radius: var(--fc-radius);
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  box-shadow: var(--fc-shadow);
+}
+.frc-cart__shipping-bar--hidden {
+  display: none;
+}
+.frc-cart__shipping-text {
+  font-family: var(--fc-font-ui);
+  font-size: 0.88rem;
+  color: var(--fc-gray);
+  margin: 0 0 12px;
+  text-align: center;
+}
+.frc-cart__shipping-text strong {
+  color: var(--fc-green-dark);
+  font-weight: 700;
+}
+.frc-cart__shipping-text .fc-highlight {
+  color: var(--fc-green);
+  font-weight: 700;
+}
+.frc-cart__shipping-progress {
+  width: 100%;
+  height: 10px;
+  background: #E8E4DB;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.frc-cart__shipping-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--fc-green) 0%, var(--fc-green-med) 100%);
+  border-radius: 999px;
+  width: 0%;
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+.frc-cart__shipping-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+  animation: fc-shimmer 2s infinite;
+}
+@keyframes fc-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.frc-cart__shipping-free .fc-shipping-icon {
+  font-size: 1.1rem;
+  margin-right: 4px;
+}
+
+/* ── Lista de productos ── */
+.frc-cart__products {
+  display: flex;
+  flex-direction: column;
+}
+.frc-cart__items-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Item individual ── */
+.frc-cart__item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: start;
+  background: var(--fc-white);
+  border: 1px solid var(--fc-border);
+  border-radius: var(--fc-radius);
+  padding: 18px;
+  box-shadow: var(--fc-shadow);
+  transition: var(--fc-transition);
+  position: relative;
+}
+.frc-cart__item:hover {
+  box-shadow: var(--fc-shadow-hover);
+  border-color: var(--fc-green);
+}
+.frc-cart__item--removing {
+  opacity: 0;
+  transform: translateX(-30px) scale(0.97);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+.frc-cart__item--soldout {
+  opacity: 0.7;
+}
+
+/* Imagen del item */
+.frc-cart__item-image-wrap {
+  width: 90px;
+  height: 90px;
+  border-radius: var(--fc-radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--fc-border);
+  background: var(--fc-bg);
+}
+.frc-cart__item-image-wrap a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.frc-cart__item-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.frc-cart__item-image-wrap:hover img {
+  transform: scale(1.06);
+}
+
+/* Info del item */
+.frc-cart__item-info {
+  min-width: 0;
+}
+.frc-cart__item-title {
+  font-family: var(--fc-font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--fc-black);
+  margin: 0 0 4px;
+  line-height: 1.35;
+  text-decoration: none;
+  display: inline-block;
+  transition: color 0.2s;
+}
+.frc-cart__item-title:hover {
+  color: var(--fc-green-med);
+}
+.frc-cart__item-vendor {
+  font-size: 0.78rem;
+  color: var(--fc-gray);
+  margin-bottom: 4px;
+  font-family: var(--fc-font-ui);
+}
+.frc-cart__item-variant {
+  font-size: 0.8rem;
+  color: var(--fc-gray);
+  background: var(--fc-bg);
+  padding: 2px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 6px;
+  font-family: var(--fc-font-ui);
+}
+.frc-cart__item-properties {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+.frc-cart__item-properties li {
+  font-size: 0.75rem;
+  color: var(--fc-gray-light);
+  margin-bottom: 2px;
+}
+
+/* Columna derecha del item (cantidad + precio) */
+.frc-cart__item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  min-width: 110px;
+}
+
+/* Precio */
+.frc-cart__item-price {
+  text-align: right;
+}
+.frc-cart__item-unit-price {
+  font-size: 0.8rem;
+  color: var(--fc-gray);
+  text-decoration: line-through;
+  display: block;
+}
+.frc-cart__item-current-price {
+  font-family: var(--fc-font-ui);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--fc-green-dark);
+}
+.frc-cart__item-line-total {
+  font-family: var(--fc-font-ui);
+  font-size: 0.85rem;
+  color: var(--fc-gray);
+  margin-top: 2px;
+}
+
+/* Selector de cantidad */
+.frc-cart__qty {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--fc-border);
+  border-radius: var(--fc-radius-sm);
+  overflow: hidden;
+}
+.frc-cart__qty-btn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: var(--fc-bg);
+  color: var(--fc-green-dark);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--fc-transition);
+  font-family: var(--fc-font-ui);
+  font-weight: 600;
+  user-select: none;
+}
+.frc-cart__qty-btn:hover {
+  background: var(--fc-green);
+  color: var(--fc-white);
+}
+.frc-cart__qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.frc-cart__qty-input {
+  width: 46px;
+  height: 34px;
+  border: none;
+  border-left: 1.5px solid var(--fc-border);
+  border-right: 1.5px solid var(--fc-border);
+  text-align: center;
+  font-family: var(--fc-font-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--fc-black);
+  background: var(--fc-white);
+  -moz-appearance: textfield;
+  outline: none;
+}
+.frc-cart__qty-input::-webkit-outer-spin-button,
+.frc-cart__qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Botón eliminar */
+.frc-cart__remove-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--fc-gray-light);
+  font-size: 0.78rem;
+  font-family: var(--fc-font-ui);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+.frc-cart__remove-btn:hover {
+  color: var(--fc-red);
+}
+.frc-cart__remove-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Badge agotado */
+.frc-cart__soldout-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--fc-red);
+  color: var(--fc-white);
+  font-family: var(--fc-font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Resumen del pedido ── */
+.frc-cart__summary {
+  background: var(--fc-white);
+  border: 1px solid var(--fc-border);
+  border-radius: var(--fc-radius);
+  padding: 24px;
+  box-shadow: var(--fc-shadow);
+  position: relative;
+}
+@media screen and (min-width: 990px) {
+  .frc-cart__summary {
+    position: sticky;
+    top: 24px;
+  }
+}
+.frc-cart__summary-title {
+  font-family: var(--fc-font-title);
+  font-size: 2rem;
+  color: var(--fc-green-dark);
+  margin: 0 0 18px;
+  text-align: center;
+}
+
+/* Líneas del resumen */
+.frc-cart__summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-family: var(--fc-font-ui);
+  font-size: 0.9rem;
+  border-bottom: 1px dashed var(--fc-border);
+}
+.frc-cart__summary-line:last-of-type {
+  border-bottom: none;
+}
+.frc-cart__summary-label {
+  color: var(--fc-gray);
+}
+.frc-cart__summary-value {
+  font-weight: 600;
+  color: var(--fc-black);
+}
+.frc-cart__summary-line--discount .frc-cart__summary-value {
+  color: var(--fc-green);
+}
+.frc-cart__summary-line--total {
+  border-top: 2px solid var(--fc-green-dark);
+  margin-top: 8px;
+  padding-top: 14px;
+}
+.frc-cart__summary-line--total .frc-cart__summary-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fc-green-dark);
+}
+.frc-cart__summary-line--total .frc-cart__summary-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--fc-green-dark);
+}
+.frc-cart__summary-line--total .frc-cart__summary-value.fc-pulse {
+  animation: fc-pulse-value 0.4s ease;
+}
+@keyframes fc-pulse-value {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); color: var(--fc-green); }
+  100% { transform: scale(1); }
+}
+
+/* ── Acordeones ── */
+.frc-cart__accordion {
+  margin-top: 10px;
+  border-top: 1px solid var(--fc-border);
+}
+.frc-cart__accordion-item {
+  border-bottom: 1px solid var(--fc-border);
+}
+.frc-cart__accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 14px 4px;
+  cursor: pointer;
+  font-family: var(--fc-font-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--fc-green-dark);
+  transition: color 0.2s;
+}
+.frc-cart__accordion-header:hover {
+  color: var(--fc-green);
+}
+.frc-cart__accordion-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+  color: var(--fc-green-med);
+}
+.frc-cart__accordion-item.is-open .frc-cart__accordion-icon {
+  transform: rotate(180deg);
+}
+.frc-cart__accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  padding: 0 4px;
+}
+.frc-cart__accordion-item.is-open .frc-cart__accordion-body {
+  max-height: 260px;
+  padding: 0 4px 14px;
+}
+
+/* Textarea nota */
+.frc-cart__note-textarea {
+  width: 100%;
+  min-height: 80px;
+  border: 1.5px solid var(--fc-border);
+  border-radius: var(--fc-radius-sm);
+  padding: 10px 12px;
+  font-family: var(--fc-font-body);
+  font-size: 0.85rem;
+  color: var(--fc-black);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.frc-cart__note-textarea:focus {
+  border-color: var(--fc-green);
+}
+.frc-cart__note-save {
+  margin-top: 8px;
+  padding: 8px 18px;
+  background: var(--fc-green-med);
+  color: var(--fc-white);
+  border: none;
+  border-radius: var(--fc-radius-sm);
+  font-family: var(--fc-font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--fc-transition);
+}
+.frc-cart__note-save:hover {
+  background: var(--fc-green-dark);
+}
+
+/* Campo de descuento */
+.frc-cart__discount-row {
+  display: flex;
+  gap: 8px;
+}
+.frc-cart__discount-input {
+  flex: 1;
+  height: 40px;
+  border: 1.5px solid var(--fc-border);
+  border-radius: var(--fc-radius-sm);
+  padding: 0 12px;
+  font-family: var(--fc-font-ui);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.frc-cart__discount-input:focus {
+  border-color: var(--fc-green);
+}
+.frc-cart__discount-btn {
+  height: 40px;
+  padding: 0 18px;
+  background: var(--fc-yellow);
+  color: var(--fc-black);
+  border: none;
+  border-radius: var(--fc-radius-sm);
+  font-family: var(--fc-font-ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--fc-transition);
+  white-space: nowrap;
+}
+.frc-cart__discount-btn:hover {
+  background: var(--fc-orange);
+  color: var(--fc-white);
+}
+.frc-cart__applied-discounts {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.frc-cart__applied-discount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #E8F5E9;
+  padding: 8px 12px;
+  border-radius: var(--fc-radius-sm);
+  font-size: 0.82rem;
+  font-family: var(--fc-font-ui);
+  margin-bottom: 6px;
+}
+.frc-cart__applied-discount span {
+  color: var(--fc-green-dark);
+  font-weight: 600;
+}
+.frc-cart__applied-discount button {
+  background: none;
+  border: none;
+  color: var(--fc-red);
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-family: var(--fc-font-ui);
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.frc-cart__applied-discount button:hover {
+  background: rgba(229,57,53,0.1);
+}
+
+/* ── Botón Checkout ── */
+.frc-cart__checkout-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, var(--fc-green) 0%, var(--fc-green-dark) 100%);
+  color: var(--fc-white);
+  border: none;
+  border-radius: var(--fc-radius);
+  font-family: var(--fc-font-ui);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: var(--fc-transition);
+  box-shadow: 0 4px 14px rgba(27,94,32,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.frc-cart__checkout-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+}
+.frc-cart__checkout-btn:hover::after {
+  animation: fc-btn-shine 0.6s ease;
+}
+.frc-cart__checkout-btn:hover {
+  box-shadow: 0 6px 22px rgba(27,94,32,0.4);
+  transform: translateY(-1px);
+}
+.frc-cart__checkout-btn:active {
+  transform: translateY(0);
+}
+.frc-cart__checkout-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+@keyframes fc-btn-shine {
+  100% { transform: translateX(100%); }
+}
+
+/* ── Pago acelerado ── */
+.frc-cart__accelerated-checkout {
+  margin-top: 14px;
+}
+.frc-cart__accelerated-label {
+  text-align: center;
+  font-family: var(--fc-font-ui);
+  font-size: 0.78rem;
+  color: var(--fc-gray);
+  margin-bottom: 10px;
+  position: relative;
+}
+.frc-cart__accelerated-label::before,
+.frc-cart__accelerated-label::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 30%;
+  height: 1px;
+  background: var(--fc-border);
+}
+.frc-cart__accelerated-label::before { left: 0; }
+.frc-cart__accelerated-label::after  { right: 0; }
+.frc-cart__additional-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.frc-cart__additional-buttons form,
+.frc-cart__additional-buttons .shopify-payment-button {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* ── Trust Badges ── */
+.frc-cart__trust {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--fc-border);
+}
+.frc-cart__trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--fc-font-ui);
+  font-size: 0.78rem;
+  color: var(--fc-gray);
+}
+.frc-cart__trust-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+/* ── Estado vacío ── */
+.frc-cart__empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--fc-white);
+  border: 1px solid var(--fc-border);
+  border-radius: var(--fc-radius);
+  box-shadow: var(--fc-shadow);
+}
+.frc-cart__empty-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+.frc-cart__empty-title {
+  font-family: var(--fc-font-title);
+  font-size: 2.4rem;
+  color: var(--fc-green-dark);
+  margin: 0 0 8px;
+}
+.frc-cart__empty-text {
+  font-family: var(--fc-font-body);
+  font-size: 0.95rem;
+  color: var(--fc-gray);
+  margin-bottom: 24px;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.frc-cart__empty-btn {
+  display: inline-block;
+  padding: 14px 36px;
+  background: linear-gradient(135deg, var(--fc-green) 0%, var(--fc-green-dark) 100%);
+  color: var(--fc-white);
+  border-radius: var(--fc-radius);
+  font-family: var(--fc-font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--fc-transition);
+  box-shadow: 0 4px 14px rgba(27,94,32,0.3);
+}
+.frc-cart__empty-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--fc-shadow-hover);
+}
+.frc-cart__empty-featured {
+  margin-top: 40px;
+}
+.frc-cart__empty-featured-title {
+  font-family: var(--fc-font-title);
+  font-size: 1.8rem;
+  color: var(--fc-green-dark);
+  margin-bottom: 20px;
+}
+
+/* ── Cross-sell ── */
+.frc-cart__crossell {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 2px solid var(--fc-border);
+}
+.frc-cart__crossell-title {
+  font-family: var(--fc-font-title);
+  font-size: 2.2rem;
+  color: var(--fc-green-dark);
+  text-align: center;
+  margin: 0 0 28px;
+}
+.frc-cart__crossell-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+@media screen and (min-width: 750px) {
+  .frc-cart__crossell-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+.frc-cart__crossell-card {
+  background: var(--fc-white);
+  border: 1px solid var(--fc-border);
+  border-radius: var(--fc-radius);
+  overflow: hidden;
+  box-shadow: var(--fc-shadow);
+  transition: var(--fc-transition);
+  display: flex;
+  flex-direction: column;
+}
+.frc-cart__crossell-card:hover {
+  box-shadow: var(--fc-shadow-hover);
+  transform: translateY(-4px);
+}
+.frc-cart__crossell-image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--fc-border);
+}
+.frc-cart__crossell-info {
+  padding: 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.frc-cart__crossell-name {
+  font-family: var(--fc-font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--fc-black);
+  margin: 0 0 6px;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.frc-cart__crossell-name:hover {
+  color: var(--fc-green-med);
+}
+.frc-cart__crossell-price {
+  font-family: var(--fc-font-ui);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--fc-green-dark);
+  margin-bottom: 10px;
+}
+.frc-cart__crossell-add {
+  margin-top: auto;
+  width: 100%;
+  padding: 10px;
+  background: var(--fc-yellow);
+  color: var(--fc-black);
+  border: none;
+  border-radius: var(--fc-radius-sm);
+  font-family: var(--fc-font-ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--fc-transition);
+}
+.frc-cart__crossell-add:hover {
+  background: var(--fc-orange);
+  color: var(--fc-white);
+}
+.frc-cart__crossell-add:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+/* ── Toast notifications ── */
+.frc-cart__toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--fc-green-dark);
+  color: var(--fc-white);
+  font-family: var(--fc-font-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 12px 28px;
+  border-radius: var(--fc-radius);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+  z-index: 99999;
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.frc-cart__toast--visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.frc-cart__toast--error {
+  background: var(--fc-red);
+}
+
+/* ── Skeleton loading ── */
+@keyframes fc-skeleton {
+  0%   { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+.frc-cart__skeleton {
+  background: linear-gradient(90deg, #E8E4DB 25%, #F0EDE6 50%, #E8E4DB 75%);
+  background-size: 200px 100%;
+  animation: fc-skeleton 1.4s infinite;
+  border-radius: var(--fc-radius-sm);
+}
+
+/* ── Responsive tweaks ── */
+@media screen and (max-width: 749px) {
+  .frc-cart {
+    padding: 16px 0 32px;
+  }
+  .frc-cart__item {
+    grid-template-columns: 72px 1fr;
+    gap: 12px;
+    padding: 14px;
+  }
+  .frc-cart__item-actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-width: auto;
+  }
+  .frc-cart__item-image-wrap {
+    width: 72px;
+    height: 72px;
+  }
+  .frc-cart__summary {
+    padding: 18px;
+  }
+  .frc-cart__trust {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .frc-cart__trust-item {
+    font-size: 0.72rem;
+  }
+  .frc-cart__checkout-btn {
+    font-size: 0.95rem;
+    padding: 14px 20px;
+  }
+}
+{%- endstyle -%}
+
+<!-- ══════════════════════════════════════════════════════════════
+     HTML / LIQUID — Estructura del Carrito
+     ══════════════════════════════════════════════════════════════ -->
+
+<div class="frc-cart" data-section-id="{{ section.id }}">
+  <div class="frc-cart__container">
+
+    {%- comment -%} ===== HEADER DEL CARRITO ===== {%- endcomment -%}
+    <div class="frc-cart__header">
+      <h1 class="frc-cart__title">Tu Carrito 🛒</h1>
+      <p class="frc-cart__subtitle">
+        <span class="frc-cart__subtitle-count" data-cart-count>{{ cart.item_count }}</span>
+        {{ cart.item_count | pluralize: 'producto en tu carrito', 'productos en tu carrito' }}
+      </p>
+    </div>
+
+    {%- comment -%} ===== LAYOUT PRINCIPAL 2 COLUMNAS ===== {%- endcomment -%}
+    <div class="frc-cart__layout">
+
+      {%- comment -%} ===== COLUMNA IZQUIERDA: PRODUCTOS ===== {%- endcomment -%}
+      <div class="frc-cart__products">
+
+        {% if cart.item_count > 0 %}
+
+          {%- comment -%} Barra de progreso envío gratis {%- endcomment -%}
+          {% if section.settings.show_shipping_bar %}
+            {% assign free_ship_threshold = section.settings.free_shipping_threshold | default: 200000 %}
+            {% assign pct_raw = cart.total_price | times: 100.0 | divided_by: free_ship_threshold %}
+            {% assign pct = pct_raw | at_most: 100 %}
+            {% assign remaining = free_ship_threshold | minus: cart.total_price %}
+            {% if remaining > 0 %}
+              {% assign remaining_money = remaining | money %}
+            {% endif %}
+
+            <div
+              class="frc-cart__shipping-bar {% if remaining <= 0 %}frc-cart__shipping-free{% endif %}"
+              data-shipping-bar
+              data-threshold="{{ free_ship_threshold }}"
+            >
+              <p class="frc-cart__shipping-text" data-shipping-text>
+                {% if remaining > 0 %}
+                  ¡Te faltan <strong>{{ remaining_money }}</strong> para envío gratis!
+                {% else %}
+                  <span class="fc-shipping-icon">🎉</span> <strong class="fc-highlight">¡Felicidades! Tienes envío gratis</strong>
+                {% endif %}
+              </p>
+              <div class="frc-cart__shipping-progress">
+                <div
+                  class="frc-cart__shipping-fill"
+                  data-shipping-fill
+                  style="width: {{ pct }}%;"
+                ></div>
+              </div>
+            </div>
+          {% endif %}
+
+          {%- comment -%} Lista de items del carrito {%- endcomment -%}
+          <ul class="frc-cart__items-list" data-cart-items>
+            {% for item in cart.items %}
+              <li
+                class="frc-cart__item {% unless item.variant.available %}frc-cart__item--soldout{% endunless %}"
+                data-cart-item
+                data-item-key="{{ item.key }}"
+                data-item-index="{{ forloop.index }}"
+              >
+
+                {%- comment -%} Badge agotado {%- endcomment -%}
+                {% unless item.variant.available %}
+                  <span class="frc-cart__soldout-badge">Agotado</span>
+                {% endunless %}
+
+                {%- comment -%} Imagen del producto {%- endcomment -%}
+                <div class="frc-cart__item-image-wrap">
+                  {% if item.image %}
+                    <a href="{{ item.url }}" aria-label="Ver {{ item.product.title | escape }}">
+                      {{ item.image | image_url: width: 200 | image_tag:
+                        loading: 'lazy',
+                        alt: item.product.title | escape
+                      }}
+                    </a>
+                  {% else %}
+                    <div class="frc-cart__skeleton" style="width:100%;height:100%;"></div>
+                  {% endif %}
+                </div>
+
+                {%- comment -%} Info del producto {%- endcomment -%}
+                <div class="frc-cart__item-info">
+                  <a href="{{ item.url }}" class="frc-cart__item-title">{{ item.product.title }}</a>
+
+                  {% if item.vendor != blank %}
+                    <div class="frc-cart__item-vendor">{{ item.vendor }}</div>
+                  {% endif %}
+
+                  {% unless item.variant.title == 'Default Title' or item.variant.title == 'Default' %}
+                    <div class="frc-cart__item-variant">{{ item.variant.title }}</div>
+                  {% endunless %}
+
+                  {%- comment -%} Propiedades personalizadas {%- endcomment -%}
+                  {% assign property_size = item.properties | size %}
+                  {% if property_size > 0 %}
+                    <ul class="frc-cart__item-properties">
+                      {% for p in item.properties %}
+                        {% unless p.last == blank %}
+                          <li>
+                            {{ p.first }}: {{ p.last }}
+                          </li>
+                        {% endunless %}
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+
+                  {%- comment -%} Precio unitario {%- endcomment -%}
+                  <div class="frc-cart__item-price">
+                    {% if item.original_price > item.price %}
+                      <span class="frc-cart__item-unit-price">{{ item.original_price | money }}</span>
+                    {% endif %}
+                    <span class="frc-cart__item-current-price">{{ item.price | money }}</span>
+                    <span class="frc-cart__item-line-total" data-item-line-total>
+                      Total: {{ item.line_price | money }}
+                    </span>
+                  </div>
+                </div>
+
+                {%- comment -%} Acciones: cantidad + eliminar {%- endcomment -%}
+                <div class="frc-cart__item-actions">
+                  <div class="frc-cart__qty">
+                    <button
+                      type="button"
+                      class="frc-cart__qty-btn"
+                      data-qty-minus
+                      data-item-key="{{ item.key }}"
+                      aria-label="Disminuir cantidad"
+                    >−</button>
+                    <input
+                      type="number"
+                      class="frc-cart__qty-input"
+                      data-qty-input
+                      data-item-key="{{ item.key }}"
+                      value="{{ item.quantity }}"
+                      min="1"
+                      max="{% if item.variant.inventory_quantity > 0 %}{{ item.variant.inventory_quantity }}{% else %}999{% endif %}"
+                      aria-label="Cantidad de {{ item.product.title | escape }}"
+                    >
+                    <button
+                      type="button"
+                      class="frc-cart__qty-btn"
+                      data-qty-plus
+                      data-item-key="{{ item.key }}"
+                      aria-label="Aumentar cantidad"
+                    >+</button>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="frc-cart__remove-btn"
+                    data-remove-item
+                    data-item-key="{{ item.key }}"
+                    aria-label="Eliminar {{ item.product.title | escape }}"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    Eliminar
+                  </button>
+                </div>
+
+              </li>
+            {% endfor %}
+          </ul>
+
+        {% else %}
+
+          {%- comment -%} ===== ESTADO VACÍO ===== {%- endcomment -%}
+          <div class="frc-cart__empty" data-empty-state>
+            <div class="frc-cart__empty-icon">🛒</div>
+            <h2 class="frc-cart__empty-title">Tu carrito está vacío</h2>
+            <p class="frc-cart__empty-text">
+              Descubre nuestros productos naturales de la mejor calidad, directamente de Colombia a tu puerta.
+            </p>
+            <a href="/collections/all" class="frc-cart__empty-btn">
+              Seguir comprando
+            </a>
+
+            {%- comment -%} Productos destacados en estado vacío {%- endcomment -%}
+            {% assign empty_collection = section.settings.cross_sell_collection | default: 'all' %}
+            {% assign empty_collection_obj = collections[empty_collection] %}
+            {% if empty_collection_obj and empty_collection_obj.products_count > 0 %}
+              <div class="frc-cart__empty-featured">
+                <h3 class="frc-cart__empty-featured-title">Productos destacados</h3>
+                <div class="frc-cart__crossell-grid">
+                  {% for product in empty_collection_obj.products limit: 4 %}
+                    <div class="frc-cart__crossell-card">
+                      <a href="{{ product.url }}">
+                        {% if product.featured_image %}
+                          {{ product.featured_image | image_url: width: 400 | image_tag:
+                            class: 'frc-cart__crossell-image',
+                            loading: 'lazy',
+                            alt: product.title | escape
+                          }}
+                        {% else %}
+                          <div class="frc-cart__crossell-image frc-cart__skeleton"></div>
+                        {% endif %}
+                      </a>
+                      <div class="frc-cart__crossell-info">
+                        <a href="{{ product.url }}" class="frc-cart__crossell-name">{{ product.title }}</a>
+                        <div class="frc-cart__crossell-price">{{ product.price | money }}</div>
+                        <button
+                          type="button"
+                          class="frc-cart__crossell-add"
+                          data-add-to-cart
+                          data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                        >
+                          Añadir al carrito
+                        </button>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+
+        {% endif %}
+
+      </div>
+
+      {%- comment -%} ===== COLUMNA DERECHA: RESUMEN ===== {%- endcomment -%}
+      {% if cart.item_count > 0 %}
+        <div class="frc-cart__summary" data-summary>
+          <h2 class="frc-cart__summary-title">Resumen del pedido</h2>
+
+          {%- comment -%} Líneas del resumen {%- endcomment -%}
+          <div class="frc-cart__summary-line">
+            <span class="frc-cart__summary-label">Subtotal</span>
+            <span class="frc-cart__summary-value" data-summary-subtotal>{{ cart.items_subtotal_price | money }}</span>
+          </div>
+
+          {%- comment -%} Descuentos {%- endcomment -%}
+          {% if cart.cart_level_discount_applications.size > 0 %}
+            {% for discount in cart.cart_level_discount_applications %}
+              <div class="frc-cart__summary-line frc-cart__summary-line--discount">
+                <span class="frc-cart__summary-label">{{ discount.title }}</span>
+                <span class="frc-cart__summary-value">-{{ discount.total_allocated_amount | money }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+          <div data-discounts-dynamic>
+            {% if cart.cart_level_discount_applications.size > 0 %}
+              {% for discount in cart.cart_level_discount_applications %}
+                <div class="frc-cart__summary-line frc-cart__summary-line--discount" data-discount-line>
+                  <span class="frc-cart__summary-label">{{ discount.title }}</span>
+                  <span class="frc-cart__summary-value" data-discount-value="{{ discount.total_allocated_amount }}">-{{ discount.total_allocated_amount | money }}</span>
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+          {%- comment -%} Envío {%- endcomment -%}
+          <div class="frc-cart__summary-line">
+            <span class="frc-cart__summary-label">Envío</span>
+            <span class="frc-cart__summary-value" data-summary-shipping>
+              {% assign free_ship_threshold = section.settings.free_shipping_threshold | default: 200000 %}
+              {% if cart.total_price >= free_ship_threshold %}
+                <span style="color: var(--fc-green); font-weight: 700;">¡Gratis!</span>
+              {% else %}
+                Calculado en el checkout
+              {% endif %}
+            </span>
+          </div>
+
+          {%- comment -%} TOTAL {%- endcomment -%}
+          <div class="frc-cart__summary-line frc-cart__summary-line--total">
+            <span class="frc-cart__summary-label">Total</span>
+            <span class="frc-cart__summary-value" data-summary-total>{{ cart.total_price | money }}</span>
+          </div>
+
+          {%- comment -%} Acordeón: Nota del pedido {%- endcomment -%}
+          {% if section.settings.show_note %}
+            <div class="frc-cart__accordion">
+              <div class="frc-cart__accordion-item" data-accordion-item>
+                <button type="button" class="frc-cart__accordion-header" data-accordion-toggle>
+                  <span>📝 Nota del pedido</span>
+                  <svg class="frc-cart__accordion-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="frc-cart__accordion-body" data-accordion-body>
+                  <textarea
+                    class="frc-cart__note-textarea"
+                    data-cart-note
+                    placeholder="Instrucciones especiales para tu pedido..."
+                  >{{ cart.note }}</textarea>
+                  <button type="button" class="frc-cart__note-save" data-note-save>Guardar nota</button>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          {%- comment -%} Acordeón: Código de descuento {%- endcomment -%}
+          {% if section.settings.show_discount %}
+            <div class="frc-cart__accordion">
+              <div class="frc-cart__accordion-item" data-accordion-item>
+                <button type="button" class="frc-cart__accordion-header" data-accordion-toggle>
+                  <span>🏷️ Código de descuento</span>
+                  <svg class="frc-cart__accordion-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="frc-cart__accordion-body" data-accordion-body>
+                  <div class="frc-cart__discount-row">
+                    <input
+                      type="text"
+                      class="frc-cart__discount-input"
+                      data-discount-input
+                      placeholder="CÓDIGO"
+                    >
+                    <button type="button" class="frc-cart__discount-btn" data-discount-apply>Aplicar</button>
+                  </div>
+                  {% if cart.discount_applications.size > 0 %}
+                    <ul class="frc-cart__applied-discounts">
+                      {% for discount in cart.discount_applications %}
+                        <li class="frc-cart__applied-discount">
+                          <span>{{ discount.title }} (-{{ discount.total_allocated_amount | money }})</span>
+                          <button type="button" data-discount-remove="{{ discount.title }}">✕ Eliminar</button>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          {%- comment -%} Botón Checkout {%- endcomment -%}
+          <form action="{{ routes.cart_url }}" method="post" data-checkout-form>
+            <button
+              type="submit"
+              name="checkout"
+              class="frc-cart__checkout-btn"
+              data-checkout-btn
+            >
+              Finalizar compra →
+            </button>
+          </form>
+
+          {%- comment -%} Botones de pago acelerado {%- endcomment -%}
+          {% if additional_checkout_buttons %}
+            <div class="frc-cart__accelerated-checkout">
+              <div class="frc-cart__accelerated-label">O paga con</div>
+              <div class="frc-cart__additional-buttons">
+                {{ content_for_additional_checkout_buttons }}
+              </div>
+            </div>
+          {% endif %}
+
+          {%- comment -%} Trust Badges {%- endcomment -%}
+          <div class="frc-cart__trust">
+            <div class="frc-cart__trust-item">
+              <span class="frc-cart__trust-icon">🔒</span>
+              <span>Pago 100% seguro</span>
+            </div>
+            <div class="frc-cart__trust-item">
+              <span class="frc-cart__trust-icon">🚚</span>
+              <span>Envío rápido</span>
+            </div>
+            <div class="frc-cart__trust-item">
+              <span class="frc-cart__trust-icon">🔄</span>
+              <span>Devoluciones fáciles</span>
+            </div>
+            <div class="frc-cart__trust-item">
+              <span class="frc-cart__trust-icon">💬</span>
+              <span>Soporte por WhatsApp</span>
+            </div>
+          </div>
+
+        </div>
+      {% endif %}
+
+    </div>
+
+    {%- comment -%} ===== CROSS-SELL ===== {%- endcomment -%}
+    {% if section.settings.show_cross_sell and cart.item_count > 0 %}
+      {% assign cross_sell_collection = section.settings.cross_sell_collection | default: 'all' %}
+      {% assign cross_sell_collection_obj = collections[cross_sell_collection] %}
+      {% if cross_sell_collection_obj and cross_sell_collection_obj.products_count > 0 %}
+        <div class="frc-cart__crossell" data-cross-sell>
+          <h2 class="frc-cart__crossell-title">Complementa tu pedido</h2>
+          <div class="frc-cart__crossell-grid">
+
+            {% assign cart_product_ids = '' %}
+            {% for item in cart.items %}
+              {% assign cart_product_ids = cart_product_ids | append: item.product.id | append: ',' %}
+            {% endfor %}
+
+            {% assign shown_count = 0 %}
+            {% assign limit = section.settings.cross_sell_limit | default: 4 %}
+
+            {% for product in cross_sell_collection_obj.products %}
+              {% if shown_count < limit %}
+                {% assign product_id_str = product.id | append: '' %}
+                {% unless cart_product_ids contains product_id_str %}
+                  <div class="frc-cart__crossell-card">
+                    <a href="{{ product.url }}">
+                      {% if product.featured_image %}
+                        {{ product.featured_image | image_url: width: 400 | image_tag:
+                          class: 'frc-cart__crossell-image',
+                          loading: 'lazy',
+                          alt: product.title | escape
+                        }}
+                      {% else %}
+                        <div class="frc-cart__crossell-image frc-cart__skeleton"></div>
+                      {% endif %}
+                    </a>
+                    <div class="frc-cart__crossell-info">
+                      <a href="{{ product.url }}" class="frc-cart__crossell-name">{{ product.title }}</a>
+                      <div class="frc-cart__crossell-price">{{ product.price | money }}</div>
+                      <button
+                        type="button"
+                        class="frc-cart__crossell-add"
+                        data-add-to-cart
+                        data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                      >
+                        Añadir al carrito
+                      </button>
+                    </div>
+                  </div>
+                  {% assign shown_count = shown_count | plus: 1 %}
+                {% endunless %}
+              {% endif %}
+            {% endfor %}
+
+          </div>
+        </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
+</div>
+
+{%- comment -%} Toast container {%- endcomment -%}
+<div class="frc-cart__toast" data-toast></div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     JAVASCRIPT VANILLA — Motor del Carrito
+     Namespace: window.FC  |  Todas las clases: .frc-cart
+     ══════════════════════════════════════════════════════════════ -->
+
+<script>
+(function() {
+  'use strict';
+
+  /* ── Namespace ── */
+  window.FC = window.FC || {};
+
+  /* ── Referencias DOM cacheadas ── */
+  const D = document;
+  const section = D.querySelector('.frc-cart');
+  if (!section) return;
+
+  const FC = {
+    els: {
+      section:       section,
+      itemsList:     section.querySelector('[data-cart-items]'),
+      subtotal:      D.querySelector('[data-summary-subtotal]'),
+      total:         D.querySelector('[data-summary-total]'),
+      shippingText:  D.querySelector('[data-shipping-text]'),
+      shippingFill:  D.querySelector('[data-shipping-fill]'),
+      shippingBar:   D.querySelector('[data-shipping-bar]'),
+      noteArea:      D.querySelector('[data-cart-note]'),
+      noteSave:      D.querySelector('[data-note-save]'),
+      discInput:     D.querySelector('[data-discount-input]'),
+      discApply:     D.querySelector('[data-discount-apply]'),
+      toast:         D.querySelector('[data-toast]'),
+      emptyState:    D.querySelector('[data-empty-state]'),
+      checkoutBtn:   D.querySelector('[data-checkout-btn]'),
+    },
+    cfg: {
+      FREE_SHIP: parseInt(section.querySelector('[data-shipping-bar]')?.dataset.threshold || '200000', 10) * 100,
+LOCALE: {{ shop.money_format | json }}.replace(/\{\{\s*amount\s*\}\}/g, '{AMOUNT}'),    }
+  };
+
+  window.FC._cart = FC;
+
+  /* ── Utilidades ── */
+
+  /**
+   * Formatea un precio en centavos a string de moneda (pesos colombianos).
+   */
+  function fcFormatMoney(cents) {
+    var value = (cents / 100).toFixed(0);
+    var parts = value.split('');
+    var result = [];
+    var count = 0;
+    for (var i = parts.length - 1; i >= 0; i--) {
+      result.unshift(parts[i]);
+      count++;
+      if (count === 3 && i > 0) {
+        result.unshift('.');
+        count = 0;
+      }
+    }
+    var amount = result.join('');
+    var tmpl = FC.cfg.LOCALE;
+    if (tmpl.indexOf('{AMOUNT}') > -1) {
+      return tmpl.replace('{AMOUNT}', amount);
+    }
+    return '$ ' + amount;
+  }
+
+  /**
+   * Muestra un toast notification.
+   * @param {string} msg  - Mensaje a mostrar
+   * @param {boolean} isError  - Si es true, muestra en rojo
+   */
+  function fcToast(msg, isError) {
+    var el = FC.els.toast;
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'frc-cart__toast' + (isError ? ' frc-cart__toast--error' : '');
+    requestAnimationFrame(function() {
+      el.classList.add('frc-cart__toast--visible');
+    });
+    clearTimeout(fcToast._t);
+    fcToast._t = setTimeout(function() {
+      el.classList.remove('frc-cart__toast--visible');
+    }, 2800);
+  }
+  FC.toast = fcToast;
+
+  /**
+   * Actualiza el contador del carrito en el header.
+   */
+  function fcUpdateHeaderCount(count) {
+    D.querySelectorAll('[data-cart-count]').forEach(function(el) {
+      el.textContent = count;
+    });
+  }
+  FC.updateHeaderCount = fcUpdateHeaderCount;
+
+  /**
+   * Actualiza la barra de progreso de envío gratis.
+   */
+  function fcUpdateShippingBar(cartTotal) {
+    var fill   = FC.els.shippingFill;
+    var text   = FC.els.shippingText;
+    var bar    = FC.els.shippingBar;
+    if (!fill || !text || !bar) return;
+
+    var threshold = FC.cfg.FREE_SHIP;
+    var pct = Math.min((cartTotal / threshold) * 100, 100);
+    fill.style.width = pct + '%';
+
+    if (cartTotal >= threshold) {
+      text.innerHTML = '<span class="fc-shipping-icon">🎉</span> <strong class="fc-highlight">¡Felicidades! Tienes envío gratis</strong>';
+      bar.classList.add('frc-cart__shipping-free');
+    } else {
+      var remaining = threshold - cartTotal;
+      var remainingMoney = fcFormatMoney(remaining);
+      text.innerHTML = '¡Te faltan <strong>' + remainingMoney + '</strong> para envío gratis!';
+      bar.classList.remove('frc-cart__shipping-free');
+    }
+  }
+  FC.updateShippingBar = fcUpdateShippingBar;
+
+  /**
+   * Actualiza los totales en el resumen sin recargar la página.
+   */
+  function fcUpdateTotals(cart) {
+    if (FC.els.subtotal) {
+      FC.els.subtotal.textContent = fcFormatMoney(cart.items_subtotal_price);
+    }
+    if (FC.els.total) {
+      FC.els.total.textContent = fcFormatMoney(cart.total_price);
+      FC.els.total.classList.add('fc-pulse');
+      setTimeout(function() {
+        if (FC.els.total) FC.els.total.classList.remove('fc-pulse');
+      }, 400);
+    }
+
+    var shippingVal = D.querySelector('[data-summary-shipping]');
+    if (shippingVal) {
+      if (cart.total_price >= FC.cfg.FREE_SHIP) {
+        shippingVal.innerHTML = '<span style="color:#4CAF50;font-weight:700;">¡Gratis!</span>';
+      } else {
+        shippingVal.textContent = 'Calculado en el checkout';
+      }
+    }
+  }
+  FC.updateTotals = fcUpdateTotals;
+
+  /**
+   * Actualiza el subtotal de un item individual.
+   */
+  function fcUpdateItemLineTotal(key, linePrice) {
+    var item = D.querySelector('[data-item-key="' + key + '"]');
+    if (item) {
+      var lineTotalEl = item.querySelector('[data-item-line-total]');
+      if (lineTotalEl) {
+        lineTotalEl.textContent = 'Total: ' + fcFormatMoney(linePrice);
+      }
+    }
+  }
+  FC.updateItemLineTotal = fcUpdateItemLineTotal;
+
+  /**
+   * Elimina un item del DOM con animación.
+   */
+  function fcRemoveItemDOM(key) {
+    var item = D.querySelector('[data-item-key="' + key + '"]');
+    if (!item) return;
+    item.classList.add('frc-cart__item--removing');
+    setTimeout(function() {
+      item.remove();
+      if (FC.els.itemsList && FC.els.itemsList.children.length === 0) {
+        window.location.reload();
+      }
+    }, 380);
+  }
+  FC.removeItemDOM = fcRemoveItemDOM;
+
+  /**
+   * Refresh completo después de cambios en el carrito.
+   * Re-fetch para asegurar datos sincronizados.
+   */
+  function fcRefreshCart(cart) {
+    fcUpdateTotals(cart);
+    fcUpdateShippingBar(cart.total_price);
+    fcUpdateHeaderCount(cart.item_count);
+
+    cart.items.forEach(function(item) {
+      var input = D.querySelector('[data-qty-input][data-item-key="' + item.key + '"]');
+      if (input) input.value = item.quantity;
+      fcUpdateItemLineTotal(item.key, item.line_price);
+    });
+
+    FC.currentCart = cart;
+  }
+  FC.refreshCart = fcRefreshCart;
+
+  /* ── Acciones AJAX ── */
+
+  /**
+   * Actualizar cantidad de un item.
+   */
+  function fcUpdateQty(key, qty) {
+    var input = D.querySelector('[data-qty-input][data-item-key="' + key + '"]');
+    if (input) input.disabled = true;
+
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ id: key, quantity: qty })
+    })
+    .then(function(r) {
+      if (!r.ok) {
+        return r.json().then(function(err) { throw new Error(err.description || err.message); });
+      }
+      return r.json();
+    })
+    .then(function(cart) {
+      fcRefreshCart(cart);
+      fcToast('Cantidad actualizada');
+      if (input) input.disabled = false;
+    })
+    .catch(function(err) {
+      fcToast(err && err.message ? err.message : 'Error al actualizar cantidad', true);
+      if (input) input.disabled = false;
+      fetch('/cart.js')
+        .then(function(r) { return r.json(); })
+        .then(function(cart) { fcRefreshCart(cart); });
+    });
+  }
+  FC.updateQty = fcUpdateQty;
+
+  /**
+   * Eliminar un item del carrito.
+   */
+  function fcRemoveItem(key) {
+    if (!confirm('¿Eliminar este producto de tu carrito?')) return;
+
+    fcRemoveItemDOM(key);
+
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ id: key, quantity: 0 })
+    })
+    .then(function(r) {
+      if (!r.ok) {
+        return r.json().then(function(err) { throw new Error(err.description || err.message); });
+      }
+      return r.json();
+    })
+    .then(function(cart) {
+      fcRefreshCart(cart);
+      fcToast('Producto eliminado');
+    })
+    .catch(function(err) {
+      fcToast(err && err.message ? err.message : 'Error al eliminar', true);
+      window.location.reload();
+    });
+  }
+  FC.removeItem = fcRemoveItem;
+
+  /**
+   * Guardar nota del pedido.
+   */
+  function fcUpdateNote(note) {
+    var btn = FC.els.noteSave;
+    if (btn) { btn.textContent = 'Guardando...'; btn.disabled = true; }
+
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ note: note })
+    })
+    .then(function(r) {
+      if (!r.ok) {
+        return r.json().then(function(err) { throw new Error(err.description || err.message); });
+      }
+      return r.json();
+    })
+    .then(function() {
+      fcToast('Nota guardada');
+      if (btn) { btn.textContent = 'Guardar nota'; btn.disabled = false; }
+    })
+    .catch(function(err) {
+      fcToast(err && err.message ? err.message : 'Error al guardar nota', true);
+      if (btn) { btn.textContent = 'Guardar nota'; btn.disabled = false; }
+    });
+  }
+  FC.updateNote = fcUpdateNote;
+
+  /**
+   * Aplicar código de descuento.
+   */
+  function fcApplyDiscount(code) {
+    if (!code || !code.trim()) {
+      fcToast('Ingresa un código de descuento', true);
+      return;
+    }
+    var btn = FC.els.discApply;
+    if (btn) { btn.textContent = 'Aplicando...'; btn.disabled = true; }
+
+    fetch('/discount/' + encodeURIComponent(code.trim()))
+    .then(function() {
+      window.location.reload();
+    })
+    .catch(function() {
+      fcToast('Código no válido o expirado', true);
+      if (btn) { btn.textContent = 'Aplicar'; btn.disabled = false; }
+    });
+  }
+  FC.applyDiscount = fcApplyDiscount;
+
+  /**
+   * Añadir al carrito (cross-sell).
+   */
+  function fcAddCrossSell(variantId) {
+    variantId = parseInt(variantId) || 0;
+    if (!variantId) { fcToast('Error: variante no válida', true); return; }
+    var btn = D.querySelector('[data-add-to-cart][data-variant-id="' + variantId + '"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Agregando...'; }
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ id: variantId, quantity: 1 })
+    })
+    .then(function(r) {
+      if (!r.ok) {
+        return r.json().then(function(err) { throw new Error(err.description || err.message); });
+      }
+      return r.json();
+    })
+    .then(function() {
+      window.location.href = '/cart';
+    })
+    .catch(function(err) {
+      fcToast(err && err.message ? err.message : 'Error al añadir producto', true);
+      if (btn) { btn.disabled = false; btn.textContent = 'Añadir al carrito'; }
+    });
+  }
+  FC.addCrossSell = fcAddCrossSell;
+
+  /* ── Event Delegation ── */
+
+  FC.els.section.addEventListener('click', function(ev) {
+    var target = ev.target;
+
+    {%- comment -%} Botón cantidad [-] {%- endcomment -%}
+    if (target.closest('[data-qty-minus]')) {
+      var btn = target.closest('[data-qty-minus]');
+      var key = btn.dataset.itemKey;
+      var input = D.querySelector('[data-qty-input][data-item-key="' + key + '"]');
+      if (input) {
+        var val = parseInt(input.value, 10) || 1;
+        if (val > 1) fcUpdateQty(key, val - 1);
+      }
+      return;
+    }
+
+    {%- comment -%} Botón cantidad [+] {%- endcomment -%}
+    if (target.closest('[data-qty-plus]')) {
+      var btn = target.closest('[data-qty-plus]');
+      var key = btn.dataset.itemKey;
+      var input = D.querySelector('[data-qty-input][data-item-key="' + key + '"]');
+      if (input) {
+        var val = parseInt(input.value, 10) || 1;
+        var max = parseInt(input.max, 10) || 999;
+        if (val < max) fcUpdateQty(key, val + 1);
+      }
+      return;
+    }
+
+    {%- comment -%} Botón eliminar {%- endcomment -%}
+    if (target.closest('[data-remove-item]')) {
+      var btn = target.closest('[data-remove-item]');
+      fcRemoveItem(btn.dataset.itemKey);
+      return;
+    }
+
+    {%- comment -%} Acordeón toggle {%- endcomment -%}
+    if (target.closest('[data-accordion-toggle]')) {
+      var toggle = target.closest('[data-accordion-toggle]');
+      var item = toggle.closest('[data-accordion-item]');
+      if (item) item.classList.toggle('is-open');
+      return;
+    }
+
+    {%- comment -%} Guardar nota {%- endcomment -%}
+    if (target.closest('[data-note-save]')) {
+      var note = FC.els.noteArea ? FC.els.noteArea.value : '';
+      fcUpdateNote(note);
+      return;
+    }
+
+    {%- comment -%} Aplicar descuento {%- endcomment -%}
+    if (target.closest('[data-discount-apply]')) {
+      var code = FC.els.discInput ? FC.els.discInput.value : '';
+      fcApplyDiscount(code);
+      return;
+    }
+
+    {%- comment -%} Eliminar descuento {%- endcomment -%}
+    if (target.closest('[data-discount-remove]')) {
+      window.location.href = '/cart?discount=0';
+      return;
+    }
+
+    {%- comment -%} Cross-sell añadir {%- endcomment -%}
+    if (target.closest('[data-add-to-cart]')) {
+      var btn = target.closest('[data-add-to-cart]');
+      fcAddCrossSell(btn.dataset.variantId);
+      return;
+    }
+  });
+
+  {%- comment -%} Input cantidad: blur/enter {%- endcomment -%}
+  FC.els.section.addEventListener('change', function(ev) {
+    if (ev.target.matches('[data-qty-input]')) {
+      var input = ev.target;
+      var key = input.dataset.itemKey;
+      var val = parseInt(input.value, 10) || 1;
+      var min = parseInt(input.min, 10) || 1;
+      var max = parseInt(input.max, 10) || 999;
+      if (val < min) val = min;
+      if (val > max) val = max;
+      input.value = val;
+      fcUpdateQty(key, val);
+    }
+  });
+
+  FC.els.section.addEventListener('keydown', function(ev) {
+    if (ev.target.matches('[data-qty-input]') && ev.key === 'Enter') {
+      ev.target.blur();
+    }
+    if (ev.target.matches('[data-discount-input]') && ev.key === 'Enter') {
+      fcApplyDiscount(ev.target.value);
+    }
+  });
+
+  /* ── Inicialización ── */
+
+  document.addEventListener('DOMContentLoaded', function() {
+    {%- comment -%} Precargar datos del carrito {%- endcomment -%}
+    fetch('/cart.js')
+      .then(function(r) { return r.json(); })
+      .then(function(cart) {
+        FC.currentCart = cart;
+        fcUpdateShippingBar(cart.total_price);
+        fcUpdateHeaderCount(cart.item_count);
+      })
+      .catch(function() { console.warn('[FC] No se pudo cargar el carrito'); });
+  });
+
+  console.log('[FrutosCart] Sección "' + (section.dataset.sectionId || '?') + '" inicializada ✅');
+
+})();
+</script>
+
+
+{% schema %}
+{
+  "name": "Frutos Cart Final",
+  "tag": "section",
+  "class": "frc-cart-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🚚 Barra de envío gratis"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_bar",
+      "label": "Mostrar barra de progreso",
+      "default": true
+    },
+  {
+  "type": "number",
+  "id": "free_shipping_threshold",
+  "label": "Umbral para envío gratis",
+  "info": "El cliente obtiene envío gratis cuando el total supera este monto",
+  "default": 200000
+},
+    {
+      "type": "header",
+      "content": "📝 Nota del pedido"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_note",
+      "label": "Mostrar campo de nota del pedido",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "🏷️ Código de descuento"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discount",
+      "label": "Mostrar campo de código de descuento",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "🎁 Cross-sell (productos recomendados)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cross_sell",
+      "label": "Mostrar productos recomendados",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "cross_sell_collection",
+      "label": "Colección para cross-sell"
+    },
+    {
+      "type": "range",
+      "id": "cross_sell_limit",
+      "label": "Cantidad de productos a mostrar",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Frutos Cart Final",
+      "category": "Frutos de la Raíz"
+    }
+  ]
+}
+{% endschema %}

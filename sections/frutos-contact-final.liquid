@@ -1,0 +1,1429 @@
+{% comment %}
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  FRUTOS DE LA RAÍZ — PÁGINA DE CONTACTO COMPLETA            ║
+  ║  Archivo: frutos-contact-final.liquid                        ║
+  ║  Uso: Añadir como sección en página de contacto             ║
+  ║  Requiere: frutos-header (arriba) + footer-frutos (abajo)   ║
+  ╚══════════════════════════════════════════════════════════════╝
+{% endcomment %}
+
+{%- style -%}
+/* ═══════════════════════════════════════════════════════════════
+   FRUTOS CONTACT — CSS COMPLETO (prefijo .frc-)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Variables CSS ── */
+.frc-contact {
+  --frc-green-dark: #1B5E20;
+  --frc-green-mid:  #2E7D32;
+  --frc-green-light:#4CAF50;
+  --frc-green-lime: #76FF03;
+  --frc-yellow:     #FFC107;
+  --frc-orange:     #FF5722;
+  --frc-brown:      #5D4037;
+  --frc-brown-mid:  #8D6E63;
+  --frc-cream:      #F5F5F0;
+  --frc-cream-light:#FAFAF8;
+  --frc-text:       #333333;
+  --frc-text-light: #f4f4f4;
+  --frc-muted:      #d7ccc8;
+  --frc-border:     #DDD8CF;
+  --frc-white:      #ffffff;
+  --frc-shadow:     0 4px 20px rgba(27,94,32,0.12);
+  --frc-shadow-lg:  0 8px 32px rgba(27,94,32,0.18);
+  --frc-shadow-input: 0 0 0 4px rgba(76,175,80,0.15);
+  --frc-radius-sm:  12px;
+  --frc-radius-md:  16px;
+  --frc-radius-lg:  50px;
+  --frc-radius-full: 100px;
+  --frc-font-title: 'Amatic SC', cursive;
+  --frc-font-ui:    'Montserrat', sans-serif;
+  --frc-font-body:  'Lato', sans-serif;
+  --frc-max-width:  {{ section.settings.max_width | default: 1200 }}px;
+  --frc-pt:         {{ section.settings.padding_top | default: 0 }}px;
+  --frc-pb:         {{ section.settings.padding_bottom | default: 0 }}px;
+  --frc-bg:         {{ section.settings.bg_color | default: '#FAFAF8' }};
+}
+
+/* ── Reset / Container ── */
+.frc-contact * { box-sizing: border-box; }
+.frc-contact {
+  font-family: var(--frc-font-body);
+  color: var(--frc-text);
+  background: var(--frc-bg);
+  padding-top: var(--frc-pt);
+  padding-bottom: var(--frc-pb);
+  line-height: 1.6;
+}
+.frc-contact__container {
+  max-width: var(--frc-max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ═══════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════ */
+.frc-hero {
+  background: linear-gradient(135deg,
+    {{ section.settings.hero_bg_from | default: '#1B5E20' }},
+    {{ section.settings.hero_bg_to | default: '#2E7D32' }}
+  );
+  padding: 64px 24px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.frc-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  background: rgba(118,255,3,0.08);
+  border-radius: 50%;
+}
+.frc-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -40px;
+  width: 160px; height: 160px;
+  background: rgba(255,193,7,0.06);
+  border-radius: 50%;
+}
+.frc-hero__inner { position: relative; z-index: 1; }
+.frc-hero__title {
+  font-family: var(--frc-font-title);
+  font-size: clamp(48px, 6vw, 72px);
+  color: var(--frc-white);
+  margin: 0 0 12px;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+  line-height: 1.1;
+}
+.frc-hero__subtitle {
+  font-family: var(--frc-font-body);
+  font-size: clamp(16px, 2vw, 20px);
+  color: rgba(255,255,255,0.92);
+  margin: 0 auto;
+  max-width: 540px;
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════
+   LAYOUT 2 COLUMNAS (Form + Info Cards)
+   ═══════════════════════════════════════════════ */
+.frc-body {
+  padding: 48px 0 32px;
+}
+.frc-body__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .frc-body__grid {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+}
+@media (max-width: 767px) {
+  .frc-body__grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* ── Formulario ── */
+.frc-form__wrapper {
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-md);
+  padding: 40px;
+  box-shadow: var(--frc-shadow);
+}
+.frc-form__title {
+  font-family: var(--frc-font-title);
+  font-size: 36px;
+  color: var(--frc-green-dark);
+  margin: 0 0 4px;
+}
+.frc-form__subtitle {
+  font-family: var(--frc-font-body);
+  font-size: 14px;
+  color: var(--frc-brown-mid);
+  margin: 0 0 28px;
+}
+.frc-form__group { margin-bottom: 20px; }
+.frc-form__group:last-of-type { margin-bottom: 28px; }
+.frc-form__label {
+  display: block;
+  font-family: var(--frc-font-ui);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--frc-brown);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.frc-form__input {
+  width: 100%;
+  padding: 14px 22px;
+  font-family: var(--frc-font-body);
+  font-size: 15px;
+  color: var(--frc-text);
+  background: var(--frc-cream);
+  border: 2px solid var(--frc-border);
+  border-radius: var(--frc-radius-full);
+  outline: none;
+  transition: all 0.25s ease;
+}
+.frc-form__input::placeholder { color: #aaa; }
+.frc-form__input:focus {
+  border-color: var(--frc-green-light);
+  box-shadow: var(--frc-shadow-input);
+  background: var(--frc-white);
+}
+.frc-form__input--textarea {
+  border-radius: var(--frc-radius-md);
+  min-height: 120px;
+  resize: vertical;
+  padding: 16px 22px;
+}
+.frc-form__submit {
+  display: block;
+  width: 100%;
+  padding: 16px 32px;
+  font-family: var(--frc-font-ui);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--frc-white);
+  background: linear-gradient(135deg, var(--frc-green-dark), var(--frc-green-mid));
+  border: none;
+  border-radius: var(--frc-radius-lg);
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(27,94,32,0.35);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.frc-form__submit:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(27,94,32,0.45);
+  background: linear-gradient(135deg, var(--frc-green-mid), var(--frc-green-dark));
+}
+.frc-form__submit:active { transform: translateY(0); }
+.frc-form__error {
+  display: none;
+  color: #c62828;
+  font-size: 13px;
+  margin-top: 6px;
+  font-family: var(--frc-font-ui);
+}
+.frc-form__success {
+  display: none;
+  background: #e8f5e9;
+  border: 1px solid var(--frc-green-light);
+  border-radius: var(--frc-radius-sm);
+  padding: 16px;
+  margin-bottom: 20px;
+  color: var(--frc-green-dark);
+  font-family: var(--frc-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ── Info Cards ── */
+.frc-info__header {
+  margin-bottom: 20px;
+}
+.frc-info__pretitle {
+  font-family: var(--frc-font-ui);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--frc-green-mid);
+  margin: 0 0 4px;
+}
+.frc-info__title {
+  font-family: var(--frc-font-title);
+  font-size: 32px;
+  color: var(--frc-green-dark);
+  margin: 0;
+}
+.frc-info__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.frc-info__card {
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-md);
+  padding: 24px;
+  box-shadow: var(--frc-shadow);
+  transition: all 0.3s ease;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+.frc-info__card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(180deg, var(--frc-green-light), var(--frc-green-dark));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.frc-info__card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--frc-shadow-lg);
+}
+.frc-info__card:hover::before { opacity: 1; }
+.frc-info__card-emoji {
+  font-size: 28px;
+  margin-bottom: 8px;
+  display: block;
+}
+.frc-info__card-title {
+  font-family: var(--frc-font-ui);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--frc-green-dark);
+  margin: 0 0 6px;
+}
+.frc-info__card-text {
+  font-family: var(--frc-font-body);
+  font-size: 14px;
+  color: var(--frc-brown-mid);
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+.frc-info__card-link {
+  font-family: var(--frc-font-ui);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--frc-green-mid);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.frc-info__card-link:hover { color: var(--frc-orange); }
+
+/* ═══════════════════════════════════════════════
+   SECCIÓN MAPA / UBICACIÓN
+   ═══════════════════════════════════════════════ */
+.frc-location {
+  background: var(--frc-cream-light);
+  padding: 64px 0;
+}
+.frc-location__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+@media (max-width: 767px) {
+  .frc-location__grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* ── Info lateral ── */
+.frc-location__eyebrow {
+  font-family: var(--frc-font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--frc-green-mid);
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.frc-location__eyebrow-icon { font-size: 18px; }
+.frc-location__title {
+  font-family: var(--frc-font-title);
+  font-size: clamp(32px, 4vw, 44px);
+  color: var(--frc-green-dark);
+  margin: 0 0 16px;
+  line-height: 1.15;
+}
+
+/* Badge abierto/cerrado */
+.frc-open-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--frc-white);
+  border: 1.5px solid var(--frc-green-light);
+  border-radius: var(--frc-radius-lg);
+  padding: 8px 18px;
+  font-family: var(--frc-font-ui);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--frc-green-dark);
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(27,94,32,0.08);
+  transition: all 0.3s ease;
+}
+.frc-open-badge.is-closed {
+  border-color: #e0e0e0;
+  color: #888;
+}
+.frc-open-badge__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--frc-green-light);
+  animation: frcBlink 1.5s ease-in-out infinite;
+}
+.frc-open-badge.is-closed .frc-open-badge__dot {
+  background: #bdbdbd;
+  animation: none;
+}
+@keyframes frcBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* USP Pills */
+.frc-usp__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.frc-usp__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--frc-green-dark), var(--frc-green-mid));
+  color: var(--frc-white);
+  font-family: var(--frc-font-ui);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 7px 16px;
+  border-radius: var(--frc-radius-lg);
+  box-shadow: 0 2px 8px rgba(27,94,32,0.2);
+}
+
+/* Detail items */
+.frc-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.frc-detail__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-sm);
+  padding: 14px 16px;
+  border-left: 3px solid var(--frc-green-light);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+.frc-detail__item:hover {
+  box-shadow: 0 3px 12px rgba(27,94,32,0.1);
+  transform: translateX(3px);
+}
+.frc-detail__icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.frc-detail__text {
+  font-family: var(--frc-font-body);
+  font-size: 14px;
+  color: var(--frc-text);
+  line-height: 1.5;
+  margin: 0;
+}
+.frc-detail__text strong {
+  font-family: var(--frc-font-ui);
+  color: var(--frc-green-dark);
+}
+
+/* Botones CTA */
+.frc-cta__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.frc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: var(--frc-font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  border-radius: var(--frc-radius-lg);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+.frc-btn--primary {
+  background: linear-gradient(135deg, var(--frc-green-dark), var(--frc-green-mid));
+  color: var(--frc-white);
+  box-shadow: 0 4px 16px rgba(27,94,32,0.35);
+}
+.frc-btn--primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(27,94,32,0.45);
+}
+.frc-btn--secondary {
+  background: var(--frc-white);
+  color: var(--frc-green-dark);
+  border: 2px solid var(--frc-green-light);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.frc-btn--secondary:hover {
+  background: var(--frc-green-light);
+  color: var(--frc-white);
+  transform: translateY(-3px);
+}
+.frc-btn__emoji { font-size: 16px; }
+
+/* Subtext */
+.frc-location__subtext {
+  font-family: var(--frc-font-body);
+  font-size: 13px;
+  color: var(--frc-brown-mid);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ── Mapa ── */
+.frc-map__wrapper {
+  border-radius: var(--frc-radius-md);
+  overflow: hidden;
+  box-shadow: var(--frc-shadow-lg);
+  height: 100%;
+  min-height: 360px;
+  position: relative;
+}
+.frc-map__wrapper iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+  border: 0;
+  display: block;
+  filter: saturate(0.85);
+  transition: filter 0.3s ease;
+}
+.frc-map__wrapper:hover iframe {
+  filter: saturate(1);
+}
+
+/* ═══════════════════════════════════════════════
+   FAQ ACORDEÓN
+   ═══════════════════════════════════════════════ */
+.frc-faq {
+  padding: 48px 0 64px;
+}
+.frc-faq__header { text-align: center; margin-bottom: 36px; }
+.frc-faq__pretitle {
+  font-family: var(--frc-font-ui);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--frc-green-mid);
+  margin: 0 0 4px;
+}
+.frc-faq__title {
+  font-family: var(--frc-font-title);
+  font-size: 40px;
+  color: var(--frc-green-dark);
+  margin: 0;
+}
+.frc-faq__list {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.frc-faq__item {
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-md);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+.frc-faq__item:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+.frc-faq__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px 24px;
+  background: none;
+  border: none;
+  font-family: var(--frc-font-ui);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--frc-green-dark);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.frc-faq__btn:hover { background: rgba(27,94,32,0.03); }
+.frc-faq__icon {
+  font-size: 20px;
+  color: var(--frc-green-mid);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+.frc-faq__item.is-open .frc-faq__icon { transform: rotate(180deg); }
+.frc-faq__answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+}
+.frc-faq__item.is-open .frc-faq__answer {
+  max-height: 300px;
+  padding: 0 24px 20px;
+}
+.frc-faq__text {
+  font-family: var(--frc-font-body);
+  font-size: 14px;
+  color: var(--frc-brown-mid);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE UTILITIES
+   ═══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .frc-hero { padding: 48px 20px 56px; }
+  .frc-form__wrapper { padding: 28px 20px; }
+  .frc-body { padding: 32px 0 20px; }
+  .frc-location { padding: 44px 0; }
+  .frc-location__grid { gap: 28px; }
+  .frc-map__wrapper { min-height: 280px; }
+  .frc-map__wrapper iframe { min-height: 280px; }
+  .frc-cta__group { flex-direction: column; }
+  .frc-btn { width: 100%; }
+  .frc-usp__list { justify-content: center; }
+  .frc-faq { padding: 36px 0 48px; }
+}
+{%- endstyle -%}
+
+{%- comment -%}
+================================================================================
+  HTML — ESTRUCTURA COMPLETA
+================================================================================
+{%- endcomment -%}
+
+<div class="frc-contact" id="frc-contact-{{ section.id }}">
+
+  <!-- ========== HERO ========== -->
+  <div class="frc-hero">
+    <div class="frc-hero__inner">
+      <h1 class="frc-hero__title">{{ section.settings.hero_title | default: 'Contáctanos' }}</h1>
+      <p class="frc-hero__subtitle">{{ section.settings.hero_subtitle | default: 'Estamos aquí para ayudarte. Escríbenos, visítanos en nuestro local o envíanos un mensaje por WhatsApp. Te responderemos con gusto.' }}</p>
+    </div>
+  </div>
+
+  <!-- ========== BODY: FORM + INFO CARDS ========== -->
+  <div class="frc-body">
+    <div class="frc-contact__container">
+      <div class="frc-body__grid">
+
+        <!-- ── FORMULARIO ── -->
+        <div class="frc-form__wrapper">
+          <h2 class="frc-form__title">{{ section.settings.form_title | default: 'Escríbenos' }}</h2>
+          <p class="frc-form__subtitle">{{ section.settings.form_subtitle | default: 'Completa el formulario y te responderemos en menos de 24 horas.' }}</p>
+
+          <div class="frc-form__success" id="fcSuccessMsg" role="status">
+            ✅ ¡Mensaje enviado con éxito! Te contactaremos pronto.
+          </div>
+
+          <form
+            id="fcContactForm"
+            action="/contact#contact_form"
+            method="post"
+            onsubmit="return window.fcValidateForm();"
+            novalidate
+          >
+            <input type="hidden" name="form_type" value="customer">
+            <input type="hidden" name="utf8" value="✓">
+
+            <div class="frc-form__group">
+              <label class="frc-form__label" for="fcName">Nombre *</label>
+              <input
+                type="text"
+                id="fcName"
+                name="contact[name]"
+                class="frc-form__input"
+                placeholder="Tu nombre completo"
+                required
+              >
+              <span class="frc-form__error" id="fcNameError">Por favor ingresa tu nombre.</span>
+            </div>
+
+            <div class="frc-form__group">
+              <label class="frc-form__label" for="fcEmail">Email *</label>
+              <input
+                type="email"
+                id="fcEmail"
+                name="contact[email]"
+                class="frc-form__input"
+                placeholder="tu@email.com"
+                required
+              >
+              <span class="frc-form__error" id="fcEmailError">Por favor ingresa un email válido.</span>
+            </div>
+
+            {% if section.settings.show_phone_field %}
+            <div class="frc-form__group">
+              <label class="frc-form__label" for="fcPhone">Teléfono</label>
+              <input
+                type="tel"
+                id="fcPhone"
+                name="contact[phone]"
+                class="frc-form__input"
+                placeholder="300 123 4567"
+              >
+            </div>
+            {% endif %}
+
+            <div class="frc-form__group">
+              <label class="frc-form__label" for="fcMessage">Mensaje *</label>
+              <textarea
+                id="fcMessage"
+                name="contact[body]"
+                class="frc-form__input frc-form__input--textarea"
+                placeholder="¿En qué podemos ayudarte? Cuéntanos..."
+                required
+              ></textarea>
+              <span class="frc-form__error" id="fcMsgError">Por favor escribe tu mensaje.</span>
+            </div>
+
+            <button type="submit" class="frc-form__submit">
+              {{ section.settings.submit_btn_text | default: 'Enviar Mensaje' }}
+            </button>
+          </form>
+        </div>
+
+        <!-- ── INFO CARDS ── -->
+        <div class="frc-info">
+          <div class="frc-info__header">
+            <p class="frc-info__pretitle">Información</p>
+            <h2 class="frc-info__title">¿Cómo contactarnos?</h2>
+          </div>
+
+          <div class="frc-info__cards">
+            <!-- Card 1: Dirección -->
+            <div class="frc-info__card">
+              <span class="frc-info__card-emoji">{{ section.settings.card1_emoji | default: '📍' }}</span>
+              <h3 class="frc-info__card-title">{{ section.settings.card1_title | default: 'Nuestra Dirección' }}</h3>
+              <p class="frc-info__card-text">{{ section.settings.card1_text | default: 'Calle 65g sur #79b - 36, Bosa, Bogotá, Colombia.' }}</p>
+              {% if section.settings.card1_action != blank %}
+                <a href="{{ section.settings.card1_link | default: 'https://share.google/nf37FhTc6ScfRpYw2' }}" class="frc-info__card-link" target="_blank" rel="noopener">
+                  {{ section.settings.card1_action }} &rarr;
+                </a>
+              {% endif %}
+            </div>
+
+            <!-- Card 2: Horario -->
+            <div class="frc-info__card">
+              <span class="frc-info__card-emoji">{{ section.settings.card2_emoji | default: '🕐' }}</span>
+              <h3 class="frc-info__card-title">{{ section.settings.card2_title | default: 'Horario de Atención' }}</h3>
+              <p class="frc-info__card-text">{{ section.settings.card2_text | default: 'Lunes a Sábado: 9:30 am - 9:00 pm. Domingo: Cerrado.' }}</p>
+            </div>
+
+            <!-- Card 3: WhatsApp -->
+            <div class="frc-info__card">
+              <span class="frc-info__card-emoji">{{ section.settings.card3_emoji | default: '📱' }}</span>
+              <h3 class="frc-info__card-title">{{ section.settings.card3_title | default: 'Escríbenos por WhatsApp' }}</h3>
+              <p class="frc-info__card-text">{{ section.settings.card3_text | default: '302 704 5952. Respuesta rápida de lunes a sábado.' }}</p>
+              {% if section.settings.card3_action != blank %}
+                <a href="{{ section.settings.card3_link | default: 'https://wa.me/573027045952' }}" class="frc-info__card-link" target="_blank" rel="noopener">
+                  {{ section.settings.card3_action }} &rarr;
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SECCIÓN MAPA / UBICACIÓN ========== -->
+  {% if section.settings.show_location %}
+  <div class="frc-location">
+    <div class="frc-contact__container">
+      <div class="frc-location__grid">
+
+        <!-- ── Info de ubicación ── -->
+        <div class="frc-location__info">
+          <p class="frc-location__eyebrow">
+            <span class="frc-location__eyebrow-icon">{{ section.settings.location_icon | default: '🗺️' }}</span>
+            {{ section.settings.location_eyebrow | default: 'Encuéntranos' }}
+          </p>
+          <h2 class="frc-location__title">{{ section.settings.location_title | default: 'Visítanos en Nuestro Espacio' }}</h2>
+
+          {% if section.settings.show_open_badge %}
+          <div class="frc-open-badge" id="fcOpenBadge">
+            <span class="frc-open-badge__dot"></span>
+            <span class="frc-open-text">{{ section.settings.open_badge_text | default: 'Abierto ahora · Visítanos hoy' }}</span>
+          </div>
+          {% endif %}
+
+          <!-- USP Pills -->
+          <div class="frc-usp__list">
+            <span class="frc-usp__pill">{{ section.settings.usp1 | default: '🌿 Productos 100% naturales' }}</span>
+            <span class="frc-usp__pill">{{ section.settings.usp2 | default: '🚚 Envíos a toda Bogotá' }}</span>
+            <span class="frc-usp__pill">{{ section.settings.usp3 | default: '💚 Compra local y consciente' }}</span>
+          </div>
+
+          <!-- Detail items -->
+          <div class="frc-detail">
+            <div class="frc-detail__item">
+              <span class="frc-detail__icon">📍</span>
+              <p class="frc-detail__text"><strong>Dirección:</strong> {{ section.settings.address | default: 'Calle 65g sur #79b - 36, Bosa, Bogotá' }}</p>
+            </div>
+            <div class="frc-detail__item">
+              <span class="frc-detail__icon">🕐</span>
+              <p class="frc-detail__text"><strong>Horario:</strong> {{ section.settings.hours | default: 'Lunes a Sábado: 9:30 am - 9:00 pm' }}{% if section.settings.hours2 != blank %}<br>{{ section.settings.hours2 }}{% endif %}</p>
+            </div>
+            <div class="frc-detail__item" style="cursor:pointer;" onclick="window.fcCopyPhone()">
+              <span class="frc-detail__icon">📱</span>
+              <p class="frc-detail__text"><strong>WhatsApp:</strong> <span id="fcPhoneNum">{{ section.settings.phone | default: '302 704 5952' }}</span> <small style="color:var(--frc-green-mid);">(click para copiar)</small></p>
+            </div>
+          </div>
+
+          <!-- Botones CTA -->
+          <div class="frc-cta__group">
+            <a href="{{ section.settings.map_link | default: 'https://share.google/nf37FhTc6ScfRpYw2' }}" class="frc-btn frc-btn--primary" target="_blank" rel="noopener">
+              <span class="frc-btn__emoji">{{ section.settings.btn1_emoji | default: '🗺️' }}</span>
+              {{ section.settings.btn1_text | default: 'Cómo Llegar' }}
+            </a>
+            <a href="{{ section.settings.whatsapp_link | default: 'https://wa.me/573027045952' }}" class="frc-btn frc-btn--secondary" target="_blank" rel="noopener">
+              <span class="frc-btn__emoji">{{ section.settings.btn2_emoji | default: '💬' }}</span>
+              {{ section.settings.btn2_text | default: 'Escribir por WhatsApp' }}
+            </a>
+          </div>
+
+          <p class="frc-location__subtext">{{ section.settings.subtext | default: 'Compra online o visítanos en el local · Te esperamos con una sonrisa 🌱' }}</p>
+        </div>
+
+        <!-- ── Mapa ── -->
+        <div class="frc-map__wrapper">
+          <iframe
+            src="{{ section.settings.map_embed | default: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3977.1234567890123!2d-74.12345678901234!3d4.12345678901234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMDcnMjQuNCJOIDc0wrAwNyczNi4wIlc!5e0!3m2!1ses!2sco!4v1234567890123!5m2!1ses!2sco' }}"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Mapa de ubicación - Frutos de la Raíz"
+          ></iframe>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ========== FAQ ACORDEÓN ========== -->
+  <div class="frc-faq">
+    <div class="frc-contact__container">
+      <div class="frc-faq__header">
+        <p class="frc-faq__pretitle">Preguntas Frecuentes</p>
+        <h2 class="frc-faq__title">¿Tienes dudas?</h2>
+      </div>
+
+      <div class="frc-faq__list">
+        <!-- FAQ 1 -->
+        <div class="frc-faq__item">
+          <button class="frc-faq__btn" type="button" onclick="window.fcFaqToggle(this)">
+            {{ section.settings.faq1_q | default: '¿Realizan envíos a toda Bogotá?' }}
+            <span class="frc-faq__icon">&#9662;</span>
+          </button>
+          <div class="frc-faq__answer">
+            <p class="frc-faq__text">{{ section.settings.faq1_a | default: 'Sí, hacemos envíos a todas las localidades de Bogotá. El tiempo de entrega es de 1 a 3 días hábiles dependiendo de tu zona. Los envíos son gratuitos en compras superiores a $80.000 COP.' }}</p>
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="frc-faq__item">
+          <button class="frc-faq__btn" type="button" onclick="window.fcFaqToggle(this)">
+            {{ section.settings.faq2_q | default: '¿Qué métodos de pago aceptan?' }}
+            <span class="frc-faq__icon">&#9662;</span>
+          </button>
+          <div class="frc-faq__answer">
+            <p class="frc-faq__text">{{ section.settings.faq2_a | default: 'Aceptamos pagos contra entrega en efectivo, transferencia bancaria, Nequi, Daviplata y tarjetas de crédito/débito a través de nuestro pasarela de pagos segura.' }}</p>
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="frc-faq__item">
+          <button class="frc-faq__btn" type="button" onclick="window.fcFaqToggle(this)">
+            {{ section.settings.faq3_q | default: '¿Tienen política de devoluciones?' }}
+            <span class="frc-faq__icon">&#9662;</span>
+          </button>
+          <div class="frc-faq__answer">
+            <p class="frc-faq__text">{{ section.settings.faq3_a | default: 'Si tu producto llega en mal estado o no cumple con lo prometido, tienes hasta 7 días calendario para solicitar un cambio o reembolso. Los productos perecedibles tienen garantía de frescura.' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.frc-contact -->
+
+{%- comment -%}
+================================================================================
+  JAVASCRIPT — FUNCIONES GLOBALES (window.*)
+================================================================================
+{%- endcomment -%}
+<script>
+(function() {
+  'use strict';
+
+  // ── 1. Validación del formulario ──
+  window.fcValidateForm = function() {
+    var form = document.getElementById('fcContactForm');
+    var nameEl = document.getElementById('fcName');
+    var emailEl = document.getElementById('fcEmail');
+    var msgEl = document.getElementById('fcMessage');
+    var isValid = true;
+
+    // Reset errores
+    var errors = form.querySelectorAll('.frc-form__error');
+    for (var i = 0; i < errors.length; i++) {
+      errors[i].style.display = 'none';
+    }
+    var inputs = form.querySelectorAll('.frc-form__input');
+    for (var j = 0; j < inputs.length; j++) {
+      inputs[j].style.borderColor = '';
+    }
+
+    // Validar nombre
+    if (!nameEl || nameEl.value.trim().length < 2) {
+      if (nameEl) nameEl.style.borderColor = '#c62828';
+      var nameErr = document.getElementById('fcNameError');
+      if (nameErr) nameErr.style.display = 'block';
+      isValid = false;
+    }
+
+    // Validar email
+    var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailEl || !emailRe.test(emailEl.value.trim())) {
+      if (emailEl) emailEl.style.borderColor = '#c62828';
+      var emailErr = document.getElementById('fcEmailError');
+      if (emailErr) emailErr.style.display = 'block';
+      isValid = false;
+    }
+
+    // Validar mensaje
+    if (!msgEl || msgEl.value.trim().length < 5) {
+      if (msgEl) msgEl.style.borderColor = '#c62828';
+      var msgErr = document.getElementById('fcMsgError');
+      if (msgErr) msgErr.style.display = 'block';
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  // ── 2. Toggle FAQ acordeón ──
+  window.fcFaqToggle = function(btn) {
+    var item = btn.closest('.frc-faq__item');
+    if (!item) return;
+    var isOpen = item.classList.contains('is-open');
+
+    // Cerrar todos los demás (accordion behavior)
+    var allItems = document.querySelectorAll('.frc-faq__item.is-open');
+    for (var k = 0; k < allItems.length; k++) {
+      if (allItems[k] !== item) {
+        allItems[k].classList.remove('is-open');
+      }
+    }
+
+    // Toggle actual
+    if (isOpen) {
+      item.classList.remove('is-open');
+    } else {
+      item.classList.add('is-open');
+    }
+  };
+
+  // ── 3. Copiar número al portapapeles ──
+  window.fcCopyPhone = function() {
+    var phoneText = document.getElementById('fcPhoneNum');
+    if (!phoneText) return;
+    var clean = phoneText.textContent.replace(/\D/g, '');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(clean).then(function() {
+        window.fcShowCopyToast('Número copiado: ' + clean);
+      }).catch(function() {
+        window.fcFallbackCopy(clean);
+      });
+    } else {
+      window.fcFallbackCopy(clean);
+    }
+  };
+
+  window.fcFallbackCopy = function(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      window.fcShowCopyToast('Número copiado: ' + text);
+    } catch (err) {
+      window.fcShowCopyToast('No se pudo copiar automáticamente');
+    }
+    document.body.removeChild(ta);
+  };
+
+  window.fcShowCopyToast = function(message) {
+    var existing = document.getElementById('fcCopyToast');
+    if (existing) existing.remove();
+
+    var toast = document.createElement('div');
+    toast.id = 'fcCopyToast';
+    toast.textContent = message;
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B5E20;color:#fff;padding:12px 24px;border-radius:50px;font-family:Montserrat,sans-serif;font-weight:600;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(27,94,32,0.4);animation:fcToastIn 0.3s ease;';
+
+    var style = document.createElement('style');
+    style.textContent = '@keyframes fcToastIn{from{opacity:0;transform:translateX(-50%) translateY(20px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}@keyframes fcToastOut{from{opacity:1;}to{opacity:0;}}';
+    document.head.appendChild(style);
+
+    document.body.appendChild(toast);
+    setTimeout(function() {
+      toast.style.animation = 'fcToastOut 0.3s ease forwards';
+      setTimeout(function() { toast.remove(); }, 300);
+    }, 2500);
+  };
+
+  // ── 4. Detectar si está abierto ahora (badge inteligente) ──
+  (function() {
+    var now = new Date();
+    var hour = now.getHours();
+    var day = now.getDay(); // 0=domingo, 1=lunes...
+    // Horario: Lun-Sáb 9:30-21:00 (9am a 9pm)
+    var isOpen = (day >= 1 && day <= 6) && (hour >= 9 && hour < 21);
+
+    var badge = document.getElementById('fcOpenBadge');
+    if (badge) {
+      badge.classList.toggle('is-open', isOpen);
+      badge.classList.toggle('is-closed', !isOpen);
+      var text = badge.querySelector('.frc-open-text');
+      if (text) {
+        text.textContent = isOpen
+          ? '{{ section.settings.open_badge_text | default: "Abierto ahora · Visítanos hoy" }}'
+          : 'Cerrado · Abrimos mañana 9:30am';
+      }
+    }
+  })();
+
+  // ── 5. Auto-marcar éxito si hay parámetro en URL ──
+  (function() {
+    var url = window.location.href;
+    if (url.indexOf('?contact%5Bposted%5D=true') !== -1 || url.indexOf('?contact[posted]=true') !== -1) {
+      var successMsg = document.getElementById('fcSuccessMsg');
+      if (successMsg) {
+        successMsg.style.display = 'block';
+        // Scroll suave al mensaje
+        setTimeout(function() {
+          successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      }
+      // Limpiar URL
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+  })();
+
+})();
+</script>
+
+{%- comment -%}
+================================================================================
+  SCHEMA — CONFIGURACIÓN COMPLETA DEL EDITOR DE SHOPIFY
+================================================================================
+{%- endcomment -%}
+{% schema %}
+{
+  "name": "Frutos Contact Final",
+  "tag": "section",
+  "class": "section-frc-contact",
+  "settings": [
+    /* ── Layout ── */
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo de la sección",
+      "default": "#FAFAF8"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 800,
+      "max": 1400,
+      "step": 50,
+      "default": 1200,
+      "unit": "px"
+    },
+
+    /* ── Hero ── */
+    {
+      "type": "header",
+      "content": "Hero de Contacto"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Título del hero",
+      "default": "Contáctanos"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_subtitle",
+      "label": "Subtítulo del hero",
+      "default": "Estamos aquí para ayudarte. Escríbenos, visítanos en nuestro local o envíanos un mensaje por WhatsApp. Te responderemos con gusto."
+    },
+    {
+      "type": "color",
+      "id": "hero_bg_from",
+      "label": "Color inicio del gradiente",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "hero_bg_to",
+      "label": "Color fin del gradiente",
+      "default": "#2E7D32"
+    },
+
+    /* ── Formulario ── */
+    {
+      "type": "header",
+      "content": "Formulario de Contacto"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Título del formulario",
+      "default": "Escríbenos"
+    },
+    {
+      "type": "textarea",
+      "id": "form_subtitle",
+      "label": "Subtítulo del formulario",
+      "default": "Completa el formulario y te responderemos en menos de 24 horas."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone_field",
+      "label": "Mostrar campo de teléfono",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "submit_btn_text",
+      "label": "Texto del botón de envío",
+      "default": "Enviar Mensaje"
+    },
+
+    /* ── Info Cards ── */
+    {
+      "type": "header",
+      "content": "Info Card 1 — Dirección"
+    },
+    {
+      "type": "text",
+      "id": "card1_emoji",
+      "label": "Emoji",
+      "default": "📍"
+    },
+    {
+      "type": "text",
+      "id": "card1_title",
+      "label": "Título",
+      "default": "Nuestra Dirección"
+    },
+    {
+      "type": "textarea",
+      "id": "card1_text",
+      "label": "Texto",
+      "default": "Calle 65g sur #79b - 36, Bosa, Bogotá, Colombia."
+    },
+    {
+      "type": "text",
+      "id": "card1_action",
+      "label": "Texto del link",
+      "default": "Ver en Google Maps"
+    },
+    {
+      "type": "url",
+      "id": "card1_link",
+      "label": "URL del link"
+    },
+    {
+      "type": "header",
+      "content": "Info Card 2 — Horario"
+    },
+    {
+      "type": "text",
+      "id": "card2_emoji",
+      "label": "Emoji",
+      "default": "🕐"
+    },
+    {
+      "type": "text",
+      "id": "card2_title",
+      "label": "Título",
+      "default": "Horario de Atención"
+    },
+    {
+      "type": "textarea",
+      "id": "card2_text",
+      "label": "Texto",
+      "default": "Lunes a Sábado: 9:30 am - 9:00 pm. Domingo: Cerrado."
+    },
+    {
+      "type": "header",
+      "content": "Info Card 3 — WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "card3_emoji",
+      "label": "Emoji",
+      "default": "📱"
+    },
+    {
+      "type": "text",
+      "id": "card3_title",
+      "label": "Título",
+      "default": "Escríbenos por WhatsApp"
+    },
+    {
+      "type": "textarea",
+      "id": "card3_text",
+      "label": "Texto",
+      "default": "302 704 5952. Respuesta rápida de lunes a sábado."
+    },
+    {
+      "type": "text",
+      "id": "card3_action",
+      "label": "Texto del link",
+      "default": "Chatear ahora"
+    },
+    {
+      "type": "url",
+      "id": "card3_link",
+      "label": "URL del link"
+    },
+
+    /* ── Ubicación / Mapa ── */
+    {
+      "type": "header",
+      "content": "Sección de Ubicación"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_location",
+      "label": "Mostrar sección de ubicación",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "location_title",
+      "label": "Título de la ubicación",
+      "default": "Visítanos en Nuestro Espacio"
+    },
+    {
+      "type": "text",
+      "id": "location_eyebrow",
+      "label": "Eyebrow text",
+      "default": "Encuéntranos"
+    },
+    {
+      "type": "text",
+      "id": "location_icon",
+      "label": "Icono del eyebrow",
+      "default": "🗺️"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_open_badge",
+      "label": "Mostrar badge de abierto/cerrado",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "open_badge_text",
+      "label": "Texto del badge (abierto)",
+      "default": "Abierto ahora · Visítanos hoy"
+    },
+    {
+      "type": "text",
+      "id": "usp1",
+      "label": "USP Pill 1",
+      "default": "🌿 Productos 100% naturales"
+    },
+    {
+      "type": "text",
+      "id": "usp2",
+      "label": "USP Pill 2",
+      "default": "🚚 Envíos a toda Bogotá"
+    },
+    {
+      "type": "text",
+      "id": "usp3",
+      "label": "USP Pill 3",
+      "default": "💚 Compra local y consciente"
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "Dirección completa",
+      "default": "Calle 65g sur #79b - 36, Bosa, Bogotá"
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Horario línea 1",
+      "default": "Lunes a Sábado: 9:30 am - 9:00 pm"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Número de teléfono / WhatsApp",
+      "default": "302 704 5952"
+    },
+    {
+      "type": "url",
+      "id": "whatsapp_link",
+      "label": "Link de WhatsApp"
+    },
+    {
+      "type": "url",
+      "id": "map_link",
+      "label": "Link de Google Maps"
+    },
+    {
+      "type": "text",
+      "id": "btn1_text",
+      "label": "Texto botón 1",
+      "default": "Cómo Llegar"
+    },
+    {
+      "type": "text",
+      "id": "btn1_emoji",
+      "label": "Emoji botón 1",
+      "default": "🗺️"
+    },
+    {
+      "type": "text",
+      "id": "btn2_text",
+      "label": "Texto botón 2",
+      "default": "Escribir por WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "btn2_emoji",
+      "label": "Emoji botón 2",
+      "default": "💬"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtexto final",
+      "default": "Compra online o visítanos en el local · Te esperamos con una sonrisa 🌱"
+    },
+    {
+      "type": "html",
+      "id": "map_embed",
+      "label": "Código embed de Google Maps",
+      "default": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.932341838826!2d-74.18912202527507!3d4.606135695368544!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9f9ef77ecf85%3A0xd805701fd8034a!2sFrutos%20de%20la%20Ra%C3%ADz!5e0!3m2!1ses!2sco!4v1778631712251!5m2!1ses!2sco"
+    },
+
+    /* ── FAQ ── */
+    {
+      "type": "header",
+      "content": "Preguntas Frecuentes"
+    },
+    {
+      "type": "text",
+      "id": "faq1_q",
+      "label": "Pregunta 1",
+      "default": "¿Realizan envíos a toda Bogotá?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq1_a",
+      "label": "Respuesta 1",
+      "default": "Sí, hacemos envíos a todas las localidades de Bogotá. El tiempo de entrega es de 1 a 3 días hábiles dependiendo de tu zona. Los envíos son gratuitos en compras superiores a $80.000 COP."
+    },
+    {
+      "type": "text",
+      "id": "faq2_q",
+      "label": "Pregunta 2",
+      "default": "¿Qué métodos de pago aceptan?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq2_a",
+      "label": "Respuesta 2",
+      "default": "Aceptamos pagos contra entrega en efectivo, transferencia bancaria, Nequi, Daviplata y tarjetas de crédito/débito a través de nuestro pasarela de pagos segura."
+    },
+    {
+      "type": "text",
+      "id": "faq3_q",
+      "label": "Pregunta 3",
+      "default": "¿Tienen política de devoluciones?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq3_a",
+      "label": "Respuesta 3",
+      "default": "Si tu producto llega en mal estado o no cumple con lo prometido, tienes hasta 7 días calendario para solicitar un cambio o reembolso. Los productos perecedibles tienen garantía de frescura."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Frutos Contact Final",
+      "category": "Frutos de la Raíz"
+    }
+  ]
+}
+{% endschema %}

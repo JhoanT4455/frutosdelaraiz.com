@@ -1,8 +1,1325 @@
-{% comment %}
-  ============================================================
-  FRUTOS PDP CRO — Todo inline (CSS + JS dentro del .liquid)
-  ============================================================
-{% endcomment %}
+{{- 'shopify-payment-button.css' | asset_url | stylesheet_tag -}}
+
+{%- comment -%}
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  Frutos PDP Final — Product Detail Page CRO                  ║
+  ║  frutosdelaraiz.com — Productos Naturales de Colombia        ║
+  ║                                                              ║
+  ║  INTEGRACIÓN HEADER/FOOTER:                                  ║
+  ║  Asegurate de que tu template (product.json) incluya:        ║
+  ║                                                              ║
+  ║    "sections": {                                             ║
+  ║      "header": {                                             ║
+  ║        "type": "frutos-header",    <-- Header al inicio      ║
+  ║        "settings": {}                                        ║
+  ║      },                                                      ║
+  ║      "main": {                                               ║
+  ║        "type": "frutos-pdp-final",   <-- Esta section        ║
+  ║        "settings": {}                                        ║
+  ║      },                                                      ║
+  ║      "footer": {                                             ║
+  ║        "type": "footer-frutos",    <-- Footer al final       ║
+  ║        "settings": {}                                        ║
+  ║      }                                                       ║
+  ║    },                                                        ║
+  ║    "order": ["header", "main", "footer"]                     ║
+  ║                                                              ║
+  ║  O en layout/theme.liquid:                                   ║
+  ║    {% section 'frutos-header' %}  (al inicio del <body>)     ║
+  ║    {{ content_for_layout }}                                   ║
+  ║    {% section 'footer-frutos' %}  (al final del <body>)      ║
+  ╚══════════════════════════════════════════════════════════════╝
+{%- endcomment -%}
+
+{%- style -%}
+/* ═══════════════════════════════════════════
+   FRC PDP FINAL — Frutos de la Raíz
+   Product Detail Page — Optimizado CRO
+   ═══════════════════════════════════════════ */
+
+/* ── Variables CSS ── */
+.frc-pdp-final {
+  --frc-green-dark: #1B5E20;
+  --frc-green: #2E7D32;
+  --frc-green-light: #4CAF50;
+  --frc-yellow: #FFC107;
+  --frc-orange: #FF5722;
+  --frc-red: #E53935;
+  --frc-bg: #F5F5F0;
+  --frc-border: #DDD8CF;
+  --frc-white: #FFFFFF;
+  --frc-black: #1A1A1A;
+  --frc-gray: #757575;
+  --frc-gray-light: #EEEEEE;
+
+  --frc-font-title: 'Amatic SC', 'Brush Script MT', cursive;
+  --frc-font-ui: 'Montserrat', 'Segoe UI', sans-serif;
+  --frc-font-body: 'Lato', 'Helvetica Neue', sans-serif;
+
+  --frc-radius-sm: 6px;
+  --frc-radius-md: 10px;
+  --frc-radius-lg: 14px;
+  --frc-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --frc-shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --frc-shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --frc-transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+
+  font-family: var(--frc-font-body);
+  color: var(--frc-black);
+  background: var(--frc-bg);
+}
+
+/* ── Reset interno ── */
+.frc-pdp-final *,
+.frc-pdp-final *::before,
+.frc-pdp-final *::after {
+  box-sizing: border-box;
+}
+
+.frc-pdp-final img {
+  max-width: 100%;
+  display: block;
+}
+
+.frc-pdp-final button {
+  cursor: pointer;
+  border: none;
+  font-family: var(--frc-font-ui);
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT PRINCIPAL
+   ═══════════════════════════════════════════ */
+
+.frc-pdp-final__wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.frc-pdp-final__top {
+  padding: 20px 0 12px;
+}
+
+.frc-pdp-final__main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 60px;
+}
+
+@media (max-width: 749px) {
+  .frc-pdp-final__main {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-bottom: 40px;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   1. BREADCRUMBS
+   ═══════════════════════════════════════════ */
+
+.frc-breadcrumbs {
+  font-family: var(--frc-font-ui);
+  font-size: 12px;
+  color: var(--frc-gray);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.frc-breadcrumbs a {
+  color: var(--frc-green);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--frc-transition);
+}
+
+.frc-breadcrumbs a:hover {
+  color: var(--frc-green-dark);
+  text-decoration: underline;
+}
+
+.frc-breadcrumbs__sep {
+  color: var(--frc-border);
+  margin: 0 2px;
+}
+
+.frc-breadcrumbs__current {
+  color: var(--frc-gray);
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════
+   2. GALERÍA DE IMÁGENES
+   ═══════════════════════════════════════════ */
+
+.frc-gallery {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  user-select: none;
+}
+
+.frc-gallery__stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--frc-border);
+  cursor: zoom-in;
+}
+
+.frc-gallery__stage.is-zoomed {
+  cursor: zoom-out;
+}
+
+.frc-gallery__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.frc-gallery__img.is-active {
+  opacity: 1;
+  position: relative;
+}
+
+/* Zoom overlay */
+.frc-gallery__zoom {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.92);
+  cursor: zoom-out;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.frc-gallery__zoom.is-open {
+  display: flex;
+}
+
+.frc-gallery__zoom img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--frc-radius-sm);
+}
+
+.frc-gallery__zoom-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  color: var(--frc-white);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--frc-transition);
+}
+
+.frc-gallery__zoom-close:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Flechas de navegación */
+.frc-gallery__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  color: var(--frc-black);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: var(--frc-transition);
+  box-shadow: var(--frc-shadow-sm);
+}
+
+.frc-gallery__arrow:hover {
+  background: var(--frc-white);
+  box-shadow: var(--frc-shadow-md);
+}
+
+.frc-gallery__arrow--prev { left: 12px; }
+.frc-gallery__arrow--next { right: 12px; }
+
+.frc-gallery__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Thumbnails */
+.frc-gallery__thumbs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.frc-gallery__thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--frc-radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--frc-transition);
+  padding: 0;
+  background: none;
+  flex-shrink: 0;
+}
+
+.frc-gallery__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--frc-transition);
+}
+
+.frc-gallery__thumb.is-active {
+  border-color: var(--frc-green);
+}
+
+.frc-gallery__thumb:hover:not(.is-active) {
+  border-color: var(--frc-border);
+}
+
+/* Dots para mobile */
+.frc-gallery__dots {
+  display: none;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.frc-gallery__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--frc-border);
+  border: none;
+  padding: 0;
+  transition: var(--frc-transition);
+}
+
+.frc-gallery__dot.is-active {
+  background: var(--frc-green);
+  width: 20px;
+  border-radius: 4px;
+}
+
+@media (max-width: 749px) {
+  .frc-gallery__thumbs { display: none; }
+  .frc-gallery__dots { display: flex; }
+  .frc-gallery__stage { aspect-ratio: 1 / 1; }
+}
+
+/* ═══════════════════════════════════════════
+   3. INFORMACIÓN DEL PRODUCTO
+   ═══════════════════════════════════════════ */
+
+.frc-product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.frc-product-info__vendor {
+  font-family: var(--frc-font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--frc-green);
+}
+
+.frc-product-info__title {
+  font-family: var(--frc-font-title);
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--frc-black);
+  margin: 0;
+}
+
+@media (max-width: 749px) {
+  .frc-product-info__title { font-size: 32px; }
+}
+
+/* Rating */
+.frc-rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.frc-rating__stars {
+  display: flex;
+  gap: 2px;
+}
+
+.frc-rating__stars svg {
+  width: 18px;
+  height: 18px;
+  fill: #FFB300;
+}
+
+.frc-rating__text {
+  font-family: var(--frc-font-ui);
+  font-size: 13px;
+  color: var(--frc-gray);
+}
+
+.frc-rating__text strong {
+  color: var(--frc-black);
+}
+
+.frc-rating__badge {
+  font-family: var(--frc-font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--frc-green-light);
+  color: var(--frc-white);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+/* Trust Pills */
+.frc-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.frc-trust__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--frc-font-ui);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--frc-green-dark);
+  background: rgba(27,94,32,0.06);
+  border: 1px solid rgba(27,94,32,0.12);
+  padding: 5px 12px;
+  border-radius: 100px;
+}
+
+.frc-trust__pill span {
+  font-size: 14px;
+}
+
+/* Urgency Bar */
+.frc-urgency {
+  padding: 10px 14px;
+  border-radius: var(--frc-radius-sm);
+  font-family: var(--frc-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.frc-urgency--critical {
+  background: #FDECEA;
+  color: var(--frc-red);
+  border: 1px solid rgba(229,57,53,0.2);
+  animation: frc-pulse-urgency 1.8s ease-in-out infinite;
+}
+
+.frc-urgency--warning {
+  background: #FFF8E1;
+  color: #E65100;
+  border: 1px solid rgba(255,193,7,0.3);
+}
+
+@keyframes frc-pulse-urgency {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(0.985); }
+}
+
+.frc-urgency__icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Precio */
+.frc-price-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.frc-price {
+  font-family: var(--frc-font-ui);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--frc-green-dark);
+}
+
+.frc-price__compare {
+  font-family: var(--frc-font-ui);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--frc-gray);
+  text-decoration: line-through;
+}
+
+.frc-price__save {
+  font-family: var(--frc-font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--frc-red);
+  color: var(--frc-white);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+/* Selector de variantes */
+.frc-variant {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.frc-variant__label {
+  font-family: var(--frc-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--frc-black);
+}
+
+.frc-variant__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.frc-variant__btn {
+  font-family: var(--frc-font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: var(--frc-radius-sm);
+  border: 1.5px solid var(--frc-border);
+  background: var(--frc-white);
+  color: var(--frc-black);
+  transition: var(--frc-transition);
+}
+
+.frc-variant__btn:hover {
+  border-color: var(--frc-green);
+  color: var(--frc-green);
+}
+
+.frc-variant__btn.is-selected {
+  background: var(--frc-green);
+  color: var(--frc-white);
+  border-color: var(--frc-green);
+}
+
+.frc-variant__btn.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.frc-variant__select {
+  font-family: var(--frc-font-ui);
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: var(--frc-radius-sm);
+  border: 1.5px solid var(--frc-border);
+  background: var(--frc-white);
+  color: var(--frc-black);
+  width: 100%;
+  max-width: 320px;
+  outline: none;
+  transition: var(--frc-transition);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23757575' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.frc-variant__select:focus {
+  border-color: var(--frc-green);
+}
+
+/* Cantidad */
+.frc-qty {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.frc-qty__btn {
+  width: 40px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--frc-white);
+  border: 1.5px solid var(--frc-border);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--frc-black);
+  transition: var(--frc-transition);
+}
+
+.frc-qty__btn:first-child {
+  border-radius: var(--frc-radius-sm) 0 0 var(--frc-radius-sm);
+}
+
+.frc-qty__btn:last-child {
+  border-radius: 0 var(--frc-radius-sm) var(--frc-radius-sm) 0;
+}
+
+.frc-qty__btn:hover {
+  background: var(--frc-gray-light);
+}
+
+.frc-qty__input {
+  width: 56px;
+  height: 42px;
+  border: 1.5px solid var(--frc-border);
+  border-left: none;
+  border-right: none;
+  text-align: center;
+  font-family: var(--frc-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--frc-black);
+  background: var(--frc-white);
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.frc-qty__input::-webkit-outer-spin-button,
+.frc-qty__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Botones de acción */
+.frc-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.frc-btn {
+  font-family: var(--frc-font-ui);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 14px 24px;
+  border-radius: var(--frc-radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: var(--frc-transition);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.frc-btn--cart {
+  background: var(--frc-green);
+  color: var(--frc-white);
+}
+
+.frc-btn--cart:hover {
+  background: var(--frc-green-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--frc-shadow-md);
+}
+
+.frc-btn--cart.is-loading .frc-btn__text,
+.frc-btn--cart.is-success .frc-btn__text {
+  opacity: 0;
+}
+
+.frc-btn--cart.is-loading .frc-btn__spinner,
+.frc-btn--cart.is-success .frc-btn__check {
+  display: flex;
+}
+
+.frc-btn__spinner {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.frc-btn__spinner svg {
+  animation: frc-spin 0.8s linear infinite;
+}
+
+.frc-btn__check {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes frc-spin {
+  to { transform: rotate(360deg); }
+}
+
+.frc-btn--wa {
+  background: #25D366;
+  color: var(--frc-white);
+}
+
+.frc-btn--wa:hover {
+  background: #128C7E;
+  transform: translateY(-1px);
+  box-shadow: var(--frc-shadow-md);
+}
+
+.frc-btn--wa svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Badge envío gratis */
+.frc-ship-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--frc-font-ui);
+  font-size: 13px;
+  color: var(--frc-green-dark);
+  background: rgba(76,175,80,0.08);
+  padding: 8px 14px;
+  border-radius: var(--frc-radius-sm);
+  border: 1px dashed var(--frc-green-light);
+}
+
+.frc-ship-badge svg {
+  width: 18px;
+  height: 18px;
+  color: var(--frc-green);
+}
+
+/* ═══════════════════════════════════════════
+   4. TABS DE INFORMACIÓN
+   ═══════════════════════════════════════════ */
+
+.frc-tabs {
+  margin-top: 40px;
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-lg);
+  border: 1px solid var(--frc-border);
+  overflow: hidden;
+}
+
+.frc-tabs__nav {
+  display: flex;
+  border-bottom: 1px solid var(--frc-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.frc-tabs__nav::-webkit-scrollbar {
+  display: none;
+}
+
+.frc-tabs__btn {
+  flex: 1;
+  min-width: 120px;
+  font-family: var(--frc-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 14px 16px;
+  background: none;
+  color: var(--frc-gray);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: var(--frc-transition);
+}
+
+.frc-tabs__btn:hover {
+  color: var(--frc-green);
+  background: rgba(27,94,32,0.03);
+}
+
+.frc-tabs__btn.is-active {
+  color: var(--frc-green);
+  border-bottom-color: var(--frc-green);
+  background: rgba(27,94,32,0.04);
+}
+
+.frc-tabs__panel {
+  display: none;
+  padding: 24px;
+  animation: frc-fade-in 0.3s ease;
+}
+
+.frc-tabs__panel.is-active {
+  display: block;
+}
+
+@keyframes frc-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.frc-tabs__panel h3 {
+  font-family: var(--frc-font-title);
+  font-size: 28px;
+  color: var(--frc-green-dark);
+  margin: 0 0 16px;
+}
+
+.frc-tabs__panel p,
+.frc-tabs__panel li {
+  font-family: var(--frc-font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--frc-black);
+}
+
+.frc-tabs__panel ul {
+  padding-left: 20px;
+  margin: 12px 0;
+}
+
+.frc-tabs__panel li {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 749px) {
+  .frc-tabs__btn { font-size: 12px; padding: 12px 10px; min-width: auto; }
+  .frc-tabs__panel { padding: 16px; }
+  .frc-tabs__panel h3 { font-size: 24px; }
+}
+
+/* ═══════════════════════════════════════════
+   5. CROSS-SELL
+   ═══════════════════════════════════════════ */
+
+.frc-cross {
+  margin-top: 56px;
+}
+
+.frc-section-title {
+  font-family: var(--frc-font-title);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--frc-green-dark);
+  text-align: center;
+  margin: 0 0 28px;
+}
+
+.frc-cross__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 990px) {
+  .frc-cross__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .frc-cross__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .frc-section-title { font-size: 28px; }
+}
+
+.frc-product-card {
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--frc-border);
+  transition: var(--frc-transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.frc-product-card:hover {
+  box-shadow: var(--frc-shadow-md);
+  transform: translateY(-3px);
+}
+
+.frc-product-card__img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: var(--frc-gray-light);
+}
+
+.frc-product-card__body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.frc-product-card__title {
+  font-family: var(--frc-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--frc-black);
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.frc-product-card__price {
+  font-family: var(--frc-font-ui);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--frc-green-dark);
+}
+
+.frc-product-card__btn {
+  font-family: var(--frc-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 9px;
+  border-radius: var(--frc-radius-sm);
+  background: var(--frc-green);
+  color: var(--frc-white);
+  border: none;
+  margin-top: auto;
+  transition: var(--frc-transition);
+}
+
+.frc-product-card__btn:hover {
+  background: var(--frc-green-dark);
+}
+
+.frc-product-card__btn.is-loading .frc-product-card__btn-text,
+.frc-product-card__btn.is-success .frc-product-card__btn-text { opacity: 0; }
+
+/* ═══════════════════════════════════════════
+   6. FAQ ACORDEÓN
+   ═══════════════════════════════════════════ */
+
+.frc-faq {
+  margin-top: 56px;
+}
+
+.frc-faq__list {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.frc-faq__item {
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-md);
+  border: 1px solid var(--frc-border);
+  overflow: hidden;
+  transition: var(--frc-transition);
+}
+
+.frc-faq__item.is-open {
+  box-shadow: var(--frc-shadow-sm);
+}
+
+.frc-faq__q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  font-family: var(--frc-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--frc-black);
+  background: none;
+  text-align: left;
+}
+
+.frc-faq__q:hover {
+  color: var(--frc-green);
+}
+
+.frc-faq__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  color: var(--frc-gray);
+}
+
+.frc-faq__item.is-open .frc-faq__icon {
+  transform: rotate(180deg);
+  color: var(--frc-green);
+}
+
+.frc-faq__a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+}
+
+.frc-faq__item.is-open .frc-faq__a {
+  max-height: 500px;
+  padding: 0 20px 18px;
+}
+
+.frc-faq__a p {
+  font-family: var(--frc-font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--frc-gray);
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════
+   7. INFO DE ENVÍO
+   ═══════════════════════════════════════════ */
+
+.frc-shipping {
+  margin-top: 56px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 749px) {
+  .frc-shipping { grid-template-columns: 1fr; }
+}
+
+.frc-ship-card {
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-lg);
+  border: 1px solid var(--frc-border);
+  padding: 28px 20px;
+  text-align: center;
+  transition: var(--frc-transition);
+}
+
+.frc-ship-card:hover {
+  box-shadow: var(--frc-shadow-md);
+  transform: translateY(-2px);
+}
+
+.frc-ship-card__icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  background: rgba(27,94,32,0.06);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.frc-ship-card__icon svg {
+  width: 26px;
+  height: 26px;
+  color: var(--frc-green);
+}
+
+.frc-ship-card__title {
+  font-family: var(--frc-font-ui);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--frc-black);
+  margin: 0 0 6px;
+}
+
+.frc-ship-card__text {
+  font-family: var(--frc-font-body);
+  font-size: 13px;
+  color: var(--frc-gray);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════
+   8. SOCIAL PROOF BAR
+   ═══════════════════════════════════════════ */
+
+.frc-social {
+  margin-top: 56px;
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-lg);
+  border: 1px solid var(--frc-border);
+  padding: 28px;
+}
+
+.frc-social__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  text-align: center;
+}
+
+@media (max-width: 749px) {
+  .frc-social__grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .frc-social { padding: 20px; }
+}
+
+.frc-social__num {
+  font-family: var(--frc-font-title);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--frc-green);
+  display: block;
+  line-height: 1;
+}
+
+.frc-social__label {
+  font-family: var(--frc-font-ui);
+  font-size: 12px;
+  color: var(--frc-gray);
+  margin-top: 4px;
+  display: block;
+}
+
+/* ═══════════════════════════════════════════
+   9. GARANTÍA
+   ═══════════════════════════════════════════ */
+
+.frc-guarantee {
+  margin-top: 56px;
+  background: var(--frc-white);
+  border-radius: var(--frc-radius-lg);
+  border: 1px solid var(--frc-border);
+  padding: 32px;
+  text-align: center;
+}
+
+@media (max-width: 749px) {
+  .frc-guarantee { padding: 24px 16px; }
+}
+
+.frc-guarantee__icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  background: rgba(27,94,32,0.06);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.frc-guarantee__icon svg {
+  width: 32px;
+  height: 32px;
+  color: var(--frc-green);
+}
+
+.frc-guarantee__title {
+  font-family: var(--frc-font-title);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--frc-green-dark);
+  margin: 0 0 10px;
+}
+
+.frc-guarantee__text {
+  font-family: var(--frc-font-body);
+  font-size: 14px;
+  color: var(--frc-gray);
+  line-height: 1.7;
+  max-width: 540px;
+  margin: 0 auto 20px;
+}
+
+.frc-guarantee__badges {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.frc-guarantee__badge {
+  font-family: var(--frc-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--frc-green-dark);
+  background: rgba(27,94,32,0.06);
+  padding: 6px 14px;
+  border-radius: 100px;
+}
+
+/* ═══════════════════════════════════════════
+   10. MOBILE STICKY BAR
+   ═══════════════════════════════════════════ */
+
+.frc-mobile-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: var(--frc-white);
+  border-top: 1px solid var(--frc-border);
+  padding: 10px 16px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+  gap: 12px;
+  align-items: center;
+}
+
+.frc-mobile-bar.is-visible {
+  display: flex;
+}
+
+.frc-mobile-bar__price {
+  font-family: var(--frc-font-ui);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--frc-green-dark);
+  white-space: nowrap;
+}
+
+.frc-mobile-bar__btn {
+  flex: 1;
+  font-family: var(--frc-font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 20px;
+  border-radius: var(--frc-radius-md);
+  background: var(--frc-green);
+  color: var(--frc-white);
+  white-space: nowrap;
+  transition: var(--frc-transition);
+}
+
+.frc-mobile-bar__btn:hover {
+  background: var(--frc-green-dark);
+}
+
+@media (min-width: 750px) {
+  .frc-mobile-bar { display: none !important; }
+}
+
+/* ═══════════════════════════════════════════
+   11. WHATSAPP FLOATING CTA
+   ═══════════════════════════════════════════ */
+
+.frc-wa-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 998;
+}
+
+@media (max-width: 749px) {
+  .frc-wa-float {
+    bottom: 80px;
+    right: 16px;
+  }
+}
+
+.frc-wa-float__btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #25D366;
+  color: var(--frc-white);
+  font-family: var(--frc-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 100px;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.35);
+  transition: var(--frc-transition);
+}
+
+.frc-wa-float__btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 24px rgba(37,211,102,0.45);
+}
+
+.frc-wa-float__btn svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   TOAST NOTIFICATION
+   ═══════════════════════════════════════════ */
+
+.frc-toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 10000;
+  font-family: var(--frc-font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 14px 20px;
+  border-radius: var(--frc-radius-md);
+  color: var(--frc-white);
+  transform: translateX(140%);
+  transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  max-width: 340px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--frc-shadow-lg);
+}
+
+.frc-toast.is-visible {
+  transform: translateX(0);
+}
+
+.frc-toast--success { background: var(--frc-green); }
+.frc-toast--error   { background: var(--frc-red); }
+
+/* ═══════════════════════════════════════════
+   ESPACIO PARA STICKY BAR EN MOBILE
+   ═══════════════════════════════════════════ */
+
+.frc-pdp-final__spacer {
+  height: 0;
+}
+
+@media (max-width: 749px) {
+  .frc-pdp-final__spacer { height: 76px; }
+}
+
+/* ── Scrollbar suave ── */
+html { scroll-behavior: smooth; }
+{%- endstyle -%}
 
 {%- assign cv = product.selected_or_first_available_variant -%}
 {%- assign benefits = product.metafields.custom.benefits.value -%}
@@ -10,314 +1327,976 @@
 {%- assign ingredients = product.metafields.custom.ingredients -%}
 {%- assign nutritional_info = product.metafields.custom.nutritional_info -%}
 {%- assign faq_content = product.metafields.custom.faq_content.value -%}
-{%- assign cross_sell_handles = product.metafields.custom.cross_sell_handles.value -%}
+{%- assign has_compare = false -%}
+{%- if cv.compare_at_price -%}
+  {%- if cv.compare_at_price > cv.price -%}
+    {%- assign has_compare = true -%}
+  {%- endif -%}
+{%- endif -%}
+{%- assign discount_pct = 0 -%}
+{%- if has_compare -%}
+  {%- assign discount_pct = cv.compare_at_price | minus: cv.price | times: 100.0 | divided_by: cv.compare_at_price | round -%}
+{%- endif -%}
 
-{%- style -%}
-{% comment %} === CSS ENCAPSULADO — solo afecta elementos con prefijo frc-pdp === {% endcomment %}
-.frc-pdp-wrap { --g:#1B5E20; --gm:#2E7D32; --gl:#4CAF50; --ye:#FFC107; --or:#FF9800; --re:#E53935; --bg:#F5F5F0; --wh:#FFFFFF; --tx:#1A2E1A; --tx2:#6B7280; --bo:#DDD8CF; --b2:#E8F5E9; --b3:#FFF3E0; --b4:#FDEDEC; --wa:#25D366; --rd:12px; --rds:8px; }
+{%- capture wa_message -%}
+Hola Frutos de la Raíz! Quiero comprar: *{{ product.title | escape }}*{% if cv.title != "Default Title" %} - Variante: {{ cv.title | escape }}{% endif %}. Precio: {{ cv.price | money }}.
+{%- endcapture -%}
 
-/* Breadcrumbs */
-.frc-pdp-bc { font-size:12.5px; color:var(--tx2); padding:14px 0 8px; border-bottom:1px solid var(--bo); margin-bottom:12px; font-family:var(--font-body-family), 'Lato', sans-serif; }
-.frc-pdp-bc ol { list-style:none; margin:0; padding:0; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-.frc-pdp-bc li { display:flex; align-items:center; gap:6px; }
-.frc-pdp-bc li:not(:last-child)::after { content:'›'; color:var(--tx2); font-size:14px; font-weight:700; }
-.frc-pdp-bc a { color:var(--g); text-decoration:none; font-weight:600; }
-.frc-pdp-bc a:hover { color:var(--gm); text-decoration:underline; }
-.frc-pdp-bc li:last-child { color:var(--tx2); font-weight:500; }
+<div class="frc-pdp-final" data-product-id="{{ product.id }}" data-section-id="{{ section.id }}">
 
-/* Rating */
-.frc-pdp-rating { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 0 6px; }
-.frc-pdp-stars { display:flex; gap:2px; color:var(--ye); font-size:18px; }
-.frc-pdp-score { font-size:15px; font-weight:700; color:var(--tx); }
-.frc-pdp-rev { font-size:13px; color:var(--tx2); }
-.frc-pdp-rev strong { color:var(--g); }
-.frc-pdp-verified { font-size:11px; font-weight:600; color:var(--gl); background:var(--b2); padding:3px 10px; border-radius:20px; }
-
-/* Trust pills */
-.frc-pdp-pills { display:flex; gap:8px; flex-wrap:wrap; padding:8px 0 14px; }
-.frc-pdp-pill { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:5px 12px; background:var(--b2); color:var(--g); border-radius:20px; border:1px solid rgba(27,94,32,.12); font-family:var(--font-body-family), 'Lato', sans-serif; }
-
-/* Urgency */
-.frc-pdp-urg { display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:var(--rds); font-size:14px; margin-bottom:14px; animation:frcPdpUrg 2s ease-in-out infinite; }
-@keyframes frcPdpUrg { 0%,100%{box-shadow:0 0 0 0 rgba(255,87,34,0);} 50%{box-shadow:0 0 0 4px rgba(255,87,34,.12);} }
-.frc-pdp-urg--hi { background:var(--b4); color:#C0392B; border:1px solid #F5B7B1; }
-.frc-pdp-urg--md { background:var(--b3); color:#E67E22; border:1px solid #F0B27A; }
-.frc-pdp-urg strong { font-weight:700; }
-
-/* Benefits */
-.frc-pdp-ben { list-style:none; margin:0 0 18px; padding:16px; background:var(--bg); border-radius:var(--rds); border-left:3px solid var(--g); }
-.frc-pdp-ben li { display:flex; align-items:flex-start; gap:10px; padding:5px 0; font-size:14.5px; color:var(--tx); line-height:1.5; }
-.frc-pdp-ben .chk { color:var(--gl); font-size:16px; flex-shrink:0; font-weight:700; }
-
-/* WhatsApp */
-.frc-pdp-wa { display:flex; align-items:center; gap:12px; padding:12px 16px; background:linear-gradient(135deg,#e8f5e9,#f1f8e9); border:1.5px solid rgba(37,211,102,.25); border-radius:var(--rds); text-decoration:none; color:var(--tx); font-size:14px; margin-bottom:14px; transition:all .25s ease; }
-.frc-pdp-wa:hover { border-color:var(--wa); box-shadow:0 4px 14px rgba(37,211,102,.15); transform:translateY(-1px); }
-.frc-pdp-wa .ico { font-size:22px; flex-shrink:0; }
-.frc-pdp-wa .txt { display:flex; flex-direction:column; }
-.frc-pdp-wa .txt strong { font-size:13px; font-weight:600; }
-.frc-pdp-wa .txt small { font-size:12px; color:var(--tx2); }
-
-/* Tabs */
-.frc-pdp-tabs { margin:28px 0 36px; }
-.frc-pdp-tabs .nav { display:flex; gap:0; border-bottom:2px solid var(--bo); overflow-x:auto; -webkit-overflow-scrolling:touch; }
-.frc-pdp-tabs .tab { padding:14px 20px; background:none; border:none; border-bottom:2.5px solid transparent; margin-bottom:-2px; font-size:13px; font-weight:600; color:var(--tx2); white-space:nowrap; cursor:pointer; transition:all .2s; text-transform:uppercase; letter-spacing:.06em; font-family:inherit; }
-.frc-pdp-tabs .tab:hover { color:var(--gm); }
-.frc-pdp-tabs .tab.on { color:var(--g); border-bottom-color:var(--g); }
-.frc-pdp-tabs .panel { display:none; padding:24px 0; font-size:15px; line-height:1.7; color:var(--tx); animation:frcPdpFade .35s ease; }
-.frc-pdp-tabs .panel.on { display:block; }
-@keyframes frcPdpFade { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
-.frc-pdp-tabs .panel ul { margin:0; padding-left:20px; }
-.frc-pdp-tabs .panel li { margin-bottom:6px; }
-
-/* Cross-sell */
-.frc-pdp-cross { margin-top:40px; }
-.frc-pdp-cross .t { font-family:'Amatic SC', cursive; font-size:2.8rem; color:var(--g); margin:0 0 4px; text-align:center; }
-.frc-pdp-cross .st { font-size:15px; color:var(--tx2); text-align:center; margin-bottom:24px; }
-.frc-pdp-cross .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; }
-.frc-pdp-cross .card { background:var(--wh); border-radius:var(--rd); border:1px solid var(--bo); overflow:hidden; transition:all .25s ease; display:flex; flex-direction:column; }
-.frc-pdp-cross .card:hover { box-shadow:0 8px 24px rgba(0,0,0,.1); transform:translateY(-3px); }
-.frc-pdp-cross .card a { text-decoration:none; color:var(--tx); display:block; }
-.frc-pdp-cross .card img { width:100%; aspect-ratio:1; object-fit:contain; background:var(--bg); padding:16px; }
-.frc-pdp-cross .card h4 { font-size:14px; font-weight:600; margin:0; padding:12px 14px 4px; line-height:1.35; }
-.frc-pdp-cross .card .pr { padding:0 14px 12px; font-size:16px; font-weight:700; color:var(--g); }
-.frc-pdp-cross .card .btn { display:block; width:calc(100% - 28px); margin:0 14px 14px; padding:10px; background:var(--g); color:var(--wh); border:none; border-radius:var(--rds); font-size:13px; font-weight:600; cursor:pointer; transition:background .2s; margin-top:auto; text-align:center; text-decoration:none; }
-.frc-pdp-cross .card .btn:hover { background:var(--gm); }
-
-/* FAQ */
-.frc-pdp-faq { margin-top:40px; }
-.frc-pdp-faq .t { font-family:'Amatic SC', cursive; font-size:2.8rem; color:var(--g); margin:0 0 20px; }
-.frc-pdp-faq .item { margin-bottom:8px; border:1px solid var(--bo); border-radius:var(--rds); overflow:hidden; background:var(--wh); }
-.frc-pdp-faq .q { width:100%; display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:none; border:none; font-size:15px; font-weight:700; color:var(--tx); cursor:pointer; text-align:left; transition:background .2s; font-family:inherit; }
-.frc-pdp-faq .q:hover { background:var(--b2); }
-.frc-pdp-faq .q .ico { font-size:20px; color:var(--g); transition:transform .3s; flex-shrink:0; margin-left:12px; }
-.frc-pdp-faq .item.open .q .ico { transform:rotate(45deg); }
-.frc-pdp-faq .a { max-height:0; overflow:hidden; transition:max-height .35s ease; }
-.frc-pdp-faq .item.open .a { max-height:400px; }
-.frc-pdp-faq .a .in { padding:0 20px 18px; font-size:14.5px; line-height:1.7; color:var(--tx2); }
-
-/* Shipping */
-.frc-pdp-ship { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:20px; background:var(--bg); border-radius:var(--rd); margin:24px 0; }
-.frc-pdp-ship .it { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--tx2); }
-.frc-pdp-ship .it strong { color:var(--tx); display:block; }
-
-/* Guarantee */
-.frc-pdp-guar { text-align:center; padding:48px 32px; background:linear-gradient(135deg,var(--b2),var(--bg)); border-radius:var(--rd); border:1px solid rgba(27,94,32,.1); margin-top:40px; }
-.frc-pdp-guar .ico { font-size:48px; margin-bottom:12px; }
-.frc-pdp-guar h3 { font-family:'Amatic SC', cursive; font-size:2.4rem; color:var(--tx); margin:0 0 10px; }
-.frc-pdp-guar p { font-size:15px; color:var(--tx2); max-width:540px; margin:0 auto 24px; line-height:1.6; }
-.frc-pdp-guar .bad { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
-.frc-pdp-guar .bad span { padding:8px 16px; background:var(--wh); border-radius:20px; font-size:12px; font-weight:500; color:var(--tx2); box-shadow:0 2px 8px rgba(0,0,0,.06); }
-
-/* Social proof bar */
-.frc-pdp-soc { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; padding:16px; background:var(--b2); border-radius:var(--rds); margin:16px 0; }
-.frc-pdp-soc span { font-size:12px; font-weight:600; color:var(--g); }
-
-/* Mobile sticky */
-.frc-pdp-sticky { display:none; position:fixed; bottom:0; left:0; right:0; background:var(--wh); box-shadow:0 -4px 20px rgba(0,0,0,.12); padding:10px 16px; z-index:999; align-items:center; gap:10px; }
-.frc-pdp-sticky .pr { font-size:16px; font-weight:700; color:var(--g); white-space:nowrap; }
-.frc-pdp-sticky .btn { flex:1; padding:12px; background:var(--g); color:var(--wh); border:none; border-radius:var(--rds); font-size:14px; font-weight:700; cursor:pointer; text-align:center; text-decoration:none; }
-
-/* Responsive */
-@media(max-width:749px){
-  .frc-pdp-cross .t, .frc-pdp-faq .t, .frc-pdp-guar h3 { font-size:2.2rem; }
-  .frc-pdp-guar { padding:32px 20px; }
-  .frc-pdp-ship { grid-template-columns:1fr; }
-  .frc-pdp-tabs .tab { padding:12px 14px; font-size:12px; }
-  .frc-pdp-sticky { display:flex; }
-}
-@media(min-width:750px){ .frc-pdp-cross .grid { grid-template-columns:repeat(4,1fr); } }
-{%- endstyle -%}
-
-<div class="frc-pdp-wrap page-width">
-
-  {%- comment -%} ===== BREADCRUMBS ===== {%- endcomment -%}
+  <!-- ====== BREADCRUMBS ====== -->
   {%- if section.settings.show_breadcrumbs -%}
-  <nav class="frc-pdp-bc" aria-label="Breadcrumb">
-    <ol>
-      <li><a href="/">Inicio</a></li>
-      <li><a href="/collections/all">Catalogo</a></li>
-      {%- if collection -%}<li><a href="{{ collection.url }}">{{ collection.title }}</a></li>{%- endif -%}
-      <li>{{ product.title | truncatewords: 6 }}</li>
-    </ol>
-  </nav>
-  {%- endif -%}
-
-  {%- comment -%} ===== RATING ===== {%- endcomment -%}
-  {%- if section.settings.show_rating -%}
-  <div class="frc-pdp-rating">
-    <div class="frc-pdp-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-    <span class="frc-pdp-score">4.9</span>
-    <span class="frc-pdp-rev"><strong>32 resenas verificadas</strong> en Google</span>
-    <span class="frc-pdp-verified">&#10003; Compra verificada</span>
+  <div class="frc-pdp-final__wrapper frc-pdp-final__top">
+    <nav class="frc-breadcrumbs" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Inicio</a>
+      <span class="frc-breadcrumbs__sep">/</span>
+      <a href="{{ routes.all_products_collection_url }}">Catálogo</a>
+      {%- if product.collections.size > 0 -%}
+        <span class="frc-breadcrumbs__sep">/</span>
+        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+      {%- endif -%}
+      <span class="frc-breadcrumbs__sep">/</span>
+      <span class="frc-breadcrumbs__current">{{ product.title }}</span>
+    </nav>
   </div>
   {%- endif -%}
 
-  {%- comment -%} ===== TRUST PILLS ===== {%- endcomment -%}
-  {%- if section.settings.show_trust_pills -%}
-  <div class="frc-pdp-pills">
-    <span class="frc-pdp-pill">&#127807; 100% Natural</span>
-    <span class="frc-pdp-pill">&#128666; Envio gratis +$200k</span>
-    <span class="frc-pdp-pill">&#128205; Bosa, Bogota</span>
-    <span class="frc-pdp-pill">&#9989; Sin conservantes</span>
-  </div>
-  {%- endif -%}
+  <!-- ====== MAIN PRODUCT ====== -->
+  <div class="frc-pdp-final__wrapper frc-pdp-final__main">
 
-  {%- comment -%} ===== URGENCIA ===== {%- endcomment -%}
-  {%- if section.settings.show_urgency -%}
-    {%- if cv.inventory_quantity > 0 and cv.inventory_quantity <= 5 -%}
-      <div class="frc-pdp-urg frc-pdp-urg--hi"><span>&#9889;</span> <span><strong>Solo quedan {{ cv.inventory_quantity }} unidades</strong> — {{ cv.inventory_quantity | times: 6 }} personas lo estan viendo ahora</span></div>
-    {%- elsif cv.inventory_quantity > 5 and cv.inventory_quantity <= 15 -%}
-      <div class="frc-pdp-urg frc-pdp-urg--md"><span>&#128293;</span> <span><strong>Producto muy solicitado</strong> — Stock limitado</span></div>
-    {%- endif -%}
-  {%- endif -%}
-
-  {%- comment -%} ===== BENEFITS ===== {%- endcomment -%}
-  {%- if section.settings.show_benefits -%}
-  <ul class="frc-pdp-ben">
-    {%- if benefits -%}{%- for benefit in benefits limit: 5 -%}<li><span class="chk">&#10003;</span> {{ benefit }}</li>{%- endfor -%}
-    {%- else -%}
-      <li><span class="chk">&#10003;</span> 100% natural sin aditivos ni conservantes</li>
-      <li><span class="chk">&#10003;</span> Origen consciente y comercio local de Colombia</li>
-      <li><span class="chk">&#10003;</span> Apoya productores locales de Bosa, Bogota</li>
-      <li><span class="chk">&#10003;</span> Calidad verificada por Frutos de la Raiz</li>
-      <li><span class="chk">&#10003;</span> Entrega en 24-48h en Bogota</li>
-    {%- endif -%}
-  </ul>
-  {%- endif -%}
-
-  {%- comment -%} ===== WHATSAPP ===== {%- endcomment -%}
-  {%- if section.settings.show_whatsapp -%}
-  <a href="https://wa.me/573027045952?text=Hola!%20Veo%20el%20{{ product.title | url_encode }}%20en%20frutosdelaraiz.com%20y%20tengo%20una%20pregunta" target="_blank" rel="noopener" class="frc-pdp-wa">
-    <span class="ico">&#128172;</span>
-    <span class="txt"><strong>Tienes dudas? Escribenos por WhatsApp</strong><small>Te respondemos en minutos — 302 704 5952</small></span>
-  </a>
-  {%- endif -%}
-
-  {%- comment -%} ===== TABS ===== {%- endcomment -%}
-  {%- if section.settings.show_tabs -%}
-  <div class="frc-pdp-tabs" data-pdp-tabs>
-    <div class="nav">
-      <button class="tab on" data-tab="desc">Descripcion</button>
-      {%- if benefits -%}<button class="tab" data-tab="ben">Beneficios</button>{%- endif -%}
-      {%- if how_to_use -%}<button class="tab" data-tab="uso">Modo de Uso</button>{%- endif -%}
-      {%- if ingredients -%}<button class="tab" data-tab="ing">Ingredientes</button>{%- endif -%}
-      {%- if nutritional_info -%}<button class="tab" data-tab="nut">Info. Nutricional</button>{%- endif -%}
-    </div>
-    <div>
-      <div class="panel on" data-panel="desc">{{ product.description | default: '<p>' | append: product.title | append: ' — Producto 100% natural de Frutos de la Raiz.</p>' }}</div>
-      {%- if benefits -%}<div class="panel" data-panel="ben"><ul>{%- for b in benefits -%}<li><strong>&#10003; {{ b }}</strong></li>{%- endfor -%}</ul></div>{%- endif -%}
-      {%- if how_to_use -%}<div class="panel" data-panel="uso">{{ how_to_use | metafield_tag }}</div>{%- endif -%}
-      {%- if ingredients -%}<div class="panel" data-panel="ing">{{ ingredients | metafield_tag }}</div>{%- endif -%}
-      {%- if nutritional_info -%}<div class="panel" data-panel="nut">{{ nutritional_info | metafield_tag }}</div>{%- endif -%}
-    </div>
-  </div>
-  {%- endif -%}
-
-  {%- comment -%} ===== CROSS-SELL INTELIGENTE ===== {%- endcomment -%}
-  {%- if section.settings.show_cross_sell -%}
-    {%- assign cross_products = "" -%}
-    {%- if collection and collection.products.size > 1 -%}
-      {%- assign cross_products = collection.products -%}
-    {%- elsif product.collections.first and product.collections.first.products.size > 1 -%}
-      {%- assign cross_products = product.collections.first.products -%}
-    {%- endif -%}
-    {%- if cross_products != "" -%}
-    <div class="frc-pdp-cross">
-      <h2 class="t">&#127873; Complementa tu compra</h2>
-      <p class="st">Productos que van bien con {{ product.title }}</p>
-      <div class="grid">
-        {%- assign shown = 0 -%}
-        {%- for cp in cross_products limit: 8 -%}
-          {%- if cp.id != product.id and cp.available and shown < 4 -%}{%- assign shown = shown | plus: 1 -%}
-            <div class="card">
-              <a href="{{ cp.url }}"><img src="{{ cp.featured_media | image_url: width: 400 }}" alt="{{ cp.title | escape }}" loading="lazy" width="400" height="400"><h4>{{ cp.title }}</h4><div class="pr">{{ cp.price | money }}</div></a>
-              <form method="post" action="/cart/add" style="margin:0;"><input type="hidden" name="id" value="{{ cp.selected_or_first_available_variant.id }}"><button type="submit" class="btn">&#128722; Anadir al carrito</button></form>
-            </div>
-          {%- endif -%}
+    <!-- 2. GALERÍA -->
+    <div class="frc-gallery" data-gallery>
+      <div class="frc-gallery__stage" data-gallery-stage onclick="fcZoom()">
+        {%- for image in product.images -%}
+          <img
+            src="{{ image | image_url: width: 800 }}"
+            srcset="{{ image | image_url: width: 400 }} 400w, {{ image | image_url: width: 800 }} 800w, {{ image | image_url: width: 1200 }} 1200w"
+            sizes="(max-width: 749px) 100vw, 50vw"
+            alt="{{ product.title | escape }} — Imagen {{ forloop.index }}"
+            class="frc-gallery__img {% if forloop.first %}is-active{% endif %}"
+            data-gallery-img="{{ forloop.index0 }}"
+            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+            width="800"
+            height="800"
+          >
         {%- endfor -%}
+        {%- if product.images.size > 1 -%}
+          <button class="frc-gallery__arrow frc-gallery__arrow--prev" onclick="fcGallery('prev')" aria-label="Imagen anterior">&#10094;</button>
+          <button class="frc-gallery__arrow frc-gallery__arrow--next" onclick="fcGallery('next')" aria-label="Imagen siguiente">&#10095;</button>
+        {%- endif -%}
+      </div>
+
+      {%- if product.images.size > 1 -%}
+      <div class="frc-gallery__thumbs" data-gallery-thumbs>
+        {%- for image in product.images -%}
+          <button
+            class="frc-gallery__thumb {% if forloop.first %}is-active{% endif %}"
+            onclick="fcGallery('go', {{ forloop.index0 }})"
+            aria-label="Ver imagen {{ forloop.index }}"
+          >
+            <img
+              src="{{ image | image_url: width: 150 }}"
+              alt="{{ product.title | escape }} — Miniatura {{ forloop.index }}"
+              loading="lazy"
+              width="150"
+              height="150"
+            >
+          </button>
+        {%- endfor -%}
+      </div>
+
+      <div class="frc-gallery__dots" data-gallery-dots>
+        {%- for image in product.images -%}
+          <button
+            class="frc-gallery__dot {% if forloop.first %}is-active{% endif %}"
+            onclick="fcGallery('go', {{ forloop.index0 }})"
+            aria-label="Ver imagen {{ forloop.index }}"
+          ></button>
+        {%- endfor -%}
+      </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Zoom overlay -->
+    <div class="frc-gallery__zoom" data-zoom-overlay onclick="fcZoom()">
+      <button class="frc-gallery__zoom-close" aria-label="Cerrar zoom">&times;</button>
+      <img src="" alt="Zoom" data-zoom-img>
+    </div>
+
+    <!-- 3. INFO DEL PRODUCTO -->
+    <div class="frc-product-info">
+
+      <!-- Vendor -->
+      {%- if product.vendor != blank -%}
+        <span class="frc-product-info__vendor">{{ product.vendor }}</span>
+      {%- endif -%}
+
+      <!-- Título -->
+      <h1 class="frc-product-info__title">{{ product.title }}</h1>
+
+      <!-- Rating -->
+      {%- if section.settings.show_rating -%}
+      <div class="frc-rating">
+        <div class="frc-rating__stars" aria-label="4.9 de 5 estrellas">
+          {%- for i in (1..5) -%}
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          {%- endfor -%}
+        </div>
+        <span class="frc-rating__text"><strong>4.9</strong> / 5 &middot; 32 reseñas verificadas</span>
+        <span class="frc-rating__badge">Compra verificada</span>
+      </div>
+      {%- endif -%}
+
+      <!-- Trust Pills -->
+      {%- if section.settings.show_trust_pills -%}
+      <div class="frc-trust">
+        <span class="frc-trust__pill"><span>&#127807;</span> 100% Natural</span>
+        <span class="frc-trust__pill"><span>&#128666;</span> Envío gratis +$200k</span>
+        <span class="frc-trust__pill"><span>&#128205;</span> Bosa Bogotá</span>
+        <span class="frc-trust__pill"><span>&#9989;</span> Sin conservantes</span>
+      </div>
+      {%- endif -%}
+
+      <!-- Urgency Bar -->
+      {%- if section.settings.show_urgency -%}
+        {%- assign stock_num = cv.inventory_quantity | default: 0 -%}
+        {%- if stock_num <= 5 and stock_num > 0 -%}
+          <div class="frc-urgency frc-urgency--critical">
+            <span class="frc-urgency__icon">&#9888;&#65039;</span>
+            <span>&#128293; Solo quedan <strong>{{ stock_num }} unidades</strong> — {{ stock_num | times: 3 | plus: 2 }} personas lo están viendo</span>
+          </div>
+        {%- elsif stock_num <= 15 and stock_num > 5 -%}
+          <div class="frc-urgency frc-urgency--warning">
+            <span class="frc-urgency__icon">&#9203;</span>
+            <span>Producto muy solicitado — Stock limitado</span>
+          </div>
+        {%- elsif stock_num == 0 and cv.available == false -%}
+          <div class="frc-urgency frc-urgency--critical">
+            <span class="frc-urgency__icon">&#128683;</span>
+            <span>Agotado temporalmente</span>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
+      <!-- Precio -->
+      <div class="frc-price-row">
+        <span class="frc-price" data-frc-price>{{ cv.price | money }}</span>
+        {%- if has_compare -%}
+          <span class="frc-price__compare" data-frc-compare>{{ cv.compare_at_price | money }}</span>
+          <span class="frc-price__save">Ahorras {{ discount_pct }}%</span>
+        {%- endif -%}
+      </div>
+
+      <!-- Variant selector -->
+      {%- if product.variants.size > 1 -%}
+        <div class="frc-variant" data-variant-container>
+          <span class="frc-variant__label">Selecciona una opción:</span>
+          {%- if product.options.size == 1 and product.variants.size <= 6 -%}
+            <!-- Botones para pocas variantes de una sola opción -->
+            <div class="frc-variant__options">
+              {%- for variant in product.variants -%}
+                <button
+                  class="frc-variant__btn {% if variant.id == cv.id %}is-selected{% endif %} {% unless variant.available %}is-disabled{% endunless %}"
+                  data-variant-id="{{ variant.id }}"
+                  data-variant-price="{{ variant.price }}"
+                  data-variant-compare="{{ variant.compare_at_price | default: 0 }}"
+                  data-variant-available="{{ variant.available }}"
+                  data-variant-image="{% if variant.featured_image %}{{ variant.featured_image | image_url: width: 800 }}{% endif %}"
+                  onclick="{% if variant.available %}fcSelectVariant({{ variant.id }}){% endif %}"
+                >
+                  {{ variant.title }}
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- else -%}
+            <!-- Dropdown para múltiples opciones -->
+            <select class="frc-variant__select" onchange="fcSelectVariant(this.value)" data-variant-select>
+              {%- for variant in product.variants -%}
+                <option
+                  value="{{ variant.id }}"
+                  {% if variant.id == cv.id %}selected{% endif %}
+                  {% unless variant.available %}disabled{% endunless %}
+                  data-variant-price="{{ variant.price }}"
+                  data-variant-compare="{{ variant.compare_at_price | default: 0 }}"
+                  data-variant-image="{% if variant.featured_image %}{{ variant.featured_image | image_url: width: 800 }}{% endif %}"
+                >
+                  {{ variant.title }} {% unless variant.available %}(Agotado){% endunless %} — {{ variant.price | money }}
+                </option>
+              {%- endfor -%}
+            </select>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <!-- Cantidad + Add to Cart -->
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px;">
+        <div class="frc-qty">
+          <button class="frc-qty__btn" onclick="fcQty('minus')" aria-label="Disminuir cantidad">&#8722;</button>
+          <input type="number" class="frc-qty__input" value="1" min="1" data-frc-qty aria-label="Cantidad">
+          <button class="frc-qty__btn" onclick="fcQty('plus')" aria-label="Aumentar cantidad">+</button>
+        </div>
+
+        <div class="frc-actions">
+          <!-- Add to Cart -->
+          <button
+            class="frc-btn frc-btn--cart"
+            data-frc-add
+            data-variant-id="{{ cv.id }}"
+            data-qty-selector="[data-frc-qty]"
+            onclick="var v=this.dataset.variantId,q=document.querySelector(this.dataset.qtySelector);fcAddCart(v,q?q.value:1)"
+            {% unless cv.available %}disabled style="opacity:0.5;cursor:not-allowed;"{% endunless %}
+          >
+            <span class="frc-btn__text">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              {%- if cv.available -%}Añadir al carrito{%- else -%}Agotado{%- endif -%}
+            </span>
+            <span class="frc-btn__spinner">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+            </span>
+            <span class="frc-btn__check">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+          </button>
+
+          <!-- WhatsApp CTA -->
+          {%- if section.settings.show_whatsapp -%}
+          <a
+            href="https://wa.me/573001234567?text={{ wa_message | url_encode }}"
+            class="frc-btn frc-btn--wa"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Comprar por WhatsApp
+          </a>
+          {%- endif -%}
+        </div>
+
+        <!-- Envío gratis badge -->
+        {%- if cv.price >= 200000 -%}
+          <div class="frc-ship-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            Envío <strong>GRATIS</strong> en este producto
+          </div>
+        {%- endif -%}
+      </div>
+
+    </div><!-- /frc-product-info -->
+  </div><!-- /frc-pdp-final__main -->
+
+  <!-- ====== 4. TABS ====== -->
+  {%- if section.settings.show_tabs -%}
+  <div class="frc-pdp-final__wrapper">
+    <div class="frc-tabs">
+      <div class="frc-tabs__nav" role="tablist">
+        <button class="frc-tabs__btn is-active" onclick="fcTabs('desc')" role="tab" aria-selected="true" data-tab="desc">Descripción</button>
+        {%- if section.settings.show_benefits -%}
+        <button class="frc-tabs__btn" onclick="fcTabs('benefits')" role="tab" aria-selected="false" data-tab="benefits">Beneficios</button>
+        {%- endif -%}
+        <button class="frc-tabs__btn" onclick="fcTabs('usage')" role="tab" aria-selected="false" data-tab="usage">Modo de Uso</button>
+        <button class="frc-tabs__btn" onclick="fcTabs('ingredients')" role="tab" aria-selected="false" data-tab="ingredients">Ingredientes</button>
+        <button class="frc-tabs__btn" onclick="fcTabs('nutrition')" role="tab" aria-selected="false" data-tab="nutrition">Info. Nutricional</button>
+      </div>
+
+      <div class="frc-tabs__panel is-active" id="tab-desc" role="tabpanel">
+        <h3>Sobre este producto</h3>
+        {{ product.description | default: '<p>Producto natural de Frutos de la Raíz. Elaborado con ingredientes seleccionados de la mejor calidad.</p>' }}
+      </div>
+
+      {%- if section.settings.show_benefits -%}
+      <div class="frc-tabs__panel" id="tab-benefits" role="tabpanel">
+        <h3>Beneficios</h3>
+        {%- if benefits != blank -%}
+          {{ benefits }}
+        {%- else -%}
+          <ul>
+            <li>100% natural, sin aditivos ni conservantes artificiales</li>
+            <li>Elaborado con ingredientes de origen colombiano</li>
+            <li>Apoya la alimentación saludable y consciente</li>
+            <li>Proceso artesanal que preserva propiedades naturales</li>
+            <li>Empaque eco-amigable</li>
+          </ul>
+        {%- endif -%}
+      </div>
+      {%- endif -%}
+
+      <div class="frc-tabs__panel" id="tab-usage" role="tabpanel">
+        <h3>Modo de Uso</h3>
+        {%- if how_to_use != blank -%}
+          {{ how_to_use }}
+        {%- else -%}
+          <p>Consume directamente o añade a tus recetas favoritas. Ideal para incorporar en tu dieta diaria de forma natural. Conserva en lugar fresco y seco.</p>
+        {%- endif -%}
+      </div>
+
+      <div class="frc-tabs__panel" id="tab-ingredients" role="tabpanel">
+        <h3>Ingredientes</h3>
+        {%- if ingredients != blank -%}
+          {{ ingredients }}
+        {%- else -%}
+          <p>Ingredientes 100% naturales seleccionados cuidadosamente. Sin aditivos artificiales, sin conservantes químicos, sin colorantes.</p>
+        {%- endif -%}
+      </div>
+
+      <div class="frc-tabs__panel" id="tab-nutrition" role="tabpanel">
+        <h3>Información Nutricional</h3>
+        {%- if nutritional_info != blank -%}
+          {{ nutritional_info }}
+        {%- else -%}
+          <p>Información nutricional por porción (aproximada):</p>
+          <ul>
+            <li>Energía: variable según producto</li>
+            <li>Grasas totales: naturalmente bajo en grasas</li>
+            <li>Carbohidratos: fuente natural de energía</li>
+            <li>Proteínas: contenido natural</li>
+            <li>Fibra dietaria: aporte natural</li>
+          </ul>
+          <p style="margin-top:12px;font-size:12px;color:var(--frc-gray);">* Los valores pueden variar ligeramente según la presentación. Consulta el empaque para información específica.</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+
+  <!-- ====== 5. CROSS-SELL ====== -->
+  {%- if section.settings.show_cross_sell -%}
+    {%- assign current_id = product.id -%}
+    {%- assign cross_limit = 4 -%}
+    {%- assign cross_found = 0 -%}
+    {%- assign cross_collection = product.collections.first -%}
+
+    {%- if cross_collection -%}
+    <div class="frc-pdp-final__wrapper">
+      <div class="frc-cross">
+        <h2 class="frc-section-title">Complementa tu compra</h2>
+        <div class="frc-cross__grid">
+          {%- for cross_product in cross_collection.products limit: 12 -%}
+            {%- if cross_product.id != current_id and cross_product.available and cross_found < cross_limit -%}
+              {%- assign cross_found = cross_found | plus: 1 -%}
+              {%- assign cross_variant = cross_product.selected_or_first_available_variant -%}
+              <div class="frc-product-card">
+                <a href="{{ cross_product.url }}" aria-label="{{ cross_product.title | escape }}">
+                  <img
+                    src="{{ cross_product.featured_image | image_url: width: 400 }}"
+                    srcset="{{ cross_product.featured_image | image_url: width: 200 }} 200w, {{ cross_product.featured_image | image_url: width: 400 }} 400w"
+                    sizes="(max-width: 480px) 50vw, 25vw"
+                    alt="{{ cross_product.title | escape }}"
+                    class="frc-product-card__img"
+                    loading="lazy"
+                    width="400"
+                    height="400"
+                  >
+                </a>
+                <div class="frc-product-card__body">
+                  <h3 class="frc-product-card__title">{{ cross_product.title }}</h3>
+                  <span class="frc-product-card__price">{{ cross_variant.price | money }}</span>
+                  <button
+                    class="frc-product-card__btn"
+                    data-variant-id="{{ cross_variant.id }}"
+                    onclick="fcAddCart(this.dataset.variantId, 1)"
+                    {% unless cross_variant.available %}disabled{% endunless %}
+                  >
+                    <span class="frc-product-card__btn-text">
+                      {%- if cross_variant.available -%}Añadir{%- else -%}Agotado{%- endif -%}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- if cross_found == 0 -%}
+          <p style="text-align:center;color:var(--frc-gray);font-family:var(--frc-font-body);font-size:14px;">Explora más productos en nuestro <a href="{{ routes.all_products_collection_url }}" style="color:var(--frc-green);font-weight:600;">catálogo</a>.</p>
+        {%- endif -%}
       </div>
     </div>
     {%- endif -%}
   {%- endif -%}
 
-  {%- comment -%} ===== SHIPPING INFO ===== {%- endcomment -%}
-  {%- if section.settings.show_shipping -%}
-  <div class="frc-pdp-ship">
-    <div class="it">&#128666;<span><strong>Envio GRATIS</strong>en Bogota por +$200k</span></div>
-    <div class="it">&#9200;<span><strong>24-48 horas</strong>de entrega en Bogota</span></div>
-    <div class="it">&#128176;<span><strong>Pago contra entrega</strong>disponible</span></div>
-  </div>
-  {%- endif -%}
-
-  {%- comment -%} ===== SOCIAL PROOF ===== {%- endcomment -%}
-  {%- if section.settings.show_social_proof -%}
-  <div class="frc-pdp-soc"><span>&#128722; +500 clientes felices</span><span>&#11088; 4.9 en Google</span><span>&#128666; Envios en Bogota</span><span>&#127807; 100% Natural</span></div>
-  {%- endif -%}
-
-  {%- comment -%} ===== FAQ ===== {%- endcomment -%}
+  <!-- ====== 6. FAQ ACORDEÓN ====== -->
   {%- if section.settings.show_faq -%}
-  <div class="frc-pdp-faq">
-    <h2 class="t">Preguntas frecuentes</h2>
-    {%- if faq_content -%}{%- for faq in faq_content -%}
-      <div class="item" data-faq><button class="q"><span>{{ faq.question }}</span><span class="ico">+</span></button><div class="a"><div class="in">{{ faq.answer }}</div></div></div>
-    {%- endfor -%}{%- else -%}
-      <div class="item" data-faq><button class="q"><span>Es 100% natural?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>Si, todos nuestros productos son <strong>100% naturales</strong>, sin aditivos ni conservantes quimicos.</p></div></div></div>
-      <div class="item" data-faq><button class="q"><span>Como se conserva?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>En lugar <strong>fresco y seco</strong>, protegido de la luz solar directa.</p></div></div></div>
-      <div class="item" data-faq><button class="q"><span>Envian a domicilio?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>Si! El envio es <strong>GRATIS</strong> por compras superiores a $200.000 COP.</p></div></div></div>
-      <div class="item" data-faq><button class="q"><span>Tiempo de entrega?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>Entregamos en <strong>24-48 horas habiles</strong> en Bogota.</p></div></div></div>
-      <div class="item" data-faq><button class="q"><span>Tienda fisica?</span><span class="ico">+</span></button><div class="a"><div class="in"><p>Si! <strong>Calle 65g sur #79b-36, Bosa, Bogota</strong>.</p></div></div></div>
-    {%- endif -%}
+  <div class="frc-pdp-final__wrapper">
+    <div class="frc-faq">
+      <h2 class="frc-section-title">Preguntas frecuentes</h2>
+      <div class="frc-faq__list">
+
+        {%- if faq_content != blank -%}
+          {{ faq_content }}
+        {%- else -%}
+          <!-- FAQ Defaults -->
+          <div class="frc-faq__item" data-faq-item>
+            <button class="frc-faq__q" onclick="fcFaq(this)">
+              ¿Es 100% natural?
+              <svg class="frc-faq__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="frc-faq__a">
+              <p>Sí, todos nuestros productos son 100% naturales. No utilizamos conservantes artificiales, colorantes ni aditivos químicos. Cada producto es elaborado con ingredientes seleccionados de origen colombiano, respetando procesos tradicionales que preservan sus propiedades naturales.</p>
+            </div>
+          </div>
+
+          <div class="frc-faq__item" data-faq-item>
+            <button class="frc-faq__q" onclick="fcFaq(this)">
+              ¿Cómo se conserva?
+              <svg class="frc-faq__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="frc-faq__a">
+              <p>Recomendamos conservar el producto en un lugar fresco y seco, protegido de la luz solar directa. Una vez abierto, cierra bien el empaque para mantener su frescura. Algunos productos pueden requerir refrigeración después de abiertos — consulta las instrucciones específicas en la etiqueta.</p>
+            </div>
+          </div>
+
+          <div class="frc-faq__item" data-faq-item>
+            <button class="frc-faq__q" onclick="fcFaq(this)">
+              ¿Envían a domicilio?
+              <svg class="frc-faq__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="frc-faq__a">
+              <p>¡Sí! Realizamos envíos a domicilio en Bogotá y alrededores. Los pedidos superiores a $200.000 tienen envío gratis. También ofrecemos la opción de pago contra entrega para tu tranquilidad.</p>
+            </div>
+          </div>
+
+          <div class="frc-faq__item" data-faq-item>
+            <button class="frc-faq__q" onclick="fcFaq(this)">
+              ¿Cuál es el tiempo de entrega?
+              <svg class="frc-faq__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="frc-faq__a">
+              <p>El tiempo de entrega en Bogotá es de 24 a 48 horas hábiles una vez confirmado el pedido. Para zonas aledañas puede tomar hasta 72 horas. Te notificaremos por WhatsApp cuando tu pedido esté en camino.</p>
+            </div>
+          </div>
+
+          <div class="frc-faq__item" data-faq-item>
+            <button class="frc-faq__q" onclick="fcFaq(this)">
+              ¿Tienen tienda física?
+              <svg class="frc-faq__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="frc-faq__a">
+              <p>Sí, tenemos punto de atención en Bosa, Bogotá. Puedes pasar a conocer nuestros productos, hacer tu pedido directamente o recoger compras realizadas online. Escríbenos por WhatsApp para confirmar dirección exacta y horarios de atención.</p>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
   </div>
   {%- endif -%}
 
-  {%- comment -%} ===== GARANTIA ===== {%- endcomment -%}
+  <!-- ====== 7. INFO DE ENVÍO ====== -->
+  {%- if section.settings.show_shipping -%}
+  <div class="frc-pdp-final__wrapper">
+    <div class="frc-shipping">
+      <div class="frc-ship-card">
+        <div class="frc-ship-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <h3 class="frc-ship-card__title">Envío GRATIS</h3>
+        <p class="frc-ship-card__text">En compras superiores a $200.000 en Bogotá</p>
+      </div>
+      <div class="frc-ship-card">
+        <div class="frc-ship-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3 class="frc-ship-card__title">24-48 horas</h3>
+        <p class="frc-ship-card__text">Entrega rápida en toda Bogotá</p>
+      </div>
+      <div class="frc-ship-card">
+        <div class="frc-ship-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <h3 class="frc-ship-card__title">Pago contra entrega</h3>
+        <p class="frc-ship-card__text">Paga cuando recibas tu pedido</p>
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+
+  <!-- ====== 8. SOCIAL PROOF BAR ====== -->
+  {%- if section.settings.show_social_proof -%}
+  <div class="frc-pdp-final__wrapper">
+    <div class="frc-social">
+      <div class="frc-social__grid">
+        <div>
+          <span class="frc-social__num">+500</span>
+          <span class="frc-social__label">Clientes felices</span>
+        </div>
+        <div>
+          <span class="frc-social__num">4.9</span>
+          <span class="frc-social__label">Calificación en Google</span>
+        </div>
+        <div>
+          <span class="frc-social__num">24h</span>
+          <span class="frc-social__label">Envíos en Bogotá</span>
+        </div>
+        <div>
+          <span class="frc-social__num">100%</span>
+          <span class="frc-social__label">Productos naturales</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+
+  <!-- ====== 9. GARANTÍA ====== -->
   {%- if section.settings.show_guarantee -%}
-  <div class="frc-pdp-guar">
-    <div class="ico">&#128170;</div>
-    <h3>Garantia de Satisfaccion</h3>
-    <p>Si no estas 100% satisfecho, contactanos por WhatsApp al <strong>302 704 5952</strong> y te ayudamos con la devolucion.</p>
-    <div class="bad"><span>&#128722; +500 clientes</span><span>&#11088; 4.9 en Google</span><span>&#128666; Envios Bogota</span><span>&#128154; Alimentacion consciente</span></div>
+  <div class="frc-pdp-final__wrapper">
+    <div class="frc-guarantee">
+      <div class="frc-guarantee__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h2 class="frc-guarantee__title">Garantía de Satisfacción</h2>
+      <p class="frc-guarantee__text">Si no quedas completamente satisfecho con tu compra, contáctanos dentro de los 7 días posteriores a la entrega y haremos todo lo posible para resolverlo. Tu confianza es nuestra prioridad.</p>
+      <div class="frc-guarantee__badges">
+        <span class="frc-guarantee__badge">Calidad garantizada</span>
+        <span class="frc-guarantee__badge">Origen colombiano</span>
+        <span class="frc-guarantee__badge">Atención personalizada</span>
+      </div>
+    </div>
   </div>
   {%- endif -%}
 
-  {%- comment -%} ===== MOBILE STICKY ===== {%- endcomment -%}
-  <div class="frc-pdp-sticky">
-    <span class="pr">{{ cv.price | money }}</span>
-    <a href="#ProductInfo" class="btn">&#128722; Comprar Ahora</a>
-  </div>
+  <!-- ====== ESPACIO PARA STICKY BAR MOBILE ====== -->
+  <div class="frc-pdp-final__spacer"></div>
 
-</div>
+  <!-- ====== 10. MOBILE STICKY BAR ====== -->
+  {%- if section.settings.show_mobile_sticky -%}
+  <div class="frc-mobile-bar" data-mobile-bar>
+    <span class="frc-mobile-bar__price" data-frc-price-mobile>{{ cv.price | money }}</span>
+    <button class="frc-mobile-bar__btn" onclick="document.querySelector('[data-frc-add]').click()">Comprar Ahora</button>
+  </div>
+  {%- endif -%}
+
+  <!-- ====== 11. WHATSAPP FLOATING CTA ====== -->
+  {%- if section.settings.show_whatsapp -%}
+  <div class="frc-wa-float">
+    <a
+      href="https://wa.me/573001234567?text={{ wa_message | url_encode }}"
+      class="frc-wa-float__btn"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Consultar por WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      ¿Tienes dudas? Escríbenos
+    </a>
+  </div>
+  {%- endif -%}
+
+  <!-- ====== TOAST ====== -->
+  <div class="frc-toast" id="frc-toast" role="alert" aria-live="polite"></div>
+
+</div><!-- /frc-pdp-final -->
 
 {%- javascript -%}
-(function(){
-  var wrap=document.querySelector('[data-pdp-tabs]');
-  if(wrap){
-    var tabs=wrap.querySelectorAll('[data-tab]'), panels=wrap.querySelectorAll('[data-panel]');
-    tabs.forEach(function(t){t.addEventListener('click',function(){var x=this.dataset.tab;tabs.forEach(function(a){a.classList.remove('on')});panels.forEach(function(a){a.classList.remove('on')});this.classList.add('on');var p=wrap.querySelector('[data-panel="'+x+'"]');if(p)p.classList.add('on');});});
+/* ═══════════════════════════════════════════
+   FRC PDP FINAL — JavaScript
+   TODAS las funciones con onclick inline
+   estan en scope GLOBAL (fuera del IIFE)
+   para garantizar que siempre existan.
+   ═══════════════════════════════════════════ */
+
+/* ====== FUNCIONES GLOBALES (scope window) ======
+   Se llaman desde onclick="..." inline en el HTML.
+   DEBEN existir siempre, sin depender del IIFE. */
+
+/* ── Helpers ── */
+window.frcFormatMoney = function(cents) {
+  var val = (cents / 100).toFixed(0);
+  return '$' + parseInt(val).toLocaleString('es-CO');
+};
+
+/* ── Encontrar el container .frc-pdp-final activo ── */
+window.frcGetContainer = function(fromEl) {
+  if (fromEl) {
+    var c = fromEl.closest('.frc-pdp-final');
+    if (c) return c;
   }
-  document.querySelectorAll('[data-faq]').forEach(function(it){var q=it.querySelector('.q');if(q)q.addEventListener('click',function(){var o=it.classList.contains('open');document.querySelectorAll('[data-faq]').forEach(function(z){if(z!==it)z.classList.remove('open');});it.classList.toggle('open',!o);});});
+  return document.querySelector('.frc-pdp-final');
+};
+
+/* ── 1. fcToast ── */
+window.fcToast = function(msg, isError) {
+  var toast = document.getElementById('frc-toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.className = 'frc-toast frc-toast--' + (isError ? 'error' : 'success');
+  requestAnimationFrame(function() {
+    toast.classList.add('is-visible');
+  });
+  setTimeout(function() {
+    toast.classList.remove('is-visible');
+  }, 3200);
+};
+
+/* ── 2. fcAddCart ── */
+window.fcAddCart = function(variantId, qty) {
+  qty = parseInt(qty) || 1;
+  variantId = parseInt(variantId) || 0;
+  if (!variantId) {
+    window.fcToast('Selecciona una variante', true);
+    return;
+  }
+  var btn = document.querySelector('[data-frc-add]');
+  if (btn) {
+    btn.classList.add('is-loading');
+    btn.disabled = true;
+  }
+
+  fetch('/cart/add.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ id: variantId, quantity: qty })
+  })
+  .then(function(r) {
+    if (!r.ok) {
+      return r.json().then(function(err) {
+        throw new Error(err.description || err.message || 'Error al anadir');
+      });
+    }
+    return r.json();
+  })
+  .then(function() {
+    if (btn) {
+      btn.classList.remove('is-loading');
+      btn.classList.add('is-success');
+      setTimeout(function() {
+        btn.classList.remove('is-success');
+        btn.disabled = false;
+      }, 1800);
+    }
+    window.fcToast('Producto anadido al carrito');
+    document.dispatchEvent(new CustomEvent('cart:refresh'));
+    window.location.href = '/cart';
+  })
+  .catch(function(err) {
+    if (btn) {
+      btn.classList.remove('is-loading');
+      btn.disabled = false;
+    }
+    window.fcToast(err.message || 'Error al anadir al carrito', true);
+    console.error('[FRC PDP] Add to cart error:', err);
+  });
+};
+
+/* ── 3. fcQty ── */
+window.fcQty = function(action) {
+  var input = document.querySelector('[data-frc-qty]');
+  if (!input) return;
+  var val = parseInt(input.value) || 1;
+  if (action === 'plus') {
+    val++;
+  } else if (action === 'minus' && val > 1) {
+    val--;
+  }
+  input.value = val;
+};
+
+/* ── 4. fcTabs ── */
+window.fcTabs = function(tabId) {
+  var container = window.frcGetContainer();
+  if (!container) return;
+  container.querySelectorAll('.frc-tabs__btn').forEach(function(btn) {
+    var isActive = btn.dataset.tab === tabId;
+    btn.classList.toggle('is-active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+  container.querySelectorAll('.frc-tabs__panel').forEach(function(panel) {
+    panel.classList.toggle('is-active', panel.id === 'tab-' + tabId);
+  });
+};
+
+/* ── 5. fcFaq ── */
+window.fcFaq = function(btn) {
+  var item = btn.closest('[data-faq-item]');
+  if (!item) return;
+  var isOpen = item.classList.contains('is-open');
+  document.querySelectorAll('[data-faq-item]').forEach(function(i) {
+    i.classList.remove('is-open');
+  });
+  if (!isOpen) item.classList.add('is-open');
+};
+
+/* ── 6. fcGallery ── */
+window.fcGallery = function(direction, index) {
+  var container = window.frcGetContainer();
+  if (!container) return;
+  var imgs = container.querySelectorAll('[data-gallery-img]');
+  var total = imgs.length;
+  if (total <= 1) return;
+
+  var state = container.dataset;
+  var current = parseInt(state.imgIndex) || 0;
+
+  if (direction === 'go') current = index;
+  else if (direction === 'next') current = (current + 1) % total;
+  else if (direction === 'prev') current = (current - 1 + total) % total;
+
+  state.imgIndex = current;
+
+  imgs.forEach(function(img, idx) {
+    img.classList.toggle('is-active', idx === current);
+  });
+  container.querySelectorAll('[data-gallery-thumbs] .frc-gallery__thumb').forEach(function(t, idx) {
+    t.classList.toggle('is-active', idx === current);
+  });
+  container.querySelectorAll('[data-gallery-dots] .frc-gallery__dot').forEach(function(d, idx) {
+    d.classList.toggle('is-active', idx === current);
+  });
+  var prevBtn = container.querySelector('.frc-gallery__arrow--prev');
+  var nextBtn = container.querySelector('.frc-gallery__arrow--next');
+  if (prevBtn) prevBtn.disabled = current === 0;
+  if (nextBtn) nextBtn.disabled = current === total - 1;
+};
+
+/* ── 7. fcZoom ── */
+window.fcZoom = function() {
+  var container = window.frcGetContainer();
+  if (!container) return;
+  var overlay = container.querySelector('[data-zoom-overlay]');
+  var activeImg = container.querySelector('[data-gallery-img].is-active');
+  if (!overlay) return;
+  var isOpen = overlay.classList.contains('is-open');
+  if (isOpen) {
+    overlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+  } else {
+    var zoomImg = overlay.querySelector('[data-zoom-img]');
+    if (zoomImg && activeImg) zoomImg.src = activeImg.src;
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+};
+
+/* ── 8. fcSelectVariant ── */
+window.fcSelectVariant = function(variantId) {
+  variantId = parseInt(variantId);
+  if (!variantId) return;
+  var container = window.frcGetContainer();
+  if (!container) return;
+
+  var variantBtn = container.querySelector('.frc-variant__btn[data-variant-id="' + variantId + '"]');
+  var variantData = variantBtn ? variantBtn.dataset : null;
+
+  if (!variantData) {
+    var opt = container.querySelector('.frc-variant__select option[value="' + variantId + '"]');
+    if (opt) {
+      variantData = opt.dataset;
+      var sel = container.querySelector('[data-variant-select]');
+      if (sel) sel.value = variantId;
+    }
+  }
+  if (!variantData) return;
+
+  // Botones visuales
+  container.querySelectorAll('.frc-variant__btn').forEach(function(b) {
+    b.classList.toggle('is-selected', parseInt(b.dataset.variantId) === variantId);
+  });
+
+  // Precios
+  var price = parseInt(variantData.variantPrice);
+  var compare = parseInt(variantData.variantCompare) || 0;
+  var available = variantData.variantAvailable === 'true';
+  var imageUrl = variantData.variantImage || '';
+
+  container.querySelectorAll('[data-frc-price], [data-frc-price-mobile]').forEach(function(el) {
+    el.textContent = window.frcFormatMoney(price);
+  });
+
+  var compareEl = container.querySelector('[data-frc-compare]');
+  if (compareEl) {
+    if (compare > price) {
+      compareEl.textContent = window.frcFormatMoney(compare);
+      compareEl.style.display = '';
+    } else {
+      compareEl.style.display = 'none';
+    }
+  }
+
+  // Boton add-to-cart
+  var addBtn = container.querySelector('[data-frc-add]');
+  if (addBtn) {
+    if (available) {
+      addBtn.disabled = false;
+      addBtn.style.opacity = '';
+      addBtn.style.cursor = '';
+      var svgCart = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+      addBtn.querySelector('.frc-btn__text').innerHTML = svgCart + ' Anadir al carrito';
+      addBtn.dataset.variantId = variantId;
+    } else {
+      addBtn.disabled = true;
+      addBtn.style.opacity = '0.5';
+      addBtn.style.cursor = 'not-allowed';
+      addBtn.querySelector('.frc-btn__text').textContent = 'Agotado';
+    }
+  }
+
+  // Imagen si aplica
+  if (imageUrl) {
+    container.querySelectorAll('[data-gallery-img]').forEach(function(img, idx) {
+      if (img.src === imageUrl || img.src.indexOf(imageUrl.split('?')[0]) !== -1) {
+        window.fcGallery('go', idx);
+      }
+    });
+  }
+};
+
+/* ====== IIFE: Solo inicializacion ====== */
+(function() {
+  'use strict';
+
+  var container = document.querySelector('.frc-pdp-final');
+  if (!container) return;
+
+  // Estado de galeria guardado en data attributes
+  container.dataset.imgIndex = '0';
+
+  var productImages = container.querySelectorAll('[data-gallery-img]');
+  var totalImages = productImages.length;
+
+  // Inicializar primera imagen como activa
+  if (productImages.length > 0) {
+    productImages[0].classList.add('is-active');
+  }
+
+  /* ── Sticky bar movil ── */
+  function initMobileBar() {
+    var mobileBar = container.querySelector('[data-mobile-bar]');
+    if (!mobileBar) return;
+    var mainEl = container.querySelector('.frc-pdp-final__main');
+    if (!mainEl) return;
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        mobileBar.classList.toggle('is-visible', !entry.isIntersecting);
+      });
+    }, { threshold: 0, rootMargin: '-100px 0px 0px 0px' });
+
+    observer.observe(mainEl);
+  }
+
+  /* ── Teclado para galeria (Escape cierra zoom) ── */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var overlay = document.querySelector('[data-zoom-overlay].is-open');
+      if (overlay) window.fcZoom();
+    }
+  });
+
+  /* ── Touch swipe para galeria mobile ── */
+  var stage = container.querySelector('[data-gallery-stage]');
+  if (stage && totalImages > 1) {
+    var startX = 0;
+    stage.addEventListener('touchstart', function(e) {
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+    stage.addEventListener('touchend', function(e) {
+      var diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) {
+        window.fcGallery(diff > 0 ? 'next' : 'prev');
+      }
+    }, { passive: true });
+  }
+
+  /* ── Inicializar barra movil ── */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileBar);
+  } else {
+    initMobileBar();
+  }
+
 })();
 {%- endjavascript -%}
 
 {% schema %}
 {
-  "name": "PDP CRO Frutos",
+  "name": "PDP Final Frutos",
   "tag": "section",
-  "class": "frutos-pdp-cro",
+  "class": "frc-pdp-final-section",
   "settings": [
-    {"type":"checkbox","id":"show_breadcrumbs","default":true,"label":"Breadcrumbs"},
-    {"type":"checkbox","id":"show_rating","default":true,"label":"Rating Google"},
-    {"type":"checkbox","id":"show_trust_pills","default":true,"label":"Trust pills"},
-    {"type":"checkbox","id":"show_urgency","default":true,"label":"Urgencia stock"},
-    {"type":"checkbox","id":"show_benefits","default":true,"label":"Benefits bullets"},
-    {"type":"checkbox","id":"show_whatsapp","default":true,"label":"WhatsApp CTA"},
-    {"type":"checkbox","id":"show_tabs","default":true,"label":"Tabs contenido"},
-    {"type":"checkbox","id":"show_cross_sell","default":true,"label":"Cross-sell inteligente"},
-    {"type":"checkbox","id":"show_shipping","default":true,"label":"Info envio"},
-    {"type":"checkbox","id":"show_social_proof","default":true,"label":"Social proof bar"},
-    {"type":"checkbox","id":"show_faq","default":true,"label":"FAQ acordeon"},
-    {"type":"checkbox","id":"show_guarantee","default":true,"label":"Garantia"}
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "label": "Mostrar breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Mostrar rating con estrellas",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_pills",
+      "label": "Mostrar trust pills",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_urgency",
+      "label": "Mostrar urgency bar de stock",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_benefits",
+      "label": "Mostrar tab de beneficios",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_whatsapp",
+      "label": "Mostrar botones de WhatsApp",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tabs",
+      "label": "Mostrar tabs de información",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cross_sell",
+      "label": "Mostrar cross-sell",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping",
+      "label": "Mostrar info de envío",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_proof",
+      "label": "Mostrar social proof bar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_faq",
+      "label": "Mostrar FAQ acordeón",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_guarantee",
+      "label": "Mostrar sección de garantía",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mobile_sticky",
+      "label": "Mostrar mobile sticky bar",
+      "default": true
+    }
   ],
-  "presets": [{"name":"PDP CRO Frutos","category":"Frutos de la Raiz"}]
+  "presets": [
+    {
+      "name": "PDP Final Frutos",
+      "category": "Frutos de la Raíz"
+    }
+  ]
 }
 {% endschema %}

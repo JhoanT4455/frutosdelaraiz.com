@@ -205,7 +205,7 @@
 /* ----- C. EXIT POPUP ----- */
 .frutos-exit-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9998; display: none; animation: fadeIn 0.3s ease; }
 .frutos-exit-overlay.visible { display: block; }
-.frutos-exit-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 9999; border-radius: 20px; padding: 40px 36px 32px; max-width: 460px; width: 90%; box-shadow: 0 24px 60px rgba(0,0,0,0.25); display: none; animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+.frutos-exit-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 9999; border-radius: 20px; padding: 40px 36px 32px;  width: 90%; box-shadow: 0 24px 60px rgba(0,0,0,0.25); display: none; animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both; }
 .frutos-exit-popup.visible { display: block; transform: translate(-50%,-50%) scale(1); }
 @keyframes popIn { from { opacity:0; transform:translate(-50%,-55%) scale(0.85); } to { opacity:1; transform:translate(-50%,-50%) scale(1); } }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }

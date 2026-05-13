@@ -1,151 +1,63 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */{
+{
   "sections": {
-    "main": {
-      "type": "main-page",
-      "blocks": {
-        "title": {
-          "type": "text",
-          "name": "t:names.title",
-          "settings": {
-            "text": "<h1>{{ closest.page.title }}</h1>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "center",
-            "type_preset": "h2",
-            "font": "var(--font-primary--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "content": {
-          "type": "text",
-          "name": "t:names.content",
-          "settings": {
-            "text": "{{ closest.page.content }}",
-            "width": "100%",
-            "max_width": "narrow",
-            "alignment": "center",
-            "type_preset": "rte",
-            "font": "var(--font-primary--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "title",
-        "content"
-      ],
+    "header": {
+      "type": "frutos-header",
       "settings": {
-        "content_direction": "column",
-        "gap": 32,
-        "color_scheme": "",
-        "padding-block-start": 40,
-        "padding-block-end": 0
+        "topbar_text": "🚚 Envíos gratis por compras mayores a $200.000 (Área Metropolitana) | ⭐ Calidad Garantizada"
       }
     },
-    "form": {
-      "type": "section",
-      "blocks": {
-        "contact_form_UwiCkQ": {
-          "type": "contact-form",
-          "settings": {
-            "width": "custom",
-            "custom_width": 50,
-            "width_mobile": "custom",
-            "custom_width_mobile": 100,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "submit-button": {
-              "type": "contact-form-submit-button",
-              "static": true,
-              "settings": {
-                "label": "Submit",
-                "style_class": "button",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": []
-        }
-      },
-      "block_order": [
-        "contact_form_UwiCkQ"
-      ],
-      "name": "t:names.contact_form",
+    "contact": {
+      "type": "frutos-contact-final",
       "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 32,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "scheme-1",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 32,
-        "padding-block-end": 84
+        "hero_title": "Contáctanos",
+        "hero_subtitle": "Estamos aquí para ayudarte. Escríbenos o visítanos en nuestro espacio físico.",
+        "form_title": "Envíanos un mensaje",
+        "form_subtitle": "Responemos en menos de 24 horas",
+        "submit_btn_text": "Enviar Mensaje 🌿",
+        "show_phone_field": true,
+        "card1_emoji": "📍",
+        "card1_title": "Nuestra Ubicación",
+        "card1_text": "Calle 65g sur #79b - 36, Bosa, Bogotá",
+        "card1_action": "Cómo llegar",
+        "card1_link": "https://share.google/nf37FhTc6ScfRpYw2",
+        "card2_emoji": "🕐",
+        "card2_title": "Horario de Atención",
+        "card2_text": "Lunes a Sábado: 9:30 am - 9:00 pm",
+        "card3_emoji": "📱",
+        "card3_title": "WhatsApp",
+        "card3_text": "302 704 5952",
+        "card3_action": "Escríbenos",
+        "card3_link": "https://wa.me/573027045952",
+        "location_title": "Visítanos en Nuestro Espacio",
+        "location_eyebrow": "📍 Encuéntranos",
+        "location_icon": "🗺️",
+        "show_open_badge": true,
+        "open_badge_text": "Abierto ahora · Visítanos hoy",
+        "usp1": "🌿 Productos 100% naturales",
+        "usp2": "🚚 Envíos a toda Bogotá",
+        "usp3": "💚 Compra local y consciente",
+        "address": "Calle 65g sur #79b - 36, Bosa, Bogotá",
+        "hours": "Lunes a Sábado: 9:30 am - 9:00 pm",
+        "phone": "3027045952",
+        "whatsapp_link": "https://wa.me/573027045952",
+        "map_link": "https://share.google/nf37FhTc6ScfRpYw2",
+        "btn1_text": "Cómo Llegar — Google Maps",
+        "btn1_emoji": "🗺️",
+        "btn2_text": "Escribir por WhatsApp",
+        "btn2_emoji": "💬",
+        "subtext": "Compra online o visítanos en el local · Te esperamos con una sonrisa 🌱",
+        "faq1_q": "¿Hacen envíos a toda Colombia?",
+        "faq1_a": "Actualmente realizamos envíos dentro del área metropolitana de Bogotá. Para compras mayores a $200.000 el envío es completamente gratis. Estamos trabajando para llegar a más ciudades pronto.",
+        "faq2_q": "¿Qué métodos de pago aceptan?",
+        "faq2_a": "Aceptamos pago contra entrega en efectivo, transferencia bancaria, Nequi, Daviplata y tarjetas de crédito/débito a través de nuestro pasarela de pagos segura.",
+        "faq3_q": "¿Puedo visitar el local físico?",
+        "faq3_a": "¡Claro que sí! Estamos ubicados en Calle 65g sur #79b - 36 en Bosa, Bogotá. Nuestro horario de atención es de lunes a sábado de 9:30 am a 9:00 pm. ¡Te esperamos!"
       }
+    },
+    "footer": {
+      "type": "footer-frutos",
+      "settings": {}
     }
   },
-  "order": [
-    "main",
-    "form"
-  ]
+  "order": ["header", "contact", "footer"]
 }
