@@ -1677,7 +1677,7 @@ media-gallery.media-gallery--grid .media-gallery__grid .product-media-container 
   }
 
   media-gallery:where(.media-gallery--grid) .media-gallery__grid {
-    display: grid;
+    display: none;
   }
 }
 
