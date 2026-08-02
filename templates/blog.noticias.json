@@ -1,6 +1,6 @@
 {
   "sections": {
-    "frutos_header_article": {
+    "frutos_header_blog": {
       "type": "frutos-header",
       "name": "Header Frutos",
       "settings": {
@@ -31,12 +31,14 @@
       }
     },
     "main": {
-      "type": "frutos-article",
+      "type": "frutos-blog",
       "settings": {
-        "show_related": true,
-        "related_title": "Sigue leyendo",
-        "cta_text": "🛒 Ver productos naturales",
-        "cta_link": "shopify://collections/all"
+        "blog": "noticias",
+        "blog_handle": "noticias",
+        "eyebrow": "📰 Noticias y bienestar",
+        "subtitle": "Historias, consejos naturales y novedades de Frutos de la Raíz.",
+        "articles_per_page": 9,
+        "featured_first": true
       }
     },
     "footer": {
@@ -51,5 +53,5 @@
       }
     }
   },
-  "order": ["frutos_header_article", "main", "footer"]
+  "order": ["frutos_header_blog", "main", "footer"]
 }
