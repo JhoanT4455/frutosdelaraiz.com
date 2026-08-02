@@ -1,6 +1,7 @@
 <style>
   /* =============================================
      TESTIMONIOS GOOGLE - CRO + EDITABLE + USP
+     Frutos de la Raíz — 4.9★ · 32 reseñas · Negocio local
      ============================================= */
 
   .test-section {
@@ -10,7 +11,7 @@
 
   /* ---- HEADER ---- */
   .test-header {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
   }
 
   .test-eyebrow {
@@ -29,34 +30,157 @@
     font-family: 'Amatic SC', cursive;
     font-size: 4.5rem;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 22px;
     line-height: 1;
   }
 
-  /* Badge Google */
-  .test-google-badge {
+  /* ---- GOOGLE HERO (rating grande, CRO) ---- */
+  .test-google-hero {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 22px;
     background: white;
-    padding: 10px 22px;
-    border-radius: 30px;
-    box-shadow: 0 3px 14px rgba(0,0,0,0.08);
-    font-family: 'Montserrat', sans-serif;
-    font-size: .95rem;
-    color: #333;
-    font-weight: 700;
+    padding: 18px 32px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
     text-decoration: none;
     transition: box-shadow 0.3s, transform 0.3s;
   }
 
-  .test-google-badge:hover {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+  .test-google-hero:hover {
+    box-shadow: 0 14px 38px rgba(0,0,0,0.13);
     transform: translateY(-2px);
   }
 
-  .test-google-badge .g-icon  { color: #4285F4; font-size: 1.1rem; }
-  .test-google-badge .g-stars { color: #FFC107; letter-spacing: 1px; }
+  .ghero-icon {
+    font-size: 1.6rem;
+    color: #4285F4;
+    flex-shrink: 0;
+  }
+
+  .ghero-score {
+    font-family: 'Amatic SC', cursive;
+    font-size: 3.1rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #1B5E20;
+  }
+
+  .ghero-details {
+    text-align: left;
+  }
+
+  .ghero-stars {
+    color: #FFC107;
+    font-size: 1.15rem;
+    letter-spacing: 2px;
+    display: block;
+  }
+
+  .ghero-meta {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .85rem;
+    color: #555;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .ghero-cta {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .74rem;
+    color: #4285F4;
+    font-weight: 700;
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ---- STATS ROW (CRO: prueba social cuantificada) ---- */
+  .test-stats-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 28px auto 0;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+
+  .test-stat {
+    flex: 1 1 0;
+    min-width: 150px;
+    padding: 22px 14px;
+    border-right: 1px solid #f0f0f0;
+  }
+
+  .test-stat:last-child { border-right: none; }
+
+  .test-stat-emoji { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+
+  .test-stat-num {
+    font-family: 'Amatic SC', cursive;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: #1B5E20;
+    font-weight: 700;
+    display: block;
+  }
+
+  .test-stat-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .68rem;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    color: #999;
+    margin-top: 5px;
+    font-weight: 700;
+  }
+
+  /* ---- TAG CLOUD (temas más mencionados) ---- */
+  .test-tags-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .8rem;
+    color: #999;
+    margin: 42px 0 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .test-tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .test-tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border: 1.5px solid #e6e6e6;
+    border-radius: 30px;
+    font-family: 'Lato', sans-serif;
+    font-size: .82rem;
+    color: #555;
+    background: #fff;
+  }
+
+  .test-tag-chip .tag-count {
+    background: #f1f8e9;
+    color: #2E7D32;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: .66rem;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
 
   /* ---- USP STRIP (CRO) ---- */
   .test-usp-strip {
@@ -64,7 +188,7 @@
     justify-content: center;
     flex-wrap: wrap;
     gap: 12px;
-    margin: 30px auto 50px;
+    margin: 40px auto 10px;
     max-width: 900px;
   }
 
@@ -84,14 +208,93 @@
 
   .test-usp-pill .usp-emoji { font-size: 1.1rem; }
 
-  /* ---- GRID DE TESTIMONIOS ---- */
-  .test-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* ---- BANNER NEGOCIO LOCAL (elemento distintivo / sello) ---- */
+  .test-local-banner {
+    position: relative;
+    max-width: 840px;
+    margin: 46px auto 50px;
+    background: linear-gradient(135deg, #1B5E20, #2E7D32);
+    border-radius: 22px;
+    padding: 34px 38px;
+    display: flex;
+    align-items: center;
     gap: 26px;
-    max-width: 1200px;
-    margin: 0 auto 50px;
+    text-align: left;
+    overflow: hidden;
   }
+
+  .test-local-banner::after {
+    content: '';
+    position: absolute;
+    right: -40px;
+    bottom: -60px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .test-local-stamp {
+    flex-shrink: 0;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px dashed rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.3rem;
+    transform: rotate(-9deg);
+    position: relative;
+    z-index: 1;
+  }
+
+  .test-local-copy { position: relative; z-index: 1; }
+
+  .test-local-copy h3 {
+    font-family: 'Amatic SC', cursive;
+    font-size: 2.1rem;
+    color: #fff;
+    margin: 0 0 6px;
+    line-height: 1;
+  }
+
+  .test-local-copy p {
+    font-family: 'Lato', sans-serif;
+    font-size: .95rem;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  .test-local-copy .local-quote-author {
+    display: block;
+    margin-top: 10px;
+    font-size: .8rem;
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+  }
+
+  /* ---- CARRUSEL DE TESTIMONIOS (con flechas) ---- */
+  .test-carousel-wrapper {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto 26px;
+    padding: 0 56px;
+  }
+
+  .test-grid {
+    display: flex;
+    gap: 26px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 4px 14px;
+    scrollbar-width: none;
+  }
+
+  .test-grid::-webkit-scrollbar { display: none; }
 
   .test-card {
     background: white;
@@ -103,12 +306,52 @@
     flex-direction: column;
     text-align: left;
     position: relative;
+    flex: 0 0 calc((100% - 52px) / 3);
+    scroll-snap-align: start;
     transition: transform 0.35s cubic-bezier(0.175,0.885,0.32,1.275), box-shadow 0.3s;
   }
 
   .test-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 14px 35px rgba(27,94,32,0.1);
+  }
+
+  /* Flechas de navegación */
+  .test-carousel-arrow {
+    position: absolute;
+    top: 44%;
+    transform: translateY(-50%);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 5px 16px rgba(0,0,0,0.14);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    color: #1B5E20;
+    z-index: 5;
+    transition: all 0.3s;
+  }
+
+  .test-carousel-arrow:hover {
+    background: #1B5E20;
+    color: #fff;
+    transform: translateY(-50%) scale(1.07);
+  }
+
+  .test-carousel-arrow.is-prev { left: 0; }
+  .test-carousel-arrow.is-next { right: 0; }
+
+  .test-carousel-hint {
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    font-size: .8rem;
+    color: #aaa;
+    margin: -12px 0 40px;
   }
 
   /* Comilla decorativa */
@@ -163,11 +406,28 @@
   /* Estrellas */
   .test-stars-row {
     display: flex;
-    gap: 2px;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
   }
 
   .test-star { color: #FFC107; font-size: .88rem; }
   .test-star.empty { color: #ddd; }
+
+  /* Badge Local Guide */
+  .test-guide-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #e8f0fe;
+    color: #1967D2;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .64rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
 
   /* Texto de la reseña */
   .test-card-text {
@@ -197,7 +457,8 @@
   .test-card-footer {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
+    flex-wrap: wrap;
     font-family: 'Lato', sans-serif;
     font-size: .8rem;
     color: #bbb;
@@ -207,6 +468,7 @@
   }
 
   .test-card-footer .g-dot { color: #4285F4; }
+  .test-card-footer .footer-sep { color: #ddd; }
 
   /* ---- CTA FINAL ---- */
   .test-cta-block {
@@ -238,11 +500,26 @@
   }
 
   /* ---- RESPONSIVE ---- */
+  @media (max-width: 1024px) {
+    .test-card { flex: 0 0 calc((100% - 26px) / 2); }
+  }
+
   @media (max-width: 768px) {
     .test-title { font-size: 3.5rem; }
-    .test-grid { grid-template-columns: 1fr; }
     .test-usp-strip { gap: 8px; }
     .test-usp-pill { font-size: .75rem; padding: 8px 14px; }
+    .test-google-hero { flex-direction: column; text-align: center; padding: 22px 26px; }
+    .ghero-details { text-align: center; }
+    .test-stats-row { flex-direction: column; }
+    .test-stat { border-right: none; border-bottom: 1px solid #f0f0f0; }
+    .test-stat:last-child { border-bottom: none; }
+    .test-local-banner { flex-direction: column; text-align: center; padding: 30px 26px; }
+    .test-local-copy { text-align: center; }
+    .test-card { flex: 0 0 88%; }
+    .test-carousel-wrapper { padding: 0 6px; }
+    .test-carousel-arrow { width: 38px; height: 38px; font-size: .9rem; top: 40%; }
+    .test-carousel-arrow.is-prev { left: -4px; }
+    .test-carousel-arrow.is-next { right: -4px; }
   }
 </style>
 
@@ -263,13 +540,63 @@
       </h2>
     {% endif %}
 
-    <!-- Badge de Google editable -->
+    <!-- Google rating hero (CRO: prueba social #1) -->
     {% if section.settings.google_link != blank %}
-      <a href="{{ section.settings.google_link }}" target="_blank" rel="noopener" class="test-google-badge">
-        <i class="fab fa-google g-icon"></i>
-        <span class="g-stars">★★★★★</span>
-        {{ section.settings.google_score }} de 5 &nbsp;·&nbsp; {{ section.settings.google_reviews }} reseñas en Google
+      <a href="{{ section.settings.google_link }}" target="_blank" rel="noopener nofollow" class="test-google-hero">
+        <i class="fab fa-google ghero-icon"></i>
+        <span class="ghero-score">{{ section.settings.google_score }}</span>
+        <span class="ghero-details">
+          <span class="ghero-stars">★★★★★</span>
+          <span class="ghero-meta">{{ section.settings.google_reviews }} reseñas verificadas en Google</span>
+          <span class="ghero-cta">{{ section.settings.google_cta_text | default: 'Ver todas las reseñas' }} →</span>
+        </span>
       </a>
+    {% endif %}
+
+    <!-- Stats row: prueba social cuantificada -->
+    {% if section.settings.show_stats %}
+      <div class="test-stats-row">
+        <div class="test-stat">
+          <span class="test-stat-emoji">⭐</span>
+          <span class="test-stat-num">{{ section.settings.google_score }}</span>
+          <span class="test-stat-label">Calificación promedio</span>
+        </div>
+        <div class="test-stat">
+          <span class="test-stat-emoji">💬</span>
+          <span class="test-stat-num">{{ section.settings.google_reviews }}+</span>
+          <span class="test-stat-label">Reseñas verificadas</span>
+        </div>
+        <div class="test-stat">
+          <span class="test-stat-emoji">{{ section.settings.stat3_emoji }}</span>
+          <span class="test-stat-num">{{ section.settings.stat3_number }}</span>
+          <span class="test-stat-label">{{ section.settings.stat3_label }}</span>
+        </div>
+        <div class="test-stat">
+          <span class="test-stat-emoji">{{ section.settings.stat4_emoji }}</span>
+          <span class="test-stat-num">{{ section.settings.stat4_number }}</span>
+          <span class="test-stat-label">{{ section.settings.stat4_label }}</span>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Tag cloud: temas más mencionados por los clientes -->
+    {% if section.settings.show_tags %}
+      {% assign tags = section.blocks | where: "type", "tag" %}
+      {% if tags.size > 0 %}
+        {% if section.settings.tags_title != blank %}
+          <p class="test-tags-title">{{ section.settings.tags_title }}</p>
+        {% endif %}
+        <div class="test-tags-cloud">
+          {% for block in tags %}
+            <span class="test-tag-chip" {{ block.shopify_attributes }}>
+              {{ block.settings.emoji }} {{ block.settings.text }}
+              {% if block.settings.count != blank %}
+                <span class="tag-count">{{ block.settings.count }}</span>
+              {% endif %}
+            </span>
+          {% endfor %}
+        </div>
+      {% endif %}
     {% endif %}
 
   </div>
@@ -292,54 +619,100 @@
     </div>
   {% endif %}
 
-  <!-- GRID DE TESTIMONIOS -->
-  <div class="test-grid">
-    {% for block in section.blocks %}
-      {% if block.type == 'testimonio' %}
-        <div class="test-card" {{ block.shopify_attributes }} style="border-top: 4px solid {{ block.settings.accent_color }};">
+  <!-- BANNER NEGOCIO LOCAL (elemento distintivo, refuerza compra por comunidad) -->
+  {% if section.settings.show_local_banner %}
+    <div class="test-local-banner">
+      <div class="test-local-stamp">{{ section.settings.local_banner_emoji | default: '🏘️' }}</div>
+      <div class="test-local-copy">
+        <h3>{{ section.settings.local_banner_title }}</h3>
+        <p>{{ section.settings.local_banner_text }}</p>
+        {% if section.settings.local_banner_author != blank %}
+          <span class="local-quote-author">{{ section.settings.local_banner_author }}</span>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
 
-          <!-- Cabecera -->
-          <div class="test-card-header">
-            <div class="test-avatar" style="background: linear-gradient(135deg, {{ block.settings.accent_color }}, {{ block.settings.accent_color }}99);">
-              {{ block.settings.name | slice: 0 | upcase }}
-            </div>
-            <div>
-              <div class="test-card-name" style="color: {{ block.settings.name_color }};">{{ block.settings.name }}</div>
-              {% if block.settings.location != blank %}
-                <div class="test-card-meta">📍 {{ block.settings.location }}</div>
+  <!-- CARRUSEL DE TESTIMONIOS -->
+  {% assign testimonios = section.blocks | where: "type", "testimonio" %}
+  {% assign total_testimonios = testimonios.size %}
+
+  <div class="test-carousel-wrapper">
+
+    {% if total_testimonios > 1 %}
+      <button type="button" class="test-carousel-arrow is-prev" id="test-prev-{{ section.id }}" aria-label="Reseña anterior">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    {% endif %}
+
+    <div class="test-grid" id="test-grid-{{ section.id }}">
+      {% for block in testimonios %}
+        <div
+          class="test-card"
+          {{ block.shopify_attributes }}
+          style="border-top: 4px solid {{ block.settings.accent_color }};"
+        >
+
+        <!-- Cabecera -->
+        <div class="test-card-header">
+          <div class="test-avatar" style="background: linear-gradient(135deg, {{ block.settings.accent_color }}, {{ block.settings.accent_color }}99);">
+            {{ block.settings.name | slice: 0 | upcase }}
+          </div>
+          <div>
+            <div class="test-card-name" style="color: {{ block.settings.name_color }};">{{ block.settings.name }}</div>
+            {% if block.settings.location != blank %}
+              <div class="test-card-meta">📍 {{ block.settings.location }}</div>
+            {% endif %}
+            <!-- Estrellas dinámicas -->
+            <div class="test-stars-row">
+              {% assign rating = block.settings.rating | plus: 0 %}
+              {% for i in (1..5) %}
+                {% if i <= rating %}
+                  <i class="fas fa-star test-star"></i>
+                {% else %}
+                  <i class="fas fa-star test-star empty"></i>
+                {% endif %}
+              {% endfor %}
+              {% if block.settings.is_local_guide %}
+                <span class="test-guide-badge">✔️ {{ block.settings.guide_label | default: 'Local Guide' }}</span>
               {% endif %}
-              <!-- Estrellas dinámicas -->
-              <div class="test-stars-row">
-                {% assign rating = block.settings.rating | plus: 0 %}
-                {% for i in (1..5) %}
-                  {% if i <= rating %}
-                    <i class="fas fa-star test-star"></i>
-                  {% else %}
-                    <i class="fas fa-star test-star empty"></i>
-                  {% endif %}
-                {% endfor %}
-              </div>
             </div>
           </div>
-
-          <!-- Keyword destacada CRO -->
-          {% if block.settings.keyword != blank %}
-            <span class="test-card-keyword">{{ block.settings.keyword }}</span>
-          {% endif %}
-
-          <!-- Texto -->
-          <p class="test-card-text">"{{ block.settings.text }}"</p>
-
-          <!-- Footer -->
-          <div class="test-card-footer">
-            <i class="fab fa-google g-dot"></i>
-            {{ block.settings.source_label | default: 'Reseña verificada en Google' }}
-          </div>
-
         </div>
-      {% endif %}
+
+        <!-- Keyword destacada CRO -->
+        {% if block.settings.keyword != blank %}
+          <span class="test-card-keyword">{{ block.settings.keyword }}</span>
+        {% endif %}
+
+        <!-- Texto -->
+        <p class="test-card-text">"{{ block.settings.text }}"</p>
+
+        <!-- Footer -->
+        <div class="test-card-footer">
+          <i class="fab fa-google g-dot"></i>
+          <span>{{ block.settings.source_label | default: 'Reseña verificada en Google' }}</span>
+          {% if block.settings.date_label != blank %}
+            <span class="footer-sep">·</span>
+            <span>{{ block.settings.date_label }}</span>
+          {% endif %}
+        </div>
+
+      </div>
     {% endfor %}
+    </div>
+
+    {% if total_testimonios > 1 %}
+      <button type="button" class="test-carousel-arrow is-next" id="test-next-{{ section.id }}" aria-label="Siguiente reseña">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    {% endif %}
+
   </div>
+
+  {% if section.settings.show_carousel_hint and total_testimonios > 1 %}
+    <p class="test-carousel-hint">{{ section.settings.carousel_hint_text | default: 'Usa las flechas o desliza para leer todas las reseñas →' }}</p>
+  {% endif %}
 
   <!-- CTA FINAL -->
   {% if section.settings.show_cta %}
@@ -358,6 +731,55 @@
   {% endif %}
 
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    (function () {
+      var grid = document.getElementById('test-grid-{{ section.id }}');
+      var prevBtn = document.getElementById('test-prev-{{ section.id }}');
+      var nextBtn = document.getElementById('test-next-{{ section.id }}');
+      if (!grid) return;
+
+      function cardStep() {
+        var card = grid.querySelector('.test-card');
+        if (!card) return 320;
+        var computed = window.getComputedStyle(grid);
+        var gap = parseInt(computed.gap || computed.columnGap || '26', 10) || 26;
+        return card.getBoundingClientRect().width + gap;
+      }
+
+      function updateArrows() {
+        if (!prevBtn || !nextBtn) return;
+        var maxScroll = grid.scrollWidth - grid.clientWidth;
+        var atStart = grid.scrollLeft <= 1;
+        var atEnd = grid.scrollLeft >= maxScroll - 1;
+        prevBtn.style.opacity = atStart ? '0.35' : '1';
+        prevBtn.style.pointerEvents = atStart ? 'none' : 'auto';
+        nextBtn.style.opacity = atEnd ? '0.35' : '1';
+        nextBtn.style.pointerEvents = atEnd ? 'none' : 'auto';
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+          grid.scrollBy({ left: -cardStep(), behavior: 'smooth' });
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+          grid.scrollBy({ left: cardStep(), behavior: 'smooth' });
+        });
+      }
+
+      grid.addEventListener('scroll', updateArrows);
+      window.addEventListener('resize', updateArrows);
+
+      // Actualizar después de que el layout esté estable (fuentes, imágenes, etc.)
+      updateArrows();
+      setTimeout(updateArrows, 100);
+      setTimeout(updateArrows, 500);
+    })();
+  });
+</script>
 
 {% schema %}
 {
@@ -409,13 +831,13 @@
     },
     {
       "type": "header",
-      "content": "Badge de Google"
+      "content": "Calificación de Google (CRO)"
     },
     {
       "type": "text",
       "id": "google_link",
       "label": "Enlace al perfil de Google",
-      "default": "https://share.google/nf37FhTc6ScfRpYw2"
+      "default": "https://www.google.com/search?q=Frutos+de+la+Ra%C3%ADz+Bogot%C3%A1&si=APenkKm7iecQ4G6P-TsbSMFKIQtv3EFIqRAFw-i8uEbk55Z-_9MGTtlYER6mXe9H95sI85xtqmE7x7vKl81ANHg4LFcpHiAqwfz7SyGeAy-5w5TSm_qZ6UBrzeH-jobtG1QqonL8JQWN4DWmbqrcu3H3JDqpncST6w%3D%3D&sxsrf=ANbL-n6tRxBcEnVTteTsjK2SN90w56VcAA:1773208957034&kgmid=/g/11rmn5bvtq&q=Frutos+de+la+Ra%C3%ADz&shndl=30&kgs=a5505ff3379ac4ed&shem=shrtsdl"
     },
     {
       "type": "text",
@@ -430,6 +852,75 @@
       "default": "32"
     },
     {
+      "type": "text",
+      "id": "google_cta_text",
+      "label": "Texto del enlace",
+      "default": "Ver todas las reseñas"
+    },
+    {
+      "type": "header",
+      "content": "Barra de estadísticas"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stats",
+      "label": "Mostrar barra de estadísticas",
+      "default": true,
+      "info": "Los primeros 2 datos usan la calificación y N° de reseñas de Google definidos arriba."
+    },
+    {
+      "type": "text",
+      "id": "stat3_emoji",
+      "label": "Estadística 3 · Emoji",
+      "default": "🏘️"
+    },
+    {
+      "type": "text",
+      "id": "stat3_number",
+      "label": "Estadística 3 · Número",
+      "default": "100%"
+    },
+    {
+      "type": "text",
+      "id": "stat3_label",
+      "label": "Estadística 3 · Texto",
+      "default": "Negocio local"
+    },
+    {
+      "type": "text",
+      "id": "stat4_emoji",
+      "label": "Estadística 4 · Emoji",
+      "default": "📅"
+    },
+    {
+      "type": "text",
+      "id": "stat4_number",
+      "label": "Estadística 4 · Número",
+      "default": "+4"
+    },
+    {
+      "type": "text",
+      "id": "stat4_label",
+      "label": "Estadística 4 · Texto",
+      "default": "Años en el barrio"
+    },
+    {
+      "type": "header",
+      "content": "Temas más mencionados (nube de tags)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Mostrar temas más mencionados",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "tags_title",
+      "label": "Título de la sección",
+      "default": "Lo que más destacan nuestros clientes"
+    },
+    {
       "type": "header",
       "content": "USP Strip (puntos clave con emojis)"
     },
@@ -438,6 +929,56 @@
       "id": "show_usp",
       "label": "Mostrar USP Strip",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Banner de negocio local"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_local_banner",
+      "label": "Mostrar banner de negocio local",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "local_banner_emoji",
+      "label": "Emoji / sello",
+      "default": "🏘️"
+    },
+    {
+      "type": "text",
+      "id": "local_banner_title",
+      "label": "Título",
+      "default": "Negocio 100% local"
+    },
+    {
+      "type": "textarea",
+      "id": "local_banner_text",
+      "label": "Texto",
+      "default": "Cada compra apoya directamente a un emprendimiento familiar del sur de Bogotá. Aquí creemos en la gente de nuestro barrio y en construir comunidad alrededor de la alimentación consciente."
+    },
+    {
+      "type": "text",
+      "id": "local_banner_author",
+      "label": "Firma / cita",
+      "default": "— Catalina Cely, clienta y vecina"
+    },
+    {
+      "type": "header",
+      "content": "Carrusel de reseñas"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_carousel_hint",
+      "label": "Mostrar texto de ayuda bajo el carrusel",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "carousel_hint_text",
+      "label": "Texto de ayuda",
+      "default": "Usa las flechas o desliza para leer todas las reseñas →"
     },
     {
       "type": "header",
@@ -513,9 +1054,34 @@
       ]
     },
     {
+      "type": "tag",
+      "name": "🏷️ Tema destacado",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji",
+          "default": "💚"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto del tema",
+          "default": "Ambiente acogedor"
+        },
+        {
+          "type": "text",
+          "id": "count",
+          "label": "N° de menciones (opcional)",
+          "default": "4"
+        }
+      ]
+    },
+    {
       "type": "testimonio",
       "name": "⭐ Testimonio",
-      "limit": 6,
+      "limit": 30,
       "settings": [
         {
           "type": "header",
@@ -549,6 +1115,18 @@
           "default": 5
         },
         {
+          "type": "checkbox",
+          "id": "is_local_guide",
+          "label": "Es Local Guide de Google",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "guide_label",
+          "label": "Texto del badge Local Guide",
+          "default": "Local Guide"
+        },
+        {
           "type": "header",
           "content": "Contenido"
         },
@@ -572,6 +1150,12 @@
           "default": "Reseña verificada en Google"
         },
         {
+          "type": "text",
+          "id": "date_label",
+          "label": "Fecha (texto libre)",
+          "default": "Hace 3 años"
+        },
+        {
           "type": "header",
           "content": "Color de acento de la card"
         },
@@ -591,23 +1175,96 @@
       "blocks": [
         {
           "type": "usp",
-          "settings": { "emoji": "⭐", "text": "4.9 en Google", "pill_bg": "#fff8e1", "pill_color": "#F57F17" }
+          "settings": {
+            "emoji": "⭐",
+            "text": "4.9 en Google",
+            "pill_bg": "#fff8e1",
+            "pill_color": "#F57F17"
+          }
         },
         {
           "type": "usp",
-          "settings": { "emoji": "🌿", "text": "100% Natural", "pill_bg": "#e8f5e9", "pill_color": "#1B5E20" }
+          "settings": {
+            "emoji": "🌿",
+            "text": "100% Natural",
+            "pill_bg": "#e8f5e9",
+            "pill_color": "#1B5E20"
+          }
         },
         {
           "type": "usp",
-          "settings": { "emoji": "🏘️", "text": "Comercio Local en Bosa", "pill_bg": "#fce4ec", "pill_color": "#880E4F" }
+          "settings": {
+            "emoji": "🏘️",
+            "text": "Comercio Local en Bosa",
+            "pill_bg": "#fce4ec",
+            "pill_color": "#880E4F"
+          }
         },
         {
           "type": "usp",
-          "settings": { "emoji": "🚚", "text": "Envíos en Bogotá", "pill_bg": "#e3f2fd", "pill_color": "#0D47A1" }
+          "settings": {
+            "emoji": "🚚",
+            "text": "Envíos en Bogotá",
+            "pill_bg": "#e3f2fd",
+            "pill_color": "#0D47A1"
+          }
         },
         {
           "type": "usp",
-          "settings": { "emoji": "💚", "text": "Comunidad Consciente", "pill_bg": "#f1f8e9", "pill_color": "#33691E" }
+          "settings": {
+            "emoji": "💚",
+            "text": "Comunidad Consciente",
+            "pill_bg": "#f1f8e9",
+            "pill_color": "#33691E"
+          }
+        },
+        {
+          "type": "tag",
+          "settings": {
+            "emoji": "🏡",
+            "text": "Ambiente acogedor",
+            "count": "4"
+          }
+        },
+        {
+          "type": "tag",
+          "settings": {
+            "emoji": "🥗",
+            "text": "Alimentación saludable",
+            "count": "4"
+          }
+        },
+        {
+          "type": "tag",
+          "settings": {
+            "emoji": "🛒",
+            "text": "Variedad de productos",
+            "count": "3"
+          }
+        },
+        {
+          "type": "tag",
+          "settings": {
+            "emoji": "✅",
+            "text": "Calidad del producto",
+            "count": "3"
+          }
+        },
+        {
+          "type": "tag",
+          "settings": {
+            "emoji": "🏪",
+            "text": "Mercado de confianza",
+            "count": "3"
+          }
+        },
+        {
+          "type": "tag",
+          "settings": {
+            "emoji": "👍",
+            "text": "Buen lugar",
+            "count": "2"
+          }
         },
         {
           "type": "testimonio",
@@ -615,9 +1272,52 @@
             "name": "Heidy",
             "location": "Bogotá",
             "rating": 5,
-            "text": "Es un gran lugar que no únicamente ofrece excelente calidad sino también información valiosa en compañía de conversaciones interesantes, toda una experiencia. La estética es acogedora y se nota que se ha construido una comunidad en torno a la alimentación saludable. ¡Espectacular!",
+            "text": "Es un gran lugar que no únicamente ofrece excelente calidad sino también información valiosa en compañía de conversaciones interesantes, toda una experiencia. La estética es acogedora, la atención es muy especial y se nota que se ha construido una comunidad en torno a la alimentación saludable. ¡Espectacular!",
             "keyword": "Comunidad",
+            "date_label": "Hace 3 años",
+            "is_local_guide": false,
             "accent_color": "#FFC107"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Catalina Cely",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Es un pequeño negocio que se lanzó al mercado, compren a sus vecinos, compren local.",
+            "keyword": "Negocio Local",
+            "date_label": "Hace 4 años",
+            "is_local_guide": true,
+            "guide_label": "Local Guide · 21 reseñas",
+            "accent_color": "#1B5E20"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Gloria Ajala",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Me encanta, es de lo mejor.",
+            "keyword": "Lo Mejor",
+            "date_label": "Hace 3 meses",
+            "is_local_guide": true,
+            "guide_label": "Local Guide · 38 reseñas",
+            "accent_color": "#4CAF50"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Juan Novoa",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Este es el mejor lugar para comprar, tiene de todo, es increíble. Me encantó el servicio y que tenga tanta variedad de frutos y cosas riquísimas 🤤😆",
+            "keyword": "Variedad",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#FF7043"
           }
         },
         {
@@ -626,9 +1326,24 @@
             "name": "Geral & Cami",
             "location": "Bogotá",
             "rating": 5,
-            "text": "Amooooo este lugar 😍 me encanta ir a hacer mi mercado saludable, realmente es muy acogedor estar allí. Siempre encuentro lo que necesito y el ambiente es increíble 😋",
+            "text": "Amooooo este lugar 😍 me encanta ir a hacer mi mercado saludable, realmente es muy acogedor estar allí 😋",
             "keyword": "Mercado Saludable",
-            "accent_color": "#1B5E20"
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#42A5F5"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Elizabeth Barrera",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Me encanta este lugar, tiene estupendos precios y excelente calidad, además que la atención es muy buena.",
+            "keyword": "Precio y Calidad",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#AB47BC"
           }
         },
         {
@@ -637,9 +1352,233 @@
             "name": "Valentina Mateus",
             "location": "Bogotá",
             "rating": 5,
-            "text": "Excelente atención y calidad de los productos, un local innovador con frutos saludables y diferentes. Lo recomiendo al 100%.",
+            "text": "Excelente atención y calidad de los productos, un local innovador con frutos saludables y diferentes, lo recomiendo.",
             "keyword": "Calidad",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#26A69A"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "El Fucker",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Excelentes productos vegetarianos.",
+            "keyword": "Opción Vegetariana",
+            "date_label": "Hace 3 años",
+            "is_local_guide": true,
+            "guide_label": "Local Guide · 113 reseñas",
+            "accent_color": "#EC407A"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Jose Linares",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Las mejores infusiones para relajarse. Lugar cálido y agradable. Excelente atención. Muy amables.",
+            "keyword": "Infusiones",
+            "date_label": "Hace 3 años",
+            "is_local_guide": false,
+            "accent_color": "#FFC107"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Tren Cañero",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Es bueno saber que podemos alimentarnos sano y creer en la gente del sur, gracias.",
+            "keyword": "Alimentación Sana",
+            "date_label": "Hace 3 años",
+            "is_local_guide": false,
+            "accent_color": "#1B5E20"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Ana Sofía",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Los mejores dulces de ajonjolí ♥",
+            "keyword": "Dulces de Ajonjolí",
+            "date_label": "Hace 3 años",
+            "is_local_guide": false,
             "accent_color": "#4CAF50"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Yamile Molano",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Me encanta venir, a comprar y tomar tinto.",
+            "keyword": "Tinto y Compras",
+            "date_label": "Hace 3 años",
+            "is_local_guide": false,
+            "accent_color": "#FF7043"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Maryluz Ballen Cristancho",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Me encanta el lugar ya que ayuda a las plantas, y los productos son de buena calidad.",
+            "keyword": "Buena Calidad",
+            "date_label": "Hace 3 años",
+            "is_local_guide": false,
+            "accent_color": "#42A5F5"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Brayan Polo",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Tiene variedad en sus productos y un excelente asesoramiento.",
+            "keyword": "Asesoría Experta",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#AB47BC"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Camila Parra Gamboa",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Excelente, encuentro todo lo que necesito.",
+            "keyword": "Todo lo que Necesito",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#26A69A"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Camilo Rojas Téllez",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Mi nueva tienda favorita de cereales, frutos secos y demás alimentos 🔥🔥🔥",
+            "keyword": "Frutos Secos",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#EC407A"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Jaime Du",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Muy agradable lugar y muy buenos productos.",
+            "keyword": "Buenos Productos",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#FFC107"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Laura Correa",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Muy buena atención y excelentes productos. Amé esta tienda, se las recomiendo :)",
+            "keyword": "Recomendado",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#1B5E20"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Leonel Aguirre",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Muy bonito lugar y estupenda tienda, es importante que alguien más se interese por nuestra salud.",
+            "keyword": "Salud",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#4CAF50"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Dylan Duque",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Me la paso comprando ahí, no puede faltar en mi mercado semanal.",
+            "keyword": "Mercado Semanal",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#FF7043"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Leidy Duque",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Excelente atención, increíble lugar ⭐️",
+            "keyword": "Excelente Atención",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#42A5F5"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Andrés Barros",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Parcero, muy buenos productos, gracias bro.",
+            "keyword": "Buenos Productos",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#AB47BC"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Fredy Steban Camacho",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Buen sitio, recomendado al cien.",
+            "keyword": "100% Recomendado",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#26A69A"
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Diana Gutiérrez",
+            "location": "Bogotá",
+            "rating": 5,
+            "text": "Es muy agradable, además de un buen servicio.",
+            "keyword": "Buen Servicio",
+            "date_label": "Hace 4 años",
+            "is_local_guide": false,
+            "accent_color": "#EC407A"
           }
         }
       ]

@@ -1,0 +1,2617 @@
+{% comment %}
+====================================================================
+COLMENA SOCIAL — Frutos de la Raíz · v2 "God Mode · Full CRO"
+--------------------------------------------------------------------
+Mejoras sobre la spec original:
+  • Hero con CTA primario/secundario + mini-stats de impacto (auto)
+  • Nav sticky con estado activo, scroll suave y CTA fija
+  • Filtros dinámicos: temas en Testimonios, categorías en Aliados
+  • Paginación "Ver más" para que la página no se sature al crecer
+  • Testimonios: calificación ⭐, insignia "Verificado" y "Destacado"
+  • Aliados: insignia "Destacado", botón de llamada, filtro por categoría
+  • Participa: insignia configurable + formulario de contacto rápido
+    embebido (usa el formulario nativo de Shopify, sin salir de la página)
+  • Historias: "Leer más" para textos largos (evita muros de texto)
+  • Indicadores: animación de conteo al hacer scroll + fecha de corte
+  • Botón flotante de WhatsApp (opcional)
+  • JSON-LD (Organization + Review) para SEO / rich snippets
+  • Estados vacíos con invitación a la acción en cada sección
+  • Seguimiento de eventos (dataLayer + CustomEvent) en cada CTA
+  • Accesibilidad: foco visible, aria-live, aria-current,
+    prefers-reduced-motion, alt text, formularios etiquetados
+  • Todo el markup, CSS y JS usan section.id como namespace para
+    soportar más de una instancia en la misma página sin choques
+====================================================================
+{% endcomment %}
+
+{{ 'https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Lato:wght@300;400;700&family=Montserrat:wght@500;600;700&display=swap' | stylesheet_tag }}
+
+{%- style -%}
+/* =============================================
+   COLMENA SOCIAL — Frutos de la Raíz
+   Investigación-Acción Participativa (IAP)
+   ============================================= */
+
+.colmena-social {
+  --c-green: {{ section.settings.color_green | default: '#1B5E20' }};
+  --c-green-mid: #2E7D32;
+  --c-green-light: #4CAF50;
+  --c-lime: #76FF03;
+  --c-yellow: #FFC107;
+  --c-brown: #5D4037;
+  --c-cream: {{ section.settings.color_cream | default: '#F1F8E9' }};
+  --c-cream-dark: #E8F5E9;
+  --c-white: #ffffff;
+  --c-text: #333333;
+  --c-muted: #666666;
+  --c-light-gray: #f5f5f5;
+  --max-w: {{ section.settings.max_width | default: 1200 }}px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-pill: 50px;
+  --shadow-sm: 0 4px 16px rgba(0,0,0,0.05);
+  --shadow-md: 0 12px 32px rgba(27,94,32,0.1);
+  --ease-pop: cubic-bezier(0.175,0.885,0.32,1.275);
+
+  font-family: 'Lato', sans-serif;
+  color: var(--c-text);
+  background: var(--c-cream);
+  line-height: 1.65;
+  position: relative;
+}
+.colmena-social * { box-sizing: border-box; }
+
+/* ---- ACCESIBILIDAD: foco visible ---- */
+.colmena-social a:focus-visible,
+.colmena-social button:focus-visible,
+.colmena-social input:focus-visible,
+.colmena-social textarea:focus-visible {
+  outline: 3px solid var(--c-lime);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Offset de anclas para que la nav sticky no tape el contenido */
+.colmena-social section[id],
+.colmena-social header[id] { scroll-margin-top: 78px; }
+
+/* ---- HERO ---- */
+.cs-hero {
+  background: linear-gradient(135deg, {{ section.settings.hero_from | default: '#1B5E20' }}, {{ section.settings.hero_to | default: '#2E7D32' }});
+  padding: clamp(64px, 10vw, 110px) 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cs-hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -80px;
+  width: 300px; height: 300px;
+  background: rgba(118,255,3,0.08);
+  border-radius: 50%;
+}
+.cs-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: -40px;
+  width: 200px; height: 200px;
+  background: rgba(255,193,7,0.06);
+  border-radius: 50%;
+}
+.cs-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+.cs-hero__eyebrow {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--c-lime);
+  margin-bottom: 14px;
+  padding: 6px 18px;
+  border: 1.5px solid rgba(118,255,3,0.4);
+  border-radius: var(--radius-pill);
+}
+.cs-hero__title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(56px, 9vw, 96px);
+  color: var(--c-white);
+  margin: 0 0 18px;
+  line-height: 1;
+  font-weight: 700;
+}
+.cs-hero__desc {
+  font-size: clamp(16px, 2.2vw, 20px);
+  color: rgba(255,255,255,0.92);
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+.cs-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 30px;
+  position: relative;
+  z-index: 1;
+}
+.cs-hero__btn {
+  padding: 15px 34px;
+  border-radius: var(--radius-pill);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.94rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  display: inline-block;
+}
+.cs-hero__btn--primary {
+  background: var(--c-lime);
+  color: #1b3600;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+.cs-hero__btn--primary:hover { background: var(--c-yellow); transform: translateY(-3px); }
+.cs-hero__btn--secondary {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.5);
+  color: var(--c-white);
+}
+.cs-hero__btn--secondary:hover { border-color: var(--c-white); background: rgba(255,255,255,0.1); }
+.cs-hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.18);
+  position: relative;
+  z-index: 1;
+}
+.cs-hero__stat-num {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2.4rem;
+  color: var(--c-lime);
+  line-height: 1;
+  margin: 0;
+}
+.cs-hero__stat-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.75);
+  margin: 4px 0 0;
+}
+
+/* ---- NAV STICKY ---- */
+.cs-nav {
+  background: var(--c-white);
+  border-bottom: 1px solid rgba(27,94,32,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.04);
+}
+.cs-nav__inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.cs-nav__inner::-webkit-scrollbar { display: none; }
+.cs-nav__pill {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--c-green);
+  background: transparent;
+  color: var(--c-green);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.cs-nav__pill:hover,
+.cs-nav__pill:focus,
+.cs-nav__pill.is-active {
+  background: var(--c-green);
+  color: var(--c-white);
+}
+.cs-nav__cta {
+  margin-left: auto;
+  background: var(--c-green);
+  color: var(--c-white);
+}
+.cs-nav__cta:hover { background: var(--c-green-mid); }
+
+/* ---- SECCIONES GENERALES ---- */
+.cs-section {
+  padding: clamp(56px, 7vw, 88px) 24px;
+}
+.cs-section--white { background: var(--c-white); }
+.cs-section--cream { background: var(--c-cream); }
+.cs-section--brown {
+  background: var(--c-brown);
+  color: #f4e4d9;
+}
+.cs-section__inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+.cs-section__header {
+  text-align: center;
+  margin-bottom: 42px;
+}
+.cs-section__eyebrow {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--c-green);
+  margin-bottom: 10px;
+  padding: 5px 16px;
+  background: var(--c-cream-dark);
+  border-radius: var(--radius-pill);
+}
+.cs-section--brown .cs-section__eyebrow {
+  background: rgba(255,193,7,0.15);
+  color: var(--c-yellow);
+}
+.cs-section__title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(44px, 6vw, 68px);
+  color: var(--c-green);
+  margin: 0 0 12px;
+  font-weight: 700;
+  line-height: 1.05;
+}
+.cs-section--brown .cs-section__title { color: var(--c-yellow); }
+.cs-section__subtitle {
+  color: var(--c-muted);
+  font-size: 1.05rem;
+  max-width: 620px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+.cs-section--brown .cs-section__subtitle { color: #d7ccc8; }
+
+/* ---- FILTROS (Testimonios / Aliados) ---- */
+.cs-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+.cs-filter__pill {
+  padding: 9px 20px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--c-green);
+  background: transparent;
+  color: var(--c-green);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.cs-filter__pill:hover,
+.cs-filter__pill.is-active {
+  background: var(--c-green);
+  color: var(--c-white);
+}
+.colmena-social .cs-hide-loadmore,
+.colmena-social .cs-hide-filter { display: none !important; }
+
+/* ---- BOTÓN "VER MÁS" ---- */
+.cs-loadmore {
+  display: block;
+  margin: 34px auto 0;
+  padding: 14px 38px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--c-green);
+  background: transparent;
+  color: var(--c-green);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.cs-loadmore:hover { background: var(--c-green); color: var(--c-white); }
+.cs-loadmore[hidden] { display: none; }
+
+/* ---- ESTADO VACÍO ---- */
+.cs-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 24px;
+  border: 2px dashed var(--c-cream-dark);
+  border-radius: var(--radius-md);
+  color: var(--c-muted);
+}
+.cs-empty__icon { font-size: 2.6rem; display: block; margin-bottom: 12px; }
+.cs-empty__text { font-size: 1rem; margin: 0 0 18px; max-width: 460px; margin-left: auto; margin-right: auto; }
+.cs-empty__btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: var(--radius-pill);
+  background: var(--c-green);
+  color: var(--c-white);
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.25s ease;
+}
+.cs-empty__btn:hover { background: var(--c-green-mid); }
+
+/* ---- INSIGNIAS ---- */
+.cs-badge-featured {
+  position: absolute;
+  top: 14px; left: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--c-yellow);
+  color: var(--c-brown);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+.cs-badge-verified {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; height: 16px;
+  margin-left: 4px;
+  border-radius: 50%;
+  background: var(--c-green);
+  color: var(--c-white);
+  font-size: 0.62rem;
+  vertical-align: middle;
+}
+.cs-stars {
+  color: var(--c-yellow);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* ---- TESTIMONIOS ---- */
+.cs-testimonials__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 26px;
+  margin-bottom: 8px;
+}
+.cs-testimonial {
+  position: relative;
+  background: var(--c-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--c-cream-dark);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform 0.35s var(--ease-pop), box-shadow 0.3s ease, opacity 0.6s ease;
+}
+.cs-testimonial:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 40px rgba(27,94,32,0.1);
+}
+.cs-testimonial.is-featured { border: 2px solid var(--c-yellow); }
+.cs-testimonial__photo {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.cs-testimonial__photo-placeholder {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  background: linear-gradient(145deg, #e8f5e9, #c8e6c9);
+}
+.cs-testimonial__body {
+  padding: 24px;
+  position: relative;
+}
+.cs-testimonial__body::before {
+  content: '\201C';
+  font-family: Georgia, serif;
+  font-size: 6rem;
+  position: absolute;
+  top: -10px;
+  right: 18px;
+  line-height: 1;
+  color: var(--c-green);
+  opacity: 0.08;
+  pointer-events: none;
+}
+.cs-testimonial__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.cs-testimonial__avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c-green), var(--c-green-mid));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--c-white);
+  flex-shrink: 0;
+}
+.cs-testimonial__name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-brown);
+  margin: 0 0 3px;
+  display: flex;
+  align-items: center;
+}
+.cs-testimonial__meta {
+  font-size: 0.78rem;
+  color: #999;
+  margin: 0;
+}
+.cs-testimonial__text {
+  font-size: 0.98rem;
+  color: #555;
+  line-height: 1.75;
+  font-style: italic;
+  margin: 0 0 16px;
+}
+.cs-testimonial__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cs-testimonial__tag {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--c-cream-dark);
+  color: var(--c-green);
+}
+
+/* ---- ALIADOS ---- */
+.cs-aliados__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+.cs-aliado {
+  position: relative;
+  background: var(--c-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--c-cream-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.6s ease;
+}
+.cs-aliado:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+.cs-aliado.is-featured { border: 2px solid var(--c-yellow); }
+.cs-aliado__img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+.cs-aliado__img-placeholder {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  background: linear-gradient(160deg, #e8f5e9, #a5d6a7);
+}
+.cs-aliado__body { padding: 22px 24px 24px; }
+.cs-aliado__cat-tag {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--c-yellow);
+  color: var(--c-brown);
+  margin-bottom: 10px;
+}
+.cs-aliado__name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--c-green);
+  margin: 0 0 10px;
+}
+.cs-aliado__desc {
+  font-size: 0.94rem;
+  color: var(--c-muted);
+  line-height: 1.65;
+  margin: 0 0 14px;
+}
+.cs-aliado__aporta {
+  font-size: 0.9rem;
+  color: var(--c-text);
+  line-height: 1.6;
+  margin: 0 0 14px;
+  padding: 12px;
+  background: var(--c-cream);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--c-lime);
+}
+.cs-aliado__services {
+  font-size: 0.85rem;
+  color: var(--c-muted);
+  margin: 0 0 16px;
+}
+.cs-aliado__services strong {
+  color: var(--c-brown);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.cs-aliado__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.cs-aliado__contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.cs-aliado__contact a:hover { transform: translateY(-2px); }
+.cs-aliado__contact .btn-wa { background: #25D366; color: var(--c-white); }
+.cs-aliado__contact .btn-tel { background: var(--c-brown); color: var(--c-white); }
+.cs-aliado__contact .btn-ig {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: var(--c-white);
+}
+.cs-aliado__contact .btn-web { background: var(--c-green); color: var(--c-white); }
+.cs-aliado__contact .btn-email { background: var(--c-cream-dark); color: var(--c-green); }
+
+/* ---- PARTICIPA ---- */
+.cs-participa__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px 20px;
+}
+.cs-participa__card {
+  position: relative;
+  background: var(--c-white);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--c-cream-dark);
+  padding: 32px 24px;
+  text-align: center;
+  transition: all 0.3s var(--ease-pop), opacity 0.6s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.cs-participa__card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--c-green);
+  box-shadow: 0 16px 40px rgba(27,94,32,0.12);
+}
+.cs-participa__badge {
+  position: absolute;
+  top: -12px; right: 20px;
+  background: var(--c-yellow);
+  color: var(--c-brown);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+.cs-participa__icon {
+  font-size: 3rem;
+  margin-bottom: 14px;
+  display: block;
+}
+.cs-participa__label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--c-green);
+  margin: 0 0 8px;
+}
+.cs-participa__hint {
+  font-size: 0.88rem;
+  color: var(--c-muted);
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* ---- FORMULARIO DE CONTACTO RÁPIDO ---- */
+.cs-quickform {
+  margin-top: 28px;
+  background: var(--c-cream-dark);
+  border-radius: 20px;
+  padding: 36px clamp(20px, 4vw, 44px);
+  text-align: center;
+}
+.cs-quickform__title {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2.1rem;
+  color: var(--c-green);
+  margin: 0 0 8px;
+}
+.cs-quickform__subtitle { color: var(--c-muted); margin: 0 0 22px; font-size: 0.95rem; }
+.cs-quickform form { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.cs-quickform__row { display: flex; gap: 12px; flex-wrap: wrap; }
+.cs-quickform label { font-size: 0; position: absolute; }
+.cs-quickform input,
+.cs-quickform textarea {
+  flex: 1 1 200px;
+  padding: 13px 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--c-cream-dark);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.95rem;
+  background: var(--c-white);
+  width: 100%;
+}
+.cs-quickform input:focus,
+.cs-quickform textarea:focus { outline: none; border-color: var(--c-green); }
+.cs-quickform__submit {
+  padding: 14px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--c-green);
+  color: var(--c-white);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+.cs-quickform__submit:hover { background: var(--c-green-mid); }
+.cs-quickform__success { background: #E8F5E9; color: var(--c-green); padding: 12px 16px; border-radius: var(--radius-sm); font-size: 0.9rem; margin: 0; }
+.cs-quickform__error { background: #FDECEA; color: #B71C1C; padding: 12px 16px; border-radius: var(--radius-sm); font-size: 0.9rem; margin: 0; }
+
+/* ---- HISTORIAS DE TRANSFORMACIÓN ---- */
+.cs-historias__list {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.cs-historia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  background: var(--c-white);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+  transition: box-shadow 0.3s ease, opacity 0.6s ease;
+}
+.cs-historia:hover { box-shadow: 0 12px 40px rgba(27,94,32,0.1); }
+.cs-historia--reverse { flex-direction: row-reverse; }
+.cs-historia__media {
+  flex: 1 1 40%;
+  min-height: 300px;
+  position: relative;
+  overflow: hidden;
+}
+.cs-historia__media img,
+.cs-historia__media-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  object-fit: cover;
+  display: block;
+}
+.cs-historia__media-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  background: linear-gradient(145deg, #e8f5e9, #c8e6c9);
+}
+.cs-historia__body {
+  flex: 1 1 55%;
+  padding: clamp(32px, 5vw, 56px) clamp(24px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.cs-historia__eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--c-lime);
+  margin-bottom: 10px;
+}
+.cs-historia__title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(36px, 4.5vw, 52px);
+  color: var(--c-green);
+  margin: 0 0 16px;
+  line-height: 1.05;
+  font-weight: 700;
+}
+.cs-historia__text {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #555;
+  margin: 0 0 8px;
+}
+.cs-historia__text.is-clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.cs-historia__text.is-expanded { -webkit-line-clamp: unset; overflow: visible; }
+.cs-historia__toggle {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 0 20px;
+  color: var(--c-green);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.cs-historia__author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--c-cream-dark);
+}
+.cs-historia__author-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c-green), var(--c-green-mid));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--c-white);
+  flex-shrink: 0;
+}
+.cs-historia__author-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--c-brown);
+  margin: 0 0 2px;
+}
+.cs-historia__author-role {
+  font-size: 0.82rem;
+  color: #999;
+  margin: 0;
+}
+
+/* ---- INDICADORES DE IMPACTO ---- */
+.cs-impacto__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+.cs-impacto__card {
+  background: var(--c-white);
+  border-radius: var(--radius-md);
+  padding: 32px 20px;
+  text-align: center;
+  border: 1px solid var(--c-cream-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.6s ease;
+}
+.cs-impacto__card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+.cs-impacto__icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  display: block;
+}
+.cs-impacto__num {
+  font-family: 'Amatic SC', cursive;
+  font-size: 3.2rem;
+  color: var(--c-green);
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.cs-impacto__label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.cs-impacto__updated {
+  text-align: center;
+  margin: 28px 0 0;
+  font-size: 0.82rem;
+  color: var(--c-muted);
+  font-style: italic;
+}
+
+/* ---- CTA FINAL ---- */
+.cs-cta-final {
+  text-align: center;
+  padding: 56px 24px 72px;
+  background: linear-gradient(135deg, var(--c-green), var(--c-green-mid));
+  position: relative;
+  overflow: hidden;
+}
+.cs-cta-final::before {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 200px; height: 200px;
+  background: rgba(118,255,3,0.08);
+  border-radius: 50%;
+}
+.cs-cta-final__proof {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--c-lime);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+.cs-cta-final__title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(40px, 6vw, 64px);
+  color: var(--c-white);
+  margin: 0 0 16px;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+.cs-cta-final__text {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.9);
+  max-width: 560px;
+  margin: 0 auto 28px;
+  position: relative;
+  z-index: 1;
+}
+.cs-cta-final__btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+.cs-cta-final__btn {
+  display: inline-block;
+  padding: 16px 44px;
+  background: var(--c-lime);
+  color: #1b3600;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+.cs-cta-final__btn:hover {
+  background: var(--c-yellow);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+}
+.cs-cta-final__btn--secondary {
+  display: inline-block;
+  padding: 16px 40px;
+  border-radius: var(--radius-pill);
+  border: 2px solid rgba(255,255,255,0.5);
+  color: var(--c-white);
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+}
+.cs-cta-final__btn--secondary:hover { border-color: var(--c-white); background: rgba(255,255,255,0.12); }
+
+/* ---- WHATSAPP FLOTANTE ---- */
+.cs-wa-float {
+  position: fixed;
+  bottom: 22px; right: 22px;
+  z-index: 50;
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: #25D366;
+  color: var(--c-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  transition: transform 0.25s ease;
+}
+.cs-wa-float:hover { transform: scale(1.08); }
+
+/* ---- ANIMACIONES DE ENTRADA (scroll reveal) ---- */
+.cs-reveal { opacity: 0; transform: translateY(18px); }
+.cs-reveal.is-visible { opacity: 1; transform: none; }
+.cs-no-anim .cs-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .colmena-social *,
+  .colmena-social *::before,
+  .colmena-social *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .cs-reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 900px) {
+  .cs-historia,
+  .cs-historia--reverse { flex-direction: column; }
+  .cs-historia__media { min-height: 220px; flex: 1 1 100%; }
+  .cs-aliados__grid,
+  .cs-testimonials__grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .cs-participa__grid { grid-template-columns: 1fr; }
+  .cs-impacto__grid { grid-template-columns: repeat(2, 1fr); }
+  .cs-hero__title { font-size: 3.5rem; }
+  .cs-wa-float { width: 52px; height: 52px; bottom: 16px; right: 16px; font-size: 1.4rem; }
+}
+{%- endstyle -%}
+
+{%- comment -%} ============== VARIABLES BASE (namespacing + agrupación de bloques) ============== {%- endcomment -%}
+{%- assign sid = section.id -%}
+{%- assign id_testimonios = 'testimonios-' | append: sid -%}
+{%- assign id_aliados = 'aliados-' | append: sid -%}
+{%- assign id_participa = 'participa-' | append: sid -%}
+{%- assign id_historias = 'historias-' | append: sid -%}
+{%- assign id_impacto = 'impacto-' | append: sid -%}
+{%- assign href_participa = '#' | append: id_participa -%}
+{%- assign href_aliados = '#' | append: id_aliados -%}
+
+{%- assign testimonio_blocks = section.blocks | where: 'type', 'testimonio' -%}
+{%- assign aliado_blocks = section.blocks | where: 'type', 'aliado' -%}
+{%- assign participa_blocks = section.blocks | where: 'type', 'participa_opcion' -%}
+{%- assign historia_blocks = section.blocks | where: 'type', 'historia' -%}
+{%- assign indicador_blocks = section.blocks | where: 'type', 'indicador' -%}
+{%- assign contacto_blocks = section.blocks | where: 'type', 'contacto_rapido' -%}
+
+{%- comment -%} Lista única de temas usados en testimonios, para el filtro {%- endcomment -%}
+{%- assign test_tags_raw = '' -%}
+{%- for block in testimonio_blocks -%}
+  {%- if block.settings.tags != blank -%}
+    {%- assign block_tags = block.settings.tags | split: ',' -%}
+    {%- for t in block_tags -%}
+      {%- assign t_clean = t | strip -%}
+      {%- if t_clean != blank -%}
+        {%- assign needle = '||' | append: t_clean | append: '||' -%}
+        {%- assign haystack = '||' | append: test_tags_raw -%}
+        {%- unless haystack contains needle -%}
+          {%- assign test_tags_raw = test_tags_raw | append: t_clean | append: '||' -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign test_tags_list = test_tags_raw | split: '||' -%}
+
+{%- comment -%} Lista única de categorías usadas en aliados, para el filtro {%- endcomment -%}
+{%- assign aliado_cats_raw = '' -%}
+{%- for block in aliado_blocks -%}
+  {%- if block.settings.category != blank -%}
+    {%- assign needle2 = '||' | append: block.settings.category | append: '||' -%}
+    {%- assign haystack2 = '||' | append: aliado_cats_raw -%}
+    {%- unless haystack2 contains needle2 -%}
+      {%- assign aliado_cats_raw = aliado_cats_raw | append: block.settings.category | append: '||' -%}
+    {%- endunless -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign aliado_categories_list = aliado_cats_raw | split: '||' -%}
+
+<div class="colmena-social{% if section.settings.enable_animations == false %} cs-no-anim{% endif %}" data-section-id="{{ sid }}" data-enable-anim="{{ section.settings.enable_animations }}">
+
+  {%- comment -%} ========== JSON-LD: SEO / rich snippets ========== {%- endcomment -%}
+  {%- if section.settings.enable_structured_data -%}
+    {%- assign rating_sum = 0 -%}
+    {%- assign rating_count = 0 -%}
+    {%- for block in testimonio_blocks -%}
+      {%- if block.settings.rating > 0 -%}
+        {%- assign rating_sum = rating_sum | plus: block.settings.rating -%}
+        {%- assign rating_count = rating_count | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": {{ section.settings.org_name | default: shop.name | json }},
+      "url": {{ section.settings.org_url | default: shop.url | json }},
+      "description": {{ section.settings.hero_desc | strip_html | json }}
+      {%- if rating_count > 0 -%}
+      ,
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": {{ rating_sum | times: 1.0 | divided_by: rating_count | round: 1 }},
+        "reviewCount": {{ rating_count }}
+      },
+      "review": [
+        {%- assign review_index = 0 -%}
+        {%- for block in testimonio_blocks -%}
+          {%- if block.settings.rating > 0 and review_index < 10 -%}
+            {%- assign review_index = review_index | plus: 1 -%}
+            {%- unless review_index == 1 -%},{%- endunless -%}
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": {{ block.settings.name | default: 'Anónimo' | json }} },
+              "reviewRating": { "@type": "Rating", "ratingValue": {{ block.settings.rating }}, "bestRating": 5 },
+              "reviewBody": {{ block.settings.text | strip_html | truncate: 300 | json }}
+            }
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+      {%- endif -%}
+    }
+    </script>
+  {%- endif -%}
+
+  <!-- ========== HERO ========== -->
+  <header class="cs-hero">
+    <div class="cs-hero__inner">
+      {%- if section.settings.hero_eyebrow != blank -%}
+        <span class="cs-hero__eyebrow">{{ section.settings.hero_eyebrow }}</span>
+      {%- endif -%}
+      <h1 class="cs-hero__title">{{ section.settings.hero_title | default: 'Colmena Social' }}</h1>
+      <p class="cs-hero__desc">
+        {{ section.settings.hero_desc | default: 'La Colmena Social es un espacio de encuentro, creación e investigación comunitaria permanente, basado en la Investigación-Acción Participativa (IAP), que busca comprender y transformar la vida de las personas a través del diálogo, la imaginación y el entrelazamiento de potenciales humanos.' }}
+      </p>
+
+      {%- if section.settings.hero_cta_text != blank or section.settings.hero_cta_secondary_text != blank -%}
+        <div class="cs-hero__ctas">
+          {%- if section.settings.hero_cta_text != blank -%}
+            <a href="{{ section.settings.hero_cta_link | default: href_participa }}" class="cs-hero__btn cs-hero__btn--primary" data-cro-event="hero_cta_primary">{{ section.settings.hero_cta_text }}</a>
+          {%- endif -%}
+          {%- if section.settings.hero_cta_secondary_text != blank -%}
+            <a href="{{ section.settings.hero_cta_secondary_link | default: href_aliados }}" class="cs-hero__btn cs-hero__btn--secondary" data-cro-event="hero_cta_secondary">{{ section.settings.hero_cta_secondary_text }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.hero_show_stats and indicador_blocks.size > 0 -%}
+        <div class="cs-hero__stats">
+          {%- for block in indicador_blocks limit: 3 -%}
+            <div class="cs-hero__stat">
+              <p class="cs-hero__stat-num">{{ block.settings.number }}</p>
+              <p class="cs-hero__stat-label">{{ block.settings.label }}</p>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </header>
+
+  <!-- ========== NAV STICKY ========== -->
+  {%- if section.settings.nav_show -%}
+    <nav class="cs-nav" aria-label="Secciones Colmena Social">
+      <div class="cs-nav__inner">
+        {%- if section.settings.enable_testimonios -%}<a href="#{{ id_testimonios }}" class="cs-nav__pill" data-nav-target="{{ id_testimonios }}">💬 Testimonios</a>{%- endif -%}
+        {%- if section.settings.enable_aliados -%}<a href="#{{ id_aliados }}" class="cs-nav__pill" data-nav-target="{{ id_aliados }}">🤝 Aliados</a>{%- endif -%}
+        {%- if section.settings.enable_participa -%}<a href="#{{ id_participa }}" class="cs-nav__pill" data-nav-target="{{ id_participa }}">✋ Participa</a>{%- endif -%}
+        {%- if section.settings.enable_historias -%}<a href="#{{ id_historias }}" class="cs-nav__pill" data-nav-target="{{ id_historias }}">📖 Historias</a>{%- endif -%}
+        {%- if section.settings.enable_impacto -%}<a href="#{{ id_impacto }}" class="cs-nav__pill" data-nav-target="{{ id_impacto }}">📊 Impacto</a>{%- endif -%}
+        {%- if section.settings.nav_cta_text != blank -%}
+          <a href="{{ section.settings.nav_cta_link | default: href_participa }}" class="cs-nav__pill cs-nav__cta" data-cro-event="nav_cta">{{ section.settings.nav_cta_text }}</a>
+        {%- endif -%}
+      </div>
+    </nav>
+  {%- endif -%}
+
+  <!-- ========== TESTIMONIOS ========== -->
+  {%- if section.settings.enable_testimonios -%}
+    <section id="{{ id_testimonios }}" class="cs-section cs-section--white">
+      <div class="cs-section__inner">
+        <div class="cs-section__header">
+          {%- if section.settings.test_eyebrow != blank -%}<span class="cs-section__eyebrow">{{ section.settings.test_eyebrow }}</span>{%- endif -%}
+          <h2 class="cs-section__title">{{ section.settings.test_title | default: 'Testimonios' }}</h2>
+          {%- if section.settings.test_subtitle != blank -%}<p class="cs-section__subtitle">{{ section.settings.test_subtitle }}</p>{%- endif -%}
+        </div>
+
+        {%- if testimonio_blocks.size > 0 -%}
+          {%- if section.settings.test_show_filter and test_tags_list.size > 2 -%}
+            <div class="cs-filter" role="group" aria-label="Filtrar testimonios por tema" data-filter-group="testimonios">
+              <button type="button" class="cs-filter__pill is-active" data-filter-value="all">Todos</button>
+              {%- for tag in test_tags_list -%}
+                {%- if tag != blank -%}<button type="button" class="cs-filter__pill" data-filter-value="{{ tag }}">{{ tag }}</button>{%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          {%- assign test_initial = section.settings.test_initial_count | default: 6 -%}
+          <div class="cs-testimonials__grid" data-grid="testimonios" aria-live="polite">
+            {%- for block in testimonio_blocks -%}
+              {%- assign tag_list = block.settings.tags | split: ',' -%}
+              {%- assign tags_attr = '' -%}
+              {%- for t in tag_list -%}{%- assign tags_attr = tags_attr | append: t | strip | append: '||' -%}{%- endfor -%}
+              <article class="cs-testimonial cs-reveal{% if block.settings.featured %} is-featured{% endif %}{% if forloop.index > test_initial %} cs-hide-loadmore{% endif %}" data-category="{{ tags_attr }}" {{ block.shopify_attributes }}>
+                {%- if block.settings.featured -%}<span class="cs-badge-featured">⭐ Destacado</span>{%- endif -%}
+                {%- if block.settings.photo != blank -%}
+                  {{ block.settings.photo | image_url: width: 600 | image_tag: class: 'cs-testimonial__photo', loading: 'lazy', decoding: 'async', width: 600, height: 220, alt: block.settings.name }}
+                {%- else -%}
+                  <div class="cs-testimonial__photo-placeholder" aria-hidden="true">🐝</div>
+                {%- endif -%}
+                <div class="cs-testimonial__body">
+                  <div class="cs-testimonial__header">
+                    <div class="cs-testimonial__avatar" aria-hidden="true">{{ block.settings.name | slice: 0 | upcase }}</div>
+                    <div>
+                      <p class="cs-testimonial__name">
+                        {{ block.settings.name | default: 'Anónimo' }}
+                        {%- if block.settings.verified -%}<span class="cs-badge-verified" title="Testimonio verificado">✓</span>{%- endif -%}
+                      </p>
+                      <p class="cs-testimonial__meta">
+                        {%- if block.settings.date != blank -%}{{ block.settings.date }} · {%- endif -%}
+                        {%- if block.settings.time_with_fdr != blank -%}{{ block.settings.time_with_fdr }}{%- endif -%}
+                      </p>
+                    </div>
+                  </div>
+                  {%- if block.settings.rating > 0 -%}
+                    <span class="cs-stars" aria-label="Calificación: {{ block.settings.rating }} de 5 estrellas">
+                      {%- for i in (1..5) -%}{%- if i <= block.settings.rating -%}★{%- else -%}☆{%- endif -%}{%- endfor -%}
+                    </span>
+                  {%- endif -%}
+                  <p class="cs-testimonial__text">"{{ block.settings.text }}"</p>
+                  {%- if block.settings.tags != blank -%}
+                    <div class="cs-testimonial__tags">
+                      {%- for tag in tag_list -%}<span class="cs-testimonial__tag">{{ tag | strip }}</span>{%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </article>
+            {%- endfor -%}
+          </div>
+
+          {%- if testimonio_blocks.size > test_initial -%}
+            <button type="button" class="cs-loadmore" data-loadmore="testimonios" aria-expanded="false">Ver más testimonios</button>
+          {%- endif -%}
+        {%- else -%}
+          <div class="cs-empty">
+            <span class="cs-empty__icon" aria-hidden="true">🐝</span>
+            <p class="cs-empty__text">Aún no hay testimonios publicados. ¡Sé la primera persona en compartir tu experiencia con Frutos de la Raíz!</p>
+            <a href="{{ href_participa }}" class="cs-empty__btn">Compartir mi historia</a>
+          </div>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+  <!-- ========== ALIADOS ========== -->
+  {%- if section.settings.enable_aliados -%}
+    <section id="{{ id_aliados }}" class="cs-section cs-section--cream">
+      <div class="cs-section__inner">
+        <div class="cs-section__header">
+          {%- if section.settings.aliados_eyebrow != blank -%}<span class="cs-section__eyebrow">{{ section.settings.aliados_eyebrow }}</span>{%- endif -%}
+          <h2 class="cs-section__title">{{ section.settings.aliados_title | default: 'Aliados' }}</h2>
+          {%- if section.settings.aliados_subtitle != blank -%}<p class="cs-section__subtitle">{{ section.settings.aliados_subtitle }}</p>{%- endif -%}
+        </div>
+
+        {%- if aliado_blocks.size > 0 -%}
+          {%- if section.settings.aliados_show_filter and aliado_categories_list.size > 2 -%}
+            <div class="cs-filter" role="group" aria-label="Filtrar aliados por categoría" data-filter-group="aliados">
+              <button type="button" class="cs-filter__pill is-active" data-filter-value="all">Todos</button>
+              {%- for cat in aliado_categories_list -%}
+                {%- if cat != blank -%}<button type="button" class="cs-filter__pill" data-filter-value="{{ cat }}">{{ cat }}</button>{%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          {%- assign aliados_initial = section.settings.aliados_initial_count | default: 9 -%}
+          <div class="cs-aliados__grid" data-grid="aliados" aria-live="polite">
+            {%- for block in aliado_blocks -%}
+              <article class="cs-aliado cs-reveal{% if block.settings.featured %} is-featured{% endif %}{% if forloop.index > aliados_initial %} cs-hide-loadmore{% endif %}" data-category="{{ block.settings.category }}" {{ block.shopify_attributes }}>
+                {%- if block.settings.featured -%}<span class="cs-badge-featured">⭐ Destacado</span>{%- endif -%}
+                {%- if block.settings.logo != blank -%}
+                  {{ block.settings.logo | image_url: width: 600 | image_tag: class: 'cs-aliado__img', loading: 'lazy', decoding: 'async', width: 600, height: 180, alt: block.settings.name }}
+                {%- else -%}
+                  <div class="cs-aliado__img-placeholder" aria-hidden="true">🤝</div>
+                {%- endif -%}
+                <div class="cs-aliado__body">
+                  {%- if block.settings.category != blank -%}<span class="cs-aliado__cat-tag">{{ block.settings.category }}</span>{%- endif -%}
+                  <h3 class="cs-aliado__name">{{ block.settings.name }}</h3>
+                  {%- if block.settings.who != blank -%}<p class="cs-aliado__desc">{{ block.settings.who }}</p>{%- endif -%}
+                  {%- if block.settings.what_does != blank -%}<p class="cs-aliado__aporta"><strong>¿Qué hace?</strong><br>{{ block.settings.what_does }}</p>{%- endif -%}
+                  {%- if block.settings.how_contributes != blank -%}<p class="cs-aliado__aporta"><strong>¿Cómo aporta?</strong><br>{{ block.settings.how_contributes }}</p>{%- endif -%}
+                  {%- if block.settings.services != blank -%}<p class="cs-aliado__services"><strong>Servicios:</strong> {{ block.settings.services }}</p>{%- endif -%}
+                  <div class="cs-aliado__contact">
+                    {%- if block.settings.whatsapp != blank -%}
+                      <a href="https://wa.me/{{ block.settings.whatsapp | remove: '+' | remove: ' ' | remove: '-' }}" class="btn-wa" target="_blank" rel="noopener" data-cro-event="aliado_whatsapp" aria-label="Escribir por WhatsApp a {{ block.settings.name }}">💬 WA</a>
+                    {%- endif -%}
+                    {%- if block.settings.phone != blank -%}
+                      <a href="tel:{{ block.settings.phone | remove: ' ' }}" class="btn-tel" data-cro-event="aliado_phone" aria-label="Llamar a {{ block.settings.name }}">📞 Llamar</a>
+                    {%- endif -%}
+                    {%- if block.settings.instagram != blank -%}
+                      <a href="{{ block.settings.instagram }}" class="btn-ig" target="_blank" rel="noopener" data-cro-event="aliado_instagram" aria-label="Ver Instagram de {{ block.settings.name }}">📷 IG</a>
+                    {%- endif -%}
+                    {%- if block.settings.website != blank -%}
+                      <a href="{{ block.settings.website }}" class="btn-web" target="_blank" rel="noopener" data-cro-event="aliado_website" aria-label="Visitar sitio web de {{ block.settings.name }}">🌐 Web</a>
+                    {%- endif -%}
+                    {%- if block.settings.email != blank -%}
+                      <a href="mailto:{{ block.settings.email }}" class="btn-email" data-cro-event="aliado_email" aria-label="Enviar correo a {{ block.settings.name }}">✉️ Email</a>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </article>
+            {%- endfor -%}
+          </div>
+
+          {%- if aliado_blocks.size > aliados_initial -%}
+            <button type="button" class="cs-loadmore" data-loadmore="aliados" aria-expanded="false">Ver más aliados</button>
+          {%- endif -%}
+        {%- else -%}
+          <div class="cs-empty">
+            <span class="cs-empty__icon" aria-hidden="true">🌱</span>
+            <p class="cs-empty__text">Estamos construyendo nuestra red de aliados. ¿Tienes un emprendimiento o proyecto afín a Frutos de la Raíz?</p>
+            <a href="{{ href_participa }}" class="cs-empty__btn">Quiero ser aliado</a>
+          </div>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+  <!-- ========== PARTICIPA ========== -->
+  {%- if section.settings.enable_participa -%}
+    <section id="{{ id_participa }}" class="cs-section cs-section--white">
+      <div class="cs-section__inner">
+        <div class="cs-section__header">
+          {%- if section.settings.participa_eyebrow != blank -%}<span class="cs-section__eyebrow">{{ section.settings.participa_eyebrow }}</span>{%- endif -%}
+          <h2 class="cs-section__title">{{ section.settings.participa_title | default: 'Participa' }}</h2>
+          {%- if section.settings.participa_subtitle != blank -%}<p class="cs-section__subtitle">{{ section.settings.participa_subtitle }}</p>{%- endif -%}
+        </div>
+
+        {%- if participa_blocks.size > 0 -%}
+          <div class="cs-participa__grid">
+            {%- for block in participa_blocks -%}
+              <a href="{{ block.settings.link | default: '#' }}" class="cs-participa__card cs-reveal" data-cro-event="participa_{{ block.settings.label | handleize }}" {{ block.shopify_attributes }}>
+                {%- if block.settings.badge_text != blank -%}<span class="cs-participa__badge">{{ block.settings.badge_text }}</span>{%- endif -%}
+                <span class="cs-participa__icon" aria-hidden="true">{{ block.settings.emoji | default: '✨' }}</span>
+                <h3 class="cs-participa__label">{{ block.settings.label }}</h3>
+                {%- if block.settings.hint != blank -%}<p class="cs-participa__hint">{{ block.settings.hint }}</p>{%- endif -%}
+              </a>
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          <div class="cs-empty">
+            <span class="cs-empty__icon" aria-hidden="true">✋</span>
+            <p class="cs-empty__text">Muy pronto habilitaremos nuevas formas de participar en la Colmena.</p>
+          </div>
+        {%- endif -%}
+
+        {%- if contacto_blocks.size > 0 -%}
+          {%- for block in contacto_blocks -%}
+            {%- assign contact_form_id = 'ColmenaContactForm-' | append: sid -%}
+            <div class="cs-quickform" {{ block.shopify_attributes }}>
+              <h3 class="cs-quickform__title">{{ block.settings.title | default: '¿Prefieres escribirnos directo?' }}</h3>
+              {%- if block.settings.subtitle != blank -%}<p class="cs-quickform__subtitle">{{ block.settings.subtitle }}</p>{%- endif -%}
+              {%- form 'contact', id: contact_form_id -%}
+                {%- if form.posted_successfully? -%}
+                  <p class="cs-quickform__success">¡Gracias! Tu mensaje fue enviado, te responderemos pronto.</p>
+                {%- endif -%}
+                {%- if form.errors -%}
+                  <p class="cs-quickform__error">{{ form.errors | default_errors }}</p>
+                {%- endif -%}
+                <div class="cs-quickform__row">
+                  <label for="{{ contact_form_id }}-name">Nombre</label>
+                  <input type="text" id="{{ contact_form_id }}-name" name="contact[name]" placeholder="Tu nombre" autocomplete="name" required>
+                  <label for="{{ contact_form_id }}-email">Correo</label>
+                  <input type="email" id="{{ contact_form_id }}-email" name="contact[email]" placeholder="Tu correo" autocomplete="email" required>
+                </div>
+                <label for="{{ contact_form_id }}-body">Mensaje</label>
+                <textarea id="{{ contact_form_id }}-body" name="contact[body]" rows="3" placeholder="Cuéntanos brevemente qué te interesa..." required></textarea>
+                <button type="submit" class="cs-quickform__submit" data-cro-event="quickform_submit">{{ block.settings.button_text | default: 'Enviar mensaje' }}</button>
+              {%- endform -%}
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+  <!-- ========== HISTORIAS DE TRANSFORMACIÓN ========== -->
+  {%- if section.settings.enable_historias -%}
+    <section id="{{ id_historias }}" class="cs-section cs-section--cream">
+      <div class="cs-section__inner">
+        <div class="cs-section__header">
+          {%- if section.settings.historias_eyebrow != blank -%}<span class="cs-section__eyebrow">{{ section.settings.historias_eyebrow }}</span>{%- endif -%}
+          <h2 class="cs-section__title">{{ section.settings.historias_title | default: 'Historias de Transformación' }}</h2>
+          {%- if section.settings.historias_subtitle != blank -%}<p class="cs-section__subtitle">{{ section.settings.historias_subtitle }}</p>{%- endif -%}
+        </div>
+
+        {%- if historia_blocks.size > 0 -%}
+          {%- assign historias_initial = section.settings.historias_initial_count | default: 2 -%}
+          <div class="cs-historias__list" data-grid="historias">
+            {%- for block in historia_blocks -%}
+              {%- assign is_even = forloop.index | modulo: 2 -%}
+              {%- assign plain_text = block.settings.text | strip_html -%}
+              {%- assign is_long = false -%}
+              {%- if plain_text.size > 260 -%}{%- assign is_long = true -%}{%- endif -%}
+              {%- assign text_id = 'historia-text-' | append: sid | append: '-' | append: forloop.index -%}
+              <article class="cs-historia cs-reveal{% if is_even == 0 %} cs-historia--reverse{% endif %}{% if forloop.index > historias_initial %} cs-hide-loadmore{% endif %}" {{ block.shopify_attributes }}>
+                <div class="cs-historia__media">
+                  {%- if block.settings.photo != blank -%}
+                    {{ block.settings.photo | image_url: width: 800 | image_tag: loading: 'lazy', decoding: 'async', width: 800, alt: block.settings.title }}
+                  {%- else -%}
+                    <div class="cs-historia__media-placeholder" aria-hidden="true">🌱</div>
+                  {%- endif -%}
+                </div>
+                <div class="cs-historia__body">
+                  {%- if block.settings.eyebrow != blank -%}<span class="cs-historia__eyebrow">{{ block.settings.eyebrow }}</span>{%- endif -%}
+                  <h3 class="cs-historia__title">{{ block.settings.title }}</h3>
+                  <div class="cs-historia__text{% if is_long %} is-clamped{% endif %}" id="{{ text_id }}">{{ block.settings.text }}</div>
+                  {%- if is_long -%}
+                    <button type="button" class="cs-historia__toggle" data-readmore-toggle="{{ text_id }}" aria-expanded="false">Leer más</button>
+                  {%- endif -%}
+                  <div class="cs-historia__author">
+                    <div class="cs-historia__author-avatar" aria-hidden="true">{{ block.settings.author_name | slice: 0 | upcase }}</div>
+                    <div>
+                      <p class="cs-historia__author-name">{{ block.settings.author_name | default: 'Anónimo' }}</p>
+                      {%- if block.settings.author_role != blank -%}<p class="cs-historia__author-role">{{ block.settings.author_role }}</p>{%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            {%- endfor -%}
+          </div>
+          {%- if historia_blocks.size > historias_initial -%}
+            <button type="button" class="cs-loadmore" data-loadmore="historias" aria-expanded="false">Ver más historias</button>
+          {%- endif -%}
+        {%- else -%}
+          <div class="cs-empty">
+            <span class="cs-empty__icon" aria-hidden="true">📖</span>
+            <p class="cs-empty__text">Todavía no hemos publicado historias de transformación. Vuelve pronto.</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+  <!-- ========== INDICADORES DE IMPACTO ========== -->
+  {%- if section.settings.enable_impacto -%}
+    <section id="{{ id_impacto }}" class="cs-section cs-section--white">
+      <div class="cs-section__inner">
+        <div class="cs-section__header">
+          {%- if section.settings.impacto_eyebrow != blank -%}<span class="cs-section__eyebrow">{{ section.settings.impacto_eyebrow }}</span>{%- endif -%}
+          <h2 class="cs-section__title">{{ section.settings.impacto_title | default: 'Indicadores de Impacto' }}</h2>
+          {%- if section.settings.impacto_subtitle != blank -%}<p class="cs-section__subtitle">{{ section.settings.impacto_subtitle }}</p>{%- endif -%}
+        </div>
+
+        {%- if indicador_blocks.size > 0 -%}
+          <div class="cs-impacto__grid">
+            {%- for block in indicador_blocks -%}
+              <div class="cs-impacto__card cs-reveal" {{ block.shopify_attributes }}>
+                <span class="cs-impacto__icon" aria-hidden="true">{{ block.settings.emoji | default: '📊' }}</span>
+                <p class="cs-impacto__num">{{ block.settings.number }}</p>
+                <p class="cs-impacto__label">{{ block.settings.label }}</p>
+              </div>
+            {%- endfor -%}
+          </div>
+          {%- if section.settings.impacto_updated_at != blank -%}
+            <p class="cs-impacto__updated">🕓 {{ section.settings.impacto_updated_at }}</p>
+          {%- endif -%}
+        {%- else -%}
+          <div class="cs-empty">
+            <span class="cs-empty__icon" aria-hidden="true">📊</span>
+            <p class="cs-empty__text">Muy pronto compartiremos las cifras de impacto de la comunidad.</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+  <!-- ========== CTA FINAL ========== -->
+  <div class="cs-cta-final">
+    {%- if section.settings.cta_social_proof != blank -%}
+      <span class="cs-cta-final__proof">{{ section.settings.cta_social_proof }}</span>
+    {%- endif -%}
+    <h2 class="cs-cta-final__title">{{ section.settings.cta_title | default: 'Sé parte de la Colmena' }}</h2>
+    <p class="cs-cta-final__text">{{ section.settings.cta_text | default: 'Tu voz, tu historia y tu talento pueden tejer nuevas posibilidades para nuestra comunidad.' }}</p>
+    <div class="cs-cta-final__btns">
+      {%- if section.settings.cta_btn_link != blank -%}
+        <a href="{{ section.settings.cta_btn_link }}" class="cs-cta-final__btn" data-cro-event="cta_final_primary">{{ section.settings.cta_btn_text | default: 'Quiero participar →' }}</a>
+      {%- endif -%}
+      {%- if section.settings.cta_secondary_link != blank -%}
+        <a href="{{ section.settings.cta_secondary_link }}" class="cs-cta-final__btn--secondary" target="_blank" rel="noopener" data-cro-event="cta_final_secondary">{{ section.settings.cta_secondary_text | default: 'Escríbenos por WhatsApp' }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <!-- ========== WHATSAPP FLOTANTE ========== -->
+  {%- if section.settings.enable_whatsapp_float and section.settings.whatsapp_float_number != blank -%}
+    {%- assign wa_number = section.settings.whatsapp_float_number | remove: '+' | remove: ' ' | remove: '-' -%}
+    {%- assign wa_message = section.settings.whatsapp_float_message | default: 'Hola, quiero saber más sobre la Colmena Social' | url_encode -%}
+    <a href="https://wa.me/{{ wa_number }}?text={{ wa_message }}" class="cs-wa-float" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" data-cro-event="whatsapp_float">💬</a>
+  {%- endif -%}
+</div>
+
+<script>
+(function () {
+  function trackEvent(name, detail) {
+    detail = detail || {};
+    try {
+      document.dispatchEvent(new CustomEvent('colmena:' + name, { detail: detail }));
+      if (window.dataLayer && typeof window.dataLayer.push === 'function') {
+        var payload = { event: 'colmena_' + name };
+        for (var k in detail) { if (Object.prototype.hasOwnProperty.call(detail, k)) payload[k] = detail[k]; }
+        window.dataLayer.push(payload);
+      }
+    } catch (err) { /* no-op: nunca bloquear la navegación por un fallo de analítica */ }
+  }
+
+  function prefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function initSmoothNav(root) {
+    var pills = root.querySelectorAll('.cs-nav__pill[data-nav-target]');
+    var reduce = prefersReducedMotion();
+    pills.forEach(function (pill) {
+      pill.addEventListener('click', function (e) {
+        var targetId = pill.getAttribute('data-nav-target');
+        var target = root.querySelector('#' + targetId);
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        trackEvent('nav_click', { target: targetId });
+      });
+    });
+  }
+
+  function initActiveNav(root) {
+    var pills = root.querySelectorAll('.cs-nav__pill[data-nav-target]');
+    if (!pills.length || !('IntersectionObserver' in window)) return;
+    var pairs = [];
+    pills.forEach(function (pill) {
+      var target = root.querySelector('#' + pill.getAttribute('data-nav-target'));
+      if (target) pairs.push({ pill: pill, target: target });
+    });
+    if (!pairs.length) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var match = pairs.filter(function (p) { return p.target === entry.target; })[0];
+        if (!match || !entry.isIntersecting) return;
+        pills.forEach(function (p) { p.classList.remove('is-active'); p.removeAttribute('aria-current'); });
+        match.pill.classList.add('is-active');
+        match.pill.setAttribute('aria-current', 'true');
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    pairs.forEach(function (p) { observer.observe(p.target); });
+  }
+
+  function initReveal(root, enableAnim) {
+    var els = root.querySelectorAll('.cs-reveal');
+    if (!els.length) return;
+    if (!enableAnim || prefersReducedMotion() || !('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    els.forEach(function (el) { el.style.transition = 'opacity .6s ease, transform .6s ease'; });
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(function (el) { observer.observe(el); });
+  }
+
+  function initCounters(root, enableAnim) {
+    var nums = root.querySelectorAll('.cs-impacto__num');
+    if (!nums.length) return;
+    if (!enableAnim || prefersReducedMotion() || !('IntersectionObserver' in window)) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        var el = entry.target;
+        var raw = el.textContent.trim();
+        var match = raw.match(/[\d.,]+/);
+        if (!match) return;
+        var target = parseFloat(match[0].replace(/,/g, ''));
+        if (isNaN(target)) return;
+        var prefix = raw.slice(0, match.index);
+        var suffix = raw.slice(match.index + match[0].length);
+        var duration = 1200;
+        var start = null;
+        function step(ts) {
+          if (!start) start = ts;
+          var progress = Math.min((ts - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = prefix + Math.floor(eased * target) + suffix;
+          if (progress < 1) requestAnimationFrame(step);
+          else el.textContent = raw;
+        }
+        requestAnimationFrame(step);
+      });
+    }, { threshold: 0.4 });
+    nums.forEach(function (el) { observer.observe(el); });
+  }
+
+  function initTagFilter(root) {
+    var group = root.querySelector('[data-filter-group="testimonios"]');
+    var grid = root.querySelector('[data-grid="testimonios"]');
+    if (!group || !grid) return;
+    var loadmoreBtn = root.querySelector('[data-loadmore="testimonios"]');
+    var pills = group.querySelectorAll('.cs-filter__pill');
+    pills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        pills.forEach(function (p) { p.classList.remove('is-active'); });
+        pill.classList.add('is-active');
+        var value = pill.getAttribute('data-filter-value');
+        grid.querySelectorAll('.cs-testimonial').forEach(function (card) {
+          var cat = '||' + (card.getAttribute('data-category') || '');
+          var match = value === 'all' || cat.indexOf('||' + value + '||') !== -1;
+          card.classList.toggle('cs-hide-filter', !match);
+        });
+        if (loadmoreBtn) loadmoreBtn.hidden = value !== 'all' || loadmoreBtn.dataset.exhausted === 'true';
+        trackEvent('filter_testimonios', { value: value });
+      });
+    });
+  }
+
+  function initCategoryFilter(root) {
+    var group = root.querySelector('[data-filter-group="aliados"]');
+    var grid = root.querySelector('[data-grid="aliados"]');
+    if (!group || !grid) return;
+    var loadmoreBtn = root.querySelector('[data-loadmore="aliados"]');
+    var pills = group.querySelectorAll('.cs-filter__pill');
+    pills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        pills.forEach(function (p) { p.classList.remove('is-active'); });
+        pill.classList.add('is-active');
+        var value = pill.getAttribute('data-filter-value');
+        grid.querySelectorAll('.cs-aliado').forEach(function (card) {
+          var cat = card.getAttribute('data-category') || '';
+          var match = value === 'all' || cat === value;
+          card.classList.toggle('cs-hide-filter', !match);
+        });
+        if (loadmoreBtn) loadmoreBtn.hidden = value !== 'all' || loadmoreBtn.dataset.exhausted === 'true';
+        trackEvent('filter_aliados', { value: value });
+      });
+    });
+  }
+
+  function initLoadMore(root, groupName) {
+    var grid = root.querySelector('[data-grid="' + groupName + '"]');
+    var btn = root.querySelector('[data-loadmore="' + groupName + '"]');
+    if (!grid || !btn) return;
+    btn.addEventListener('click', function () {
+      grid.querySelectorAll('.cs-hide-loadmore').forEach(function (c) { c.classList.remove('cs-hide-loadmore'); });
+      btn.hidden = true;
+      btn.dataset.exhausted = 'true';
+      trackEvent('load_more', { group: groupName });
+    });
+  }
+
+  function initReadMore(root) {
+    root.querySelectorAll('[data-readmore-toggle]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var targetId = btn.getAttribute('data-readmore-toggle');
+        var textEl = root.querySelector('#' + targetId);
+        if (!textEl) return;
+        var expanded = textEl.classList.toggle('is-expanded');
+        textEl.classList.toggle('is-clamped', !expanded);
+        btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        btn.textContent = expanded ? 'Leer menos' : 'Leer más';
+      });
+    });
+  }
+
+  function initEventTracking(root) {
+    root.querySelectorAll('[data-cro-event]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        trackEvent(el.getAttribute('data-cro-event'), { label: (el.textContent || '').trim() });
+      });
+    });
+  }
+
+  function init(root) {
+    if (!root || root.dataset.csInit === 'true') return;
+    root.dataset.csInit = 'true';
+    var enableAnim = root.dataset.enableAnim !== 'false';
+    initSmoothNav(root);
+    initActiveNav(root);
+    initReveal(root, enableAnim);
+    initCounters(root, enableAnim);
+    initTagFilter(root);
+    initCategoryFilter(root);
+    initLoadMore(root, 'testimonios');
+    initLoadMore(root, 'aliados');
+    initLoadMore(root, 'historias');
+    initReadMore(root);
+    initEventTracking(root);
+  }
+
+  function boot() {
+    document.querySelectorAll('.colmena-social').forEach(init);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  // Compatibilidad con el editor de temas de Shopify: re-inicializa
+  // al agregar/editar la sección sin recargar la página.
+  document.addEventListener('shopify:section:load', function (event) {
+    var root = event.target && event.target.querySelector ? event.target.querySelector('.colmena-social') : null;
+    if (root) init(root);
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Colmena Social",
+  "tag": "section",
+  "class": "colmena-social-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🎨 Colores y layout"
+    },
+    {
+      "type": "color",
+      "id": "color_green",
+      "label": "Verde principal",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "color_cream",
+      "label": "Fondo crema",
+      "default": "#F1F8E9"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 900,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animations",
+      "label": "Activar animaciones ",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "🐝 Hero — Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "hero_eyebrow",
+      "label": "Eyebrow",
+      "default": "Investigación-Acción Participativa"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Título",
+      "default": "Colmena Social"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_desc",
+      "label": "Descripción",
+      "default": "La Colmena Social es un espacio de encuentro, creación e investigación comunitaria permanente, basado en la Investigación-Acción Participativa (IAP), que busca comprender y transformar la vida de las personas a través del diálogo, la imaginación y el entrelazamiento de potenciales humanos."
+    },
+    {
+      "type": "color",
+      "id": "hero_from",
+      "label": "Gradiente hero inicio",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "hero_to",
+      "label": "Gradiente hero fin",
+      "default": "#2E7D32"
+    },
+    {
+      "type": "text",
+      "id": "hero_cta_text",
+      "label": "Texto del botón primario",
+      "default": "Comparte tu historia"
+    },
+    {
+      "type": "url",
+      "id": "hero_cta_link",
+      "label": "Enlace del botón primario",
+      "info": "Si se deja vacío, apunta automáticamente a la sección Participa."
+    },
+    {
+      "type": "text",
+      "id": "hero_cta_secondary_text",
+      "label": "Texto del botón secundario",
+      "default": "Conoce a nuestros aliados"
+    },
+    {
+      "type": "url",
+      "id": "hero_cta_secondary_link",
+      "label": "Enlace del botón secundario",
+      "info": "Si se deja vacío, apunta automáticamente a la sección Aliados."
+    },
+    {
+      "type": "checkbox",
+      "id": "hero_show_stats",
+      "label": "Mostrar mini-cifras de impacto debajo del hero",
+      "info": "Toma automáticamente los primeros 3 bloques de Indicador de Impacto.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "🧭 Navegación"
+    },
+    {
+      "type": "checkbox",
+      "id": "nav_show",
+      "label": "Mostrar barra de navegación fija",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "nav_cta_text",
+      "label": "Texto del botón de la barra",
+      "default": "Únete →"
+    },
+    {
+      "type": "url",
+      "id": "nav_cta_link",
+      "label": "Enlace del botón de la barra",
+      "info": "Si se deja vacío, apunta automáticamente a la sección Participa."
+    },
+    {
+      "type": "header",
+      "content": "💬 Sección — Testimonios"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_testimonios",
+      "label": "Mostrar sección de Testimonios",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "test_eyebrow",
+      "label": "Eyebrow",
+      "default": "Voces de la comunidad"
+    },
+    {
+      "type": "text",
+      "id": "test_title",
+      "label": "Título",
+      "default": "Testimonios"
+    },
+    {
+      "type": "textarea",
+      "id": "test_subtitle",
+      "label": "Subtítulo",
+      "default": "Experiencias de quienes han habitado Frutos de la Raíz."
+    },
+    {
+      "type": "range",
+      "id": "test_initial_count",
+      "label": "Testimonios visibles antes de \"Ver más\"",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "test_show_filter",
+      "label": "Mostrar filtro por tema",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "🤝 Sección — Aliados"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_aliados",
+      "label": "Mostrar sección de Aliados",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "aliados_eyebrow",
+      "label": "Eyebrow",
+      "default": "Nuestra red"
+    },
+    {
+      "type": "text",
+      "id": "aliados_title",
+      "label": "Título",
+      "default": "Aliados"
+    },
+    {
+      "type": "textarea",
+      "id": "aliados_subtitle",
+      "label": "Subtítulo",
+      "default": "Personas, organizaciones y emprendimientos que tejen el ecosistema de Frutos de la Raíz."
+    },
+    {
+      "type": "range",
+      "id": "aliados_initial_count",
+      "label": "Aliados visibles antes de \"Ver más\"",
+      "min": 3,
+      "max": 18,
+      "step": 3,
+      "default": 9
+    },
+    {
+      "type": "checkbox",
+      "id": "aliados_show_filter",
+      "label": "Mostrar filtro por categoría",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "✋ Sección — Participa"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_participa",
+      "label": "Mostrar sección de Participa",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "participa_eyebrow",
+      "label": "Eyebrow",
+      "default": "Vincúlate"
+    },
+    {
+      "type": "text",
+      "id": "participa_title",
+      "label": "Título",
+      "default": "Participa"
+    },
+    {
+      "type": "textarea",
+      "id": "participa_subtitle",
+      "label": "Subtítulo",
+      "default": "Hay muchas formas de ser parte de la Colmena. Elige la tuya."
+    },
+    {
+      "type": "header",
+      "content": "📖 Sección — Historias de Transformación"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_historias",
+      "label": "Mostrar sección de Historias",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "historias_eyebrow",
+      "label": "Eyebrow",
+      "default": "Relatos de cambio"
+    },
+    {
+      "type": "text",
+      "id": "historias_title",
+      "label": "Título",
+      "default": "Historias de Transformación"
+    },
+    {
+      "type": "textarea",
+      "id": "historias_subtitle",
+      "label": "Subtítulo",
+      "default": "Procesos vividos por personas que hacen parte de Frutos de la Raíz."
+    },
+    {
+      "type": "range",
+      "id": "historias_initial_count",
+      "label": "Historias visibles antes de \"Ver más\"",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "📊 Sección — Indicadores de Impacto"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_impacto",
+      "label": "Mostrar sección de Indicadores",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "impacto_eyebrow",
+      "label": "Eyebrow",
+      "default": "Nuestro alcance"
+    },
+    {
+      "type": "text",
+      "id": "impacto_title",
+      "label": "Título",
+      "default": "Indicadores de Impacto"
+    },
+    {
+      "type": "textarea",
+      "id": "impacto_subtitle",
+      "label": "Subtítulo",
+      "default": "Cifras que reflejan el crecimiento y alcance de nuestra comunidad."
+    },
+    {
+      "type": "text",
+      "id": "impacto_updated_at",
+      "label": "Nota de actualización",
+      "default": "Actualizado en julio de 2026"
+    },
+    {
+      "type": "header",
+      "content": "🔘 CTA final"
+    },
+    {
+      "type": "text",
+      "id": "cta_social_proof",
+      "label": "Microcopy de prueba social (opcional)",
+      "default": "Únete a más de 150 personas que ya son parte de la Colmena"
+    },
+    {
+      "type": "text",
+      "id": "cta_title",
+      "label": "Título",
+      "default": "Sé parte de la Colmena"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_text",
+      "label": "Texto",
+      "default": "Tu voz, tu historia y tu talento pueden tejer nuevas posibilidades para nuestra comunidad."
+    },
+    {
+      "type": "text",
+      "id": "cta_btn_text",
+      "label": "Texto del botón primario",
+      "default": "Quiero participar →"
+    },
+    {
+      "type": "url",
+      "id": "cta_btn_link",
+      "label": "Enlace del botón primario"
+    },
+    {
+      "type": "text",
+      "id": "cta_secondary_text",
+      "label": "Texto del botón secundario",
+      "default": "Escríbenos por WhatsApp"
+    },
+    {
+      "type": "url",
+      "id": "cta_secondary_link",
+      "label": "Enlace del botón secundario (ej: https://wa.me/57300...)"
+    },
+    {
+      "type": "header",
+      "content": "📱 Contacto flotante de WhatsApp"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_whatsapp_float",
+      "label": "Mostrar botón flotante de WhatsApp",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_float_number",
+      "label": "Número de WhatsApp (con código de país, sin +)",
+      "default": "573000000000"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_float_message",
+      "label": "Mensaje prellenado",
+      "default": "Hola, quiero saber más sobre la Colmena Social"
+    },
+    {
+      "type": "header",
+      "content": "🔍 SEO y datos estructurados"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_structured_data",
+      "label": "Emitir datos estructurados (JSON-LD) para buscadores",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "org_name",
+      "label": "Nombre de la organización",
+      "info": "Si se deja vacío, usa el nombre de la tienda."
+    },
+    {
+      "type": "url",
+      "id": "org_url",
+      "label": "URL de la organización",
+      "info": "Si se deja vacío, usa la URL de la tienda."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonio",
+      "name": "💬 Testimonio",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "photo",
+          "label": "Fotografía"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nombre",
+          "default": "María G."
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Fecha del testimonio",
+          "default": "Julio 2026"
+        },
+        {
+          "type": "text",
+          "id": "time_with_fdr",
+          "label": "Tiempo con Frutos de la Raíz",
+          "default": "2 años"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Testimonio",
+          "default": "Frutos de la Raíz cambió mi relación con la alimentación. No solo encontré productos de calidad, sino un espacio donde me siento escuchada y acompañada."
+        },
+        {
+          "type": "text",
+          "id": "tags",
+          "label": "Etiquetas (separadas por coma)",
+          "default": "Comunidad, Alimentación consciente, Bienestar"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Calificación (0 = sin calificación)",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "Testimonio verificado",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Destacar este testimonio",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "aliado",
+      "name": "🤝 Aliado",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo o imagen"
+        },
+        {
+          "type": "select",
+          "id": "category",
+          "label": "Categoría",
+          "options": [
+            { "value": "Organización", "label": "Organización" },
+            { "value": "Fundación", "label": "Fundación" },
+            { "value": "Colectivo", "label": "Colectivo" },
+            { "value": "Huerta", "label": "Huerta" },
+            { "value": "Red comunitaria", "label": "Red comunitaria" },
+            { "value": "Emprendimiento", "label": "Emprendimiento" },
+            { "value": "Productor", "label": "Productor" },
+            { "value": "Transformador", "label": "Transformador" },
+            { "value": "Artesano", "label": "Artesano" },
+            { "value": "Tienda", "label": "Tienda" },
+            { "value": "Nutrición", "label": "Nutrición" },
+            { "value": "Terapia", "label": "Terapia" },
+            { "value": "Medicina", "label": "Medicina" },
+            { "value": "Actividad física", "label": "Actividad física" },
+            { "value": "Arte", "label": "Arte" },
+            { "value": "Educación", "label": "Educación" },
+            { "value": "Servicios para eventos", "label": "Servicios para eventos" },
+            { "value": "Bebidas", "label": "Bebidas" },
+            { "value": "Talleres", "label": "Talleres" },
+            { "value": "Catering saludable", "label": "Catering saludable" },
+            { "value": "Otro", "label": "Otro" }
+          ],
+          "default": "Emprendimiento"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nombre del aliado",
+          "default": "Huerta Urbana Bosa"
+        },
+        {
+          "type": "textarea",
+          "id": "who",
+          "label": "¿Quiénes son?",
+          "default": "Un colectivo de agricultores urbanos que cultivan hortalizas orgánicas en Bosa."
+        },
+        {
+          "type": "textarea",
+          "id": "what_does",
+          "label": "¿Qué hace?",
+          "default": "Producen vegetales de estación sin agroquímicos y los distribuyen en la localidad."
+        },
+        {
+          "type": "textarea",
+          "id": "how_contributes",
+          "label": "¿Cómo aporta a la comunidad?",
+          "default": "Abastece a Frutos de la Raíz con productos frescos y educa sobre agricultura urbana."
+        },
+        {
+          "type": "textarea",
+          "id": "services",
+          "label": "Servicios que brinda",
+          "default": "Venta de hortalizas, asesorías de huerta, talleres de compostaje."
+        },
+        {
+          "type": "text",
+          "id": "whatsapp",
+          "label": "WhatsApp (solo número, con código de país)",
+          "default": "+57 300 0000000"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "Teléfono (para botón de llamada)"
+        },
+        {
+          "type": "text",
+          "id": "instagram",
+          "label": "Instagram (URL completa)",
+          "default": "https://instagram.com/ejemplo"
+        },
+        {
+          "type": "url",
+          "id": "website",
+          "label": "Sitio web"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "Correo electrónico"
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Destacar este aliado",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "participa_opcion",
+      "name": "✋ Opción de Participación",
+      "settings": [
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji",
+          "default": "💬"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Título",
+          "default": "Compartir mi historia"
+        },
+        {
+          "type": "textarea",
+          "id": "hint",
+          "label": "Descripción corta",
+          "default": "Cuéntanos tu experiencia con Frutos de la Raíz."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace al formulario o página"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Insignia (opcional, ej: \"Popular\", \"Nuevo\")"
+        }
+      ]
+    },
+    {
+      "type": "contacto_rapido",
+      "name": "Formulario de contacto",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Usa el formulario nativo de contacto de Shopify."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "¿Prefieres escribirnos directo?"
+        },
+        {
+          "type": "textarea",
+          "id": "subtitle",
+          "label": "Subtítulo",
+          "default": "Déjanos tu mensaje y te contactaremos en menos de 48 horas."
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Texto del botón",
+          "default": "Enviar mensaje"
+        }
+      ]
+    },
+    {
+      "type": "historia",
+      "name": "📖 Historia",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "photo",
+          "label": "Fotografía"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow",
+          "default": "Proceso de sanación"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título de la historia",
+          "default": "De la ansiedad a la conexión con la tierra"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Relato completo",
+          "default": "<p>Desde que llegué a Frutos de la Raíz, mi relación con la comida cambió por completo. Empecé a entender que alimentarme es un acto de amor propio y de conexión con quienes producen nuestros alimentos.</p>"
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Nombre del autor",
+          "default": "Carlos R."
+        },
+        {
+          "type": "text",
+          "id": "author_role",
+          "label": "Rol o contexto",
+          "default": "Miembro de la Colmena desde 2024"
+        }
+      ]
+    },
+    {
+      "type": "indicador",
+      "name": "📊 Indicador de Impacto",
+      "settings": [
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji",
+          "default": "👥"
+        },
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Número / Valor",
+          "default": "150+"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etiqueta",
+          "default": "Personas participantes"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Colmena Social",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Heidy",
+            "date": "Junio 2026",
+            "time_with_fdr": "3 años",
+            "text": "Es un gran lugar que no únicamente ofrece excelente calidad sino también información valiosa en compañía de conversaciones interesantes, toda una experiencia. La estética es acogedora y se nota que se ha construido una comunidad en torno a la alimentación saludable.",
+            "tags": "Comunidad, Alimentación saludable, Bienestar",
+            "rating": 5,
+            "verified": true,
+            "featured": true
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Geral & Cami",
+            "date": "Mayo 2026",
+            "time_with_fdr": "1 año",
+            "text": "Amooooo este lugar. Me encanta ir a hacer mi mercado saludable, realmente es muy acogedor estar allí. Siempre encuentro lo que necesito y el ambiente es increíble.",
+            "tags": "Mercado saludable, Comunidad, Bosa",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonio",
+          "settings": {
+            "name": "Anónimo",
+            "date": "Julio 2026",
+            "time_with_fdr": "6 meses",
+            "text": "Encontré en Frutos de la Raíz mucho más que una tienda. Es un espacio donde puedo preguntar, aprender y sentirme parte de algo más grande que una simple transacción comercial.",
+            "tags": "Aprendizaje, Comercio consciente, Pertenencia"
+          }
+        },
+        {
+          "type": "aliado",
+          "settings": {
+            "category": "Huerta",
+            "name": "Verde Bosa",
+            "who": "Colectivo de agricultura urbana del barrio Bosa Libertad.",
+            "what_does": "Cultivan hortalizas, aromáticas y frutales en lotes comunitarios usando técnicas agroecológicas.",
+            "how_contributes": "Abastece a Frutos con productos frescos de estación y comparte saberes en talleres abiertos.",
+            "services": "Venta de cajas de verduras, talleres de huerta, visitas guiadas.",
+            "featured": true
+          }
+        },
+        {
+          "type": "aliado",
+          "settings": {
+            "category": "Nutrición",
+            "name": "Nutre consciente",
+            "who": "Consultorio de nutrición holística orientado a alimentación real y de origen local.",
+            "what_does": "Atención nutricional individualizada con enfoque en salud intestinal y alimentación antiinflamatoria.",
+            "how_contributes": "Asesora a la comunidad de Frutos en charlas y consultorías grupales.",
+            "services": "Consulta nutricional, planes alimentarios, charlas educativas."
+          }
+        },
+        {
+          "type": "participa_opcion",
+          "settings": {
+            "emoji": "💬",
+            "label": "Compartir mi historia",
+            "hint": "Cuéntanos cómo Frutos de la Raíz ha impactado tu vida.",
+            "badge_text": "Popular"
+          }
+        },
+        {
+          "type": "participa_opcion",
+          "settings": {
+            "emoji": "🤝",
+            "label": "Quiero ser aliado",
+            "hint": "Si tienes un emprendimiento o proyecto alineado, postúlate."
+          }
+        },
+        {
+          "type": "participa_opcion",
+          "settings": {
+            "emoji": "🎓",
+            "label": "Proponer un taller",
+            "hint": "Comparte tus conocimientos con la comunidad."
+          }
+        },
+        {
+          "type": "participa_opcion",
+          "settings": {
+            "emoji": "🙌",
+            "label": "Ser voluntario",
+            "hint": "Aporta tu tiempo y talento a los proyectos de la Colmena."
+          }
+        },
+        {
+          "type": "participa_opcion",
+          "settings": {
+            "emoji": "💚",
+            "label": "Donar",
+            "hint": "Apoya económicamente las investigaciones y proyectos comunitarios."
+          }
+        },
+        {
+          "type": "participa_opcion",
+          "settings": {
+            "emoji": "📋",
+            "label": "Proponer un proyecto comunitario",
+            "hint": "Tienes una idea que beneficie al barrio o la localidad. Cuéntanos."
+          }
+        },
+        {
+          "type": "participa_opcion",
+          "settings": {
+            "emoji": "🔬",
+            "label": "Participar en investigaciones",
+            "hint": "Únete como co-investigador en los procesos de IAP de la Colmena."
+          }
+        },
+        {
+          "type": "contacto_rapido",
+          "settings": {
+            "title": "¿Prefieres escribirnos directo?",
+            "subtitle": "Déjanos tu mensaje y te contactaremos en menos de 48 horas.",
+            "button_text": "Enviar mensaje"
+          }
+        },
+        {
+          "type": "historia",
+          "settings": {
+            "eyebrow": "Proceso de sanación",
+            "title": "De la ansiedad a la conexión",
+            "text": "<p>Llegué a Frutos de la Raíz en medio de una crisis de ansiedad. No buscaba comprar nada; buscaba un espacio donde respirar. Encontré mucho más: un lugar donde la gente me saludaba por mi nombre, donde podía tocar las semillas y oler las aromáticas, donde aprendí que comer también es un acto político y de cuidado.</p><p>Hoy coordino el grupo de huerta comunitaria y mi ansiedad se convirtió en una energía que cultiva vida.</p>",
+            "author_name": "Carlos R.",
+            "author_role": "Coordinador de Huerta Urbana — Miembro desde 2023"
+          }
+        },
+        {
+          "type": "indicador",
+          "settings": {
+            "emoji": "👥",
+            "number": "150+",
+            "label": "Personas participantes"
+          }
+        },
+        {
+          "type": "indicador",
+          "settings": {
+            "emoji": "🎤",
+            "number": "45",
+            "label": "Personas entrevistadas"
+          }
+        },
+        {
+          "type": "indicador",
+          "settings": {
+            "emoji": "💬",
+            "number": "32",
+            "label": "Testimonios publicados"
+          }
+        },
+        {
+          "type": "indicador",
+          "settings": {
+            "emoji": "🤝",
+            "number": "18",
+            "label": "Aliados activos"
+          }
+        },
+        {
+          "type": "indicador",
+          "settings": {
+            "emoji": "🎓",
+            "number": "24",
+            "label": "Talleres realizados"
+          }
+        },
+        {
+          "type": "indicador",
+          "settings": {
+            "emoji": "📋",
+            "number": "8",
+            "label": "Proyectos acompañados"
+          }
+        },
+        {
+          "type": "indicador",
+          "settings": {
+            "emoji": "🙌",
+            "number": "350h",
+            "label": "Horas de voluntariado"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

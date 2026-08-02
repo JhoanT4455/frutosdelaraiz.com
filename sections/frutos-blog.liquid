@@ -1,186 +1,380 @@
-<style>
-  .blog-wrapper-frutos { 
-    background: #ffffff; 
-    padding: 60px 5%; 
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  
-  .blog-header-frutos {
-    text-align: center;
-    margin-bottom: 50px;
-  }
-  
-  .blog-title-main {
-    font-family: 'Amatic SC', cursive;
-    font-size: 4.5rem;
-    color: #1B5E20;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+{%- liquid
+  assign display_blog = blog
+  if display_blog == blank and section.settings.blog != blank
+    assign display_blog = section.settings.blog
+  endif
+  if display_blog == blank and section.settings.blog_handle != blank
+    assign display_blog = blogs[section.settings.blog_handle]
+  endif
+  assign per_page = section.settings.articles_per_page | default: 9
+-%}
 
-  .blog-grid-frutos {
-    display: grid;
-    /* Ajuste para que se adapte bien si hay 2, 3 o 4 artículos */
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-  }
+{%- style -%}
+.frc-blog {
+  --frc-green: {{ section.settings.accent_color | default: '#1B5E20' }};
+  --frc-lime: #76FF03;
+  --frc-yellow: #FFC107;
+  --frc-cream: {{ section.settings.bg_color | default: '#F1F8E9' }};
+  --frc-max: {{ section.settings.max_width | default: 1200 }}px;
+  font-family: 'Lato', sans-serif;
+  background: var(--frc-cream);
+  color: #333;
+}
+.frc-blog * { box-sizing: border-box; }
 
-  .blog-card-frutos {
-    border: 1px solid #eee; 
-    border-radius: 8px; 
-    overflow: hidden;
-    transition: box-shadow 0.3s;
-    display: flex;
-    flex-direction: column;
-  }
+.frc-blog__hero {
+  background: linear-gradient(135deg, {{ section.settings.hero_from | default: '#1B5E20' }}, {{ section.settings.hero_to | default: '#2E7D32' }});
+  padding: clamp(48px, 7vw, 72px) 24px;
+  text-align: center;
+}
+.frc-blog__hero-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--frc-lime);
+  margin-bottom: 10px;
+}
+.frc-blog__hero-title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(48px, 7vw, 72px);
+  color: #fff;
+  margin: 0 0 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+.frc-blog__hero-sub {
+  color: rgba(255,255,255,0.9);
+  font-size: 1.05rem;
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
 
-  .blog-card-frutos:hover {
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-  }
+.frc-blog__body {
+  max-width: var(--frc-max);
+  margin: 0 auto;
+  padding: clamp(32px, 5vw, 52px) 20px;
+}
 
-  .blog-img-frutos { 
-    height: 220px; 
-    background: #f4f4f4; 
-    overflow: hidden;
-  }
-  
-  .blog-img-frutos img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; 
-    transition: transform 0.5s;
-  }
+.frc-blog__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px 22px;
+}
 
-  .blog-card-frutos:hover .blog-img-frutos img {
-    transform: scale(1.05);
-  }
+.frc-blog__card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(27, 94, 32, 0.1);
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 2px 10px rgba(27, 94, 32, 0.05);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.frc-blog__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(27, 94, 32, 0.1);
+  border-color: rgba(27, 94, 32, 0.2);
+}
+.frc-blog__card-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #e8f5e9;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.frc-blog__card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+.frc-blog__card:hover .frc-blog__card-media img { transform: scale(1.03); }
+.frc-blog__card-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: linear-gradient(145deg, #e8f5e9, #c8e6c9);
+}
+.frc-blog__card-body {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 6px;
+}
+.frc-blog__card-tag {
+  display: inline-block;
+  align-self: flex-start;
+  background: rgba(255, 193, 7, 0.2);
+  color: #5d4037;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+.frc-blog__card-meta {
+  font-size: 0.75rem;
+  color: #999;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.frc-blog__card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--frc-green);
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.frc-blog__card-excerpt {
+  font-size: 0.84rem;
+  color: #666;
+  line-height: 1.55;
+  margin: 4px 0 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.frc-blog__card-cta {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--frc-green);
+  margin-top: 10px;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+.frc-blog__card:hover .frc-blog__card-cta { opacity: 1; }
 
-  .blog-content-frutos { 
-    padding: 25px; 
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
+.frc-blog__empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: #666;
+  grid-column: 1 / -1;
+}
 
-  .blog-date-frutos { 
-    font-size: 0.85rem; 
-    color: #999; 
-    margin-bottom: 8px; 
-    font-family: 'Lato', sans-serif; 
-  }
+.frc-blog__pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+.frc-blog__page-link {
+  padding: 10px 16px;
+  border-radius: 50px;
+  border: 2px solid var(--frc-green);
+  color: var(--frc-green);
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+.frc-blog__page-link:hover,
+.frc-blog__page-link--current {
+  background: var(--frc-green);
+  color: #fff;
+}
+.frc-blog__page-link--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
 
-  .blog-title-frutos { 
-    font-family: 'Amatic SC', cursive; 
-    font-weight: 700; 
-    margin-bottom: 10px;
-    font-size: 2.5rem;
-    line-height: 1;
-    color: #1B5E20;
-    text-decoration: none;
-  }
+@media (max-width: 1024px) {
+  .frc-blog__grid { grid-template-columns: repeat(2, 1fr); gap: 22px 18px; }
+}
+@media (max-width: 600px) {
+  .frc-blog__grid { grid-template-columns: 1fr; gap: 18px; }
+  .frc-blog__card-body { padding: 16px 18px 18px; }
+}
+{%- endstyle -%}
 
-  .blog-title-frutos:hover {
-    color: #5D4037;
-  }
+<div class="frc-blog">
+  <header class="frc-blog__hero">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="frc-blog__hero-eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    <h1 class="frc-blog__hero-title">
+      {%- if section.settings.title != blank -%}
+        {{ section.settings.title }}
+      {%- elsif display_blog != blank -%}
+        {{ display_blog.title }}
+      {%- else -%}
+        Blog
+      {%- endif -%}
+    </h1>
+    {%- if section.settings.subtitle != blank -%}
+      <p class="frc-blog__hero-sub">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+  </header>
 
-  .blog-excerpt-frutos {
-    font-family: 'Lato', sans-serif;
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 15px;
-    line-height: 1.5;
-  }
+  <div class="frc-blog__body">
+    {%- if display_blog != blank -%}
+      {%- paginate display_blog.articles by per_page -%}
+        <div class="frc-blog__grid">
+          {%- for article in display_blog.articles -%}
+            <a href="{{ article.url }}" class="frc-blog__card">
+              <div class="frc-blog__card-media">
+                {%- if article.image -%}
+                  {{ article.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: article.title }}
+                {%- else -%}
+                  <div class="frc-blog__card-placeholder" aria-hidden="true">🌿</div>
+                {%- endif -%}
+              </div>
+              <div class="frc-blog__card-body">
+                {%- if article.tags.size > 0 -%}
+                  <span class="frc-blog__card-tag">{{ article.tags.first }}</span>
+                {%- endif -%}
+                <p class="frc-blog__card-meta">{{ article.published_at | date: '%d %b %Y' }}</p>
+                <h2 class="frc-blog__card-title">{{ article.title }}</h2>
+                <p class="frc-blog__card-excerpt">
+                  {%- if article.excerpt != blank -%}
+                    {{ article.excerpt | strip_html | truncate: 110 }}
+                  {%- else -%}
+                    {{ article.content | strip_html | truncate: 110 }}
+                  {%- endif -%}
+                </p>
+                <span class="frc-blog__card-cta">Leer más →</span>
+              </div>
+            </a>
+          {%- else -%}
+            <p class="frc-blog__empty">Aún no hay artículos publicados en este blog.</p>
+          {%- endfor -%}
+        </div>
 
-  .blog-link-frutos { 
-    color: #1B5E20; 
-    text-decoration: none; 
-    font-weight: 700; 
-    font-family: 'Lato', sans-serif; 
-    margin-top: auto;
-    font-size: 0.9rem;
-  }
-  
-  .blog-link-frutos:hover {
-    text-decoration: underline;
-  }
-
-  @media(max-width: 768px) {
-    .blog-title-main { font-size: 3.5rem; }
-    .blog-img-frutos { height: 180px; }
-  }
-</style>
-
-<div class="blog-wrapper-frutos">
-  <div class="blog-header-frutos">
-    <h2 class="blog-title-main">{{ section.settings.title }}</h2>
-  </div>
-
-  <div class="blog-grid-frutos">
-    {% assign blog = blogs[section.settings.blog] %}
-    
-    {% if blog != blank and blog.articles_count > 0 %}
-      {% for article in blog.articles limit: section.settings.post_limit %}
-        <article class="blog-card-frutos">
-          <a href="{{ article.url }}" class="blog-img-frutos">
-            {% if article.image %}
-              <img src="{{ article.image | image_url: width: 600 }}" alt="{{ article.title | escape }}" loading="lazy">
-            {% else %}
-              <div style="width: 100%; height: 100%; background: #1B5E20; display:flex; align-items:center; justify-content:center; color:white;"><i class="fas fa-leaf fa-3x"></i></div>
-            {% endif %}
-          </a>
-          <div class="blog-content-frutos">
-            <div class="blog-date-frutos">{{ article.published_at | date: "%d de %B, %Y" }}</div>
-            <a href="{{ article.url }}" class="blog-title-frutos">{{ article.title }}</a>
-            <div class="blog-excerpt-frutos">
-              {% if article.excerpt.size > 0 %}
-                {{ article.excerpt | strip_html | truncatewords: 20 }}
-              {% else %}
-                {{ article.content | strip_html | truncatewords: 20 }}
-              {% endif %}
-            </div>
-            <a href="{{ article.url }}" class="blog-link-frutos">Leer más &rarr;</a>
-          </div>
-        </article>
-      {% endfor %}
-    {% else %}
-      <p style="text-align: center; width: 100%;">Selecciona un blog con artículos en la configuración de la sección.</p>
-    {% endif %}
+        {%- if paginate.pages > 1 -%}
+          <nav class="frc-blog__pagination" aria-label="Paginación del blog">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="frc-blog__page-link">← Anterior</a>
+            {%- else -%}
+              <span class="frc-blog__page-link frc-blog__page-link--disabled">← Anterior</span>
+            {%- endif -%}
+            <span class="frc-blog__page-link frc-blog__page-link--current">{{ paginate.current_page }} / {{ paginate.pages }}</span>
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="frc-blog__page-link">Siguiente →</a>
+            {%- else -%}
+              <span class="frc-blog__page-link frc-blog__page-link--disabled">Siguiente →</span>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <p class="frc-blog__empty">Selecciona un blog en la configuración de la sección o asigna esta plantilla a un blog de Shopify.</p>
+    {%- endif -%}
   </div>
 </div>
 
 {% schema %}
 {
   "name": "Blog Frutos",
+  "tag": "section",
+  "class": "frc-blog-section",
   "settings": [
     {
-      "type": "text",
-      "id": "title",
-      "label": "Título de la sección",
-      "default": "NUESTRO BLOG DE BIENESTAR"
+      "type": "paragraph",
+      "content": "Conectado al blog de Shopify. En la plantilla blog, usa el blog actual automáticamente."
     },
     {
       "type": "blog",
       "id": "blog",
-      "label": "Seleccionar Blog"
+      "label": "Blog (opcional si ya estás en plantilla blog)"
+    },
+    {
+      "type": "text",
+      "id": "blog_handle",
+      "label": "Handle del blog (respaldo)",
+      "default": "noticias",
+      "info": "Solo si el selector de blog no está asignado. Ej: noticias"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "📰 Noticias y bienestar"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título (vacío = título del blog)",
+      "default": "Blog Frutos de la Raíz"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Recetas, consejos naturales y novedades de nuestra comunidad en Bosa."
     },
     {
       "type": "range",
-      "id": "post_limit",
-      "min": 2,
-      "max": 6,
-      "step": 1,
-      "label": "Número de artículos a mostrar",
-      "default": 3
+      "id": "articles_per_page",
+      "label": "Artículos por página",
+      "min": 3,
+      "max": 24,
+      "step": 3,
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color acento",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#F1F8E9"
+    },
+    {
+      "type": "color",
+      "id": "hero_from",
+      "label": "Hero gradiente inicio",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "hero_to",
+      "label": "Hero gradiente fin",
+      "default": "#2E7D32"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo",
+      "min": 900,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
     }
   ],
   "presets": [
     {
-      "name": "Blog Frutos de la Raíz",
-      "category": "Custom"
+      "name": "Blog Frutos"
     }
   ]
 }
 {% endschema %}
-

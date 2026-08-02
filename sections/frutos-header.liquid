@@ -1,59 +1,103 @@
 {{ 'https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Montserrat:wght@400;500;600;700&family=Lato:wght@400;700&display=swap' | stylesheet_tag }}
 
-<!-- ===================== BARRA SUPERIOR ===================== -->
-<div class="fdr-topbar" id="fdr-topbar">
-  <span class="fdr-topbar__text">
-    {{ section.settings.topbar_text }}
-  </span>
+{%- assign free_shipping_threshold = section.settings.free_shipping_threshold | default: 200000 -%}
+{%- assign cart_total = cart.total_price | default: 0 -%}
+{%- assign remaining = free_shipping_threshold | minus: cart_total -%}
+{%- if remaining < 0 -%}{%- assign remaining = 0 -%}{%- endif -%}
+{%- assign progress = cart_total | times: 100 | divided_by: free_shipping_threshold -%}
+{%- if progress > 100 -%}{%- assign progress = 100 -%}{%- endif -%}
+
+<!-- ===================== BARRA DE PROMO / COUNTDOWN ===================== -->
+{%- if section.settings.promo_enabled and section.settings.promo_end_date != blank -%}
+  {%- assign promo_end = section.settings.promo_end_date | date: '%Y-%m-%dT%H:%M:%S' -%}
+  <div class="fdr-promo-bar" id="fdr-promo-bar" data-promo-end="{{ promo_end }}">
+    <span class="fdr-promo-bar__badge">{{ section.settings.promo_badge }}</span>
+    <span class="fdr-promo-bar__text">{{ section.settings.promo_text }}</span>
+    <span class="fdr-promo-bar__countdown" id="fdr-promo-countdown"></span>
+  </div>
+{%- endif -%}
+
+<!-- ===================== BARRA DE ENVIO GRATIS DINAMICA ===================== -->
+<div class="fdr-shipping-bar" id="fdr-shipping-bar" data-threshold="{{ free_shipping_threshold }}" data-cart-total="{{ cart_total }}">
+  <div class="fdr-shipping-bar__content">
+    <span class="fdr-shipping-bar__icon" id="fdr-shipping-icon">
+      {%- if cart_total >= free_shipping_threshold -%}
+        🎉
+      {%- elsif cart_total > 0 -%}
+        🚚
+      {%- else -%}
+        🚚
+      {%- endif -%}
+    </span>
+    <span class="fdr-shipping-bar__text" id="fdr-shipping-text">
+      {%- if cart_total >= free_shipping_threshold -%}
+        {{ section.settings.shipping_free_message | default: "¡Felicidades! Tienes envío gratis" }}
+      {%- elsif cart_total > 0 -%}
+        {%- assign remaining_money = remaining | money -%}
+        ¡Te faltan {{ remaining_money }} para envío gratis!
+      {%- else -%}
+        {{ section.settings.shipping_default_message | default: "Envíos gratis por compras mayores a $200.000" }}
+      {%- endif -%}
+    </span>
+  </div>
+  <div class="fdr-shipping-bar__progress-wrap">
+    <div class="fdr-shipping-bar__progress-track">
+      <div class="fdr-shipping-bar__progress-fill" id="fdr-shipping-progress" style="width: {{ progress }}%;"></div>
+    </div>
+    <span class="fdr-shipping-bar__goal" id="fdr-shipping-goal" {% if cart_total >= free_shipping_threshold %}style="display:none;"{% endif %}>
+      Meta: {{ free_shipping_threshold | money }}
+    </span>
+  </div>
 </div>
 
-<!-- ===================== HEADER PRINCIPAL ===================== -->
-<header class="fdr-header" id="fdr-header">
+<!-- ===================== HEADER PRINCIPAL (STICKY + SHRINK) ===================== -->
+<header class="fdr-header" id="fdr-header" data-shrink="{{ section.settings.enable_shrink }}">
   <div class="fdr-header__inner">
 
     <!-- LOGO -->
-    <a href="{{ routes.root_url }}" class="fdr-logo" aria-label="{{ shop.name }}">
+    <a href="{{ routes.root_url }}" class="fdr-logo" aria-label="{{ shop.name }}" id="fdr-logo-link">
       {%- if section.settings.logo != blank -%}
         <img
           src="{{ section.settings.logo | image_url: width: 120 }}"
           alt="{{ shop.name }}"
           class="fdr-logo__img"
+          id="fdr-logo-img"
           width="60"
           height="60"
           loading="eager"
         >
       {%- else -%}
-        <span class="fdr-logo__icon">🌿</span>
+        <span class="fdr-logo__icon" id="fdr-logo-icon">🌿</span>
       {%- endif -%}
-      <div class="fdr-logo__text-wrap">
-        <span class="fdr-logo__name">{{ shop.name }}</span>
-        <span class="fdr-logo__tagline">{{ section.settings.tagline }}</span>
+      <div class="fdr-logo__text-wrap" id="fdr-logo-text-wrap">
+        <span class="fdr-logo__name" id="fdr-logo-name">{{ shop.name }}</span>
+        <span class="fdr-logo__tagline" id="fdr-logo-tagline">{{ section.settings.tagline }}</span>
       </div>
     </a>
 
-    <!-- BÚSQUEDA -->
-    <form class="fdr-search" action="{{ routes.search_url }}" method="get" role="search" id="fdr-search-form">
-      <input
-        type="search"
-        name="q"
-        class="fdr-search__input"
-        id="fdr-search-input"
-        placeholder="{{ section.settings.search_placeholder }}"
-        aria-label="Buscar productos"
-        autocomplete="off"
-      >
-      <button type="submit" class="fdr-search__btn" aria-label="Buscar">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </button>
-      <!-- Búsqueda predictiva: resultados -->
-      <div class="fdr-search__predictive" id="fdr-search-predictive" aria-hidden="true">
-        <div class="fdr-search__predictive-inner" id="fdr-search-predictive-inner">
-          <span class="fdr-search__predictive-empty">Escribe para buscar productos...</span>
-        </div>
+    <!-- BÚSQUEDA PREDICTIVA -->
+    <div class="fdr-search-wrap">
+      <form class="fdr-search" action="{{ routes.search_url }}" method="get" role="search" id="fdr-search-form">
+        <input
+          type="search"
+          name="q"
+          class="fdr-search__input"
+          id="fdr-search-input"
+          placeholder="{{ section.settings.search_placeholder }}"
+          aria-label="Buscar productos"
+          autocomplete="off"
+        >
+        <button type="submit" class="fdr-search__btn" aria-label="Buscar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </form>
+      <!-- Dropdown predictivo -->
+      <div class="fdr-search__dropdown" id="fdr-search-dropdown">
+        <div class="fdr-search__dropdown-inner" id="fdr-search-results"></div>
       </div>
-    </form>
+    </div>
 
-    <!-- ACCIONES (cuenta + carrito + burger) -->
+    <!-- ACCIONES (cuenta + carrito) -->
     <div class="fdr-actions">
 
       <!-- Cuenta -->
@@ -68,7 +112,7 @@
       {%- endif -%}
 
       <!-- Carrito -->
-      <a href="{{ routes.cart_url }}" class="fdr-actions__btn fdr-cart" aria-label="Ver carrito" id="fdr-cart-link">
+      <a href="{{ routes.cart_url }}" class="fdr-actions__btn fdr-cart" aria-label="Ver carrito" id="fdr-cart-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         <span
           class="fdr-cart__count"
@@ -78,7 +122,7 @@
       </a>
 
       <!-- Botón hamburguesa móvil -->
-      <button class="fdr-burger" id="fdr-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="fdr-nav">
+      <button class="fdr-burger" id="fdr-burger" aria-label="Abrir menú" aria-expanded="false">
         <span></span>
         <span></span>
         <span></span>
@@ -88,88 +132,161 @@
 
   </div><!-- /.fdr-header__inner -->
 
-  <!-- ===================== MENÚ DE NAVEGACIÓN ===================== -->
+  <!-- ===================== MENÚ DE NAVEGACIÓN CON SUBNIVELES ===================== -->
   <nav class="fdr-nav" id="fdr-nav" aria-label="Navegación principal">
-    <!-- Botón cerrar móvil -->
-    <button class="fdr-nav__close" id="fdr-nav-close" aria-label="Cerrar menú">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-
     <ul class="fdr-nav__list">
+      {%- assign conoce_page = pages[section.settings.conoce_page_handle] -%}
+      {%- if conoce_page != blank -%}
+        {%- assign conoce_url = conoce_page.url -%}
+      {%- else -%}
+        {%- assign conoce_url = section.settings.conoce_page_url | default: '/pages/conocenos' -%}
+      {%- endif -%}
+      {%- if section.settings.blog_menu_target != blank -%}
+        {%- assign blog_nav_obj = blogs[section.settings.blog_menu_target] -%}
+      {%- elsif section.settings.blog_handle_fallback != blank -%}
+        {%- assign blog_nav_obj = blogs[section.settings.blog_handle_fallback] -%}
+      {%- endif -%}
+      {%- if blog_nav_obj != blank -%}
+        {%- assign blog_url = blog_nav_obj.url -%}
+      {%- else -%}
+        {%- assign blog_url = section.settings.blog_url_fallback | default: '/blogs/noticias' -%}
+      {%- endif -%}
+      {%- assign blog_active = false -%}
+      {%- if template.name == 'blog' or template.name == 'article' -%}
+        {%- assign blog_active = true -%}
+      {%- endif -%}
+      {%- assign conoce_injected = false -%}
+      {%- assign blog_injected = false -%}
+      {%- assign menu_pdf_injected = false -%}
+      {%- if section.settings.show_menu_pdf -%}
+        {%- assign menu_pdf_url = section.settings.menu_pdf_url | default: 'https://drive.google.com/file/d/1BHWjAg7N38WDy1ZJoo-h1cTQl1xO54bW/view?usp=drive_link' -%}
+      {%- endif -%}
       {%- for link in linklists[section.settings.menu].links -%}
-        <li class="fdr-nav__item{% if link.links.size > 0 %} fdr-nav__item--has-children{% endif %}">
-          {%- if link.links.size > 0 -%}
-            <!-- Link con subniveles -->
-            <div class="fdr-nav__item-wrap">
+        {%- assign link_title_down = link.title | downcase -%}
+        {%- if section.settings.show_conoce_menu and conoce_injected == false -%}
+          {%- if link_title_down contains 'contact' or link_title_down contains 'contáct' or link_title_down contains 'contacta' -%}
+            <li class="fdr-nav__item">
+              <a href="{{ conoce_url }}" class="fdr-nav__link{% if request.path == conoce_url %} fdr-nav__link--active{% endif %}">{{ section.settings.conoce_menu_label }}</a>
+            </li>
+            {%- assign conoce_injected = true -%}
+            {%- if section.settings.show_blog_menu and blog_injected == false -%}
+              <li class="fdr-nav__item">
+                <a href="{{ blog_url }}" class="fdr-nav__link{% if blog_active %} fdr-nav__link--active{% endif %}">{{ section.settings.blog_menu_label }}</a>
+              </li>
+              {%- assign blog_injected = true -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+        {%- if section.settings.show_menu_pdf and menu_pdf_injected == false -%}
+          {%- if link_title_down contains 'contact' or link_title_down contains 'contáct' or link_title_down contains 'contacta' -%}
+            <li class="fdr-nav__item">
               <a
-                href="{{ link.url }}"
-                class="fdr-nav__link{% if link.active %} fdr-nav__link--active{% endif %}{% if link.title == section.settings.highlight_item %} fdr-nav__link--highlight{% endif %}"
+                href="{{ menu_pdf_url }}"
+                class="fdr-nav__link{% if section.settings.menu_pdf_highlight %} fdr-nav__link--highlight{% endif %}"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                {{ link.title }}
+                {{ section.settings.menu_pdf_label | default: 'Menú' }}
               </a>
-              <button
-                class="fdr-nav__toggle"
-                aria-label="Mostrar submenú de {{ link.title }}"
-                aria-expanded="false"
-                data-toggle-submenu
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
+            </li>
+            {%- assign menu_pdf_injected = true -%}
+          {%- endif -%}
+        {%- endif -%}
+        <li class="fdr-nav__item{% if link.links.size > 0 %} fdr-nav__item--has-children{% endif %}">
+          <a
+            href="{{ link.url }}"
+            class="fdr-nav__link{% if link.active %} fdr-nav__link--active{% endif %}{% if link.title == section.settings.highlight_item %} fdr-nav__link--highlight{% endif %}"
+            {% if link.links.size > 0 %}aria-haspopup="true" aria-expanded="false"{% endif %}
+          >
+            {{ link.title }}
+            {%- if link.links.size > 0 -%}
+              <svg class="fdr-nav__arrow" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            {%- endif -%}
+          </a>
+          {%- if link.links.size > 0 -%}
+            <div class="fdr-nav__dropdown">
+              <ul class="fdr-nav__sublist">
+                {%- for childlink in link.links -%}
+                  <li class="fdr-nav__subitem{% if childlink.links.size > 0 %} fdr-nav__subitem--has-children{% endif %}">
+                    <a href="{{ childlink.url }}" class="fdr-nav__sublink{% if childlink.active %} fdr-nav__sublink--active{% endif %}">
+                      {%- if childlink.object and childlink.object.featured_image -%}
+                        <img src="{{ childlink.object.featured_image | image_url: width: 80 }}" alt="" class="fdr-nav__subimg" width="40" height="40" loading="lazy">
+                      {%- endif -%}
+                      <span>{{ childlink.title }}</span>
+                    </a>
+                    {%- if childlink.links.size > 0 -%}
+                      <ul class="fdr-nav__subsublist">
+                        {%- for grandchild in childlink.links -%}
+                          <li><a href="{{ grandchild.url }}" class="fdr-nav__subsublink{% if grandchild.active %} fdr-nav__subsublink--active{% endif %}">{{ grandchild.title }}</a></li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
             </div>
-            <!-- Submenú dropdown -->
-            <ul class="fdr-nav__submenu" aria-hidden="true">
-              {%- for child_link in link.links -%}
-                <li class="fdr-nav__subitem{% if child_link.links.size > 0 %} fdr-nav__subitem--has-children{% endif %}">
-                  {%- if child_link.links.size > 0 -%}
-                    <div class="fdr-nav__subitem-wrap">
-                      <a href="{{ child_link.url }}" class="fdr-nav__sublink{% if child_link.active %} fdr-nav__sublink--active{% endif %}">{{ child_link.title }}</a>
-                      <button
-                        class="fdr-nav__subtoggle"
-                        aria-label="Mostrar submenú de {{ child_link.title }}"
-                        aria-expanded="false"
-                        data-toggle-submenu
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                      </button>
-                    </div>
-                    <ul class="fdr-nav__subsubmenu" aria-hidden="true">
-                      {%- for grandchild_link in child_link.links -%}
-                        <li class="fdr-nav__subsubitem">
-                          <a href="{{ grandchild_link.url }}" class="fdr-nav__subsublink{% if grandchild_link.active %} fdr-nav__subsublink--active{% endif %}">{{ grandchild_link.title }}</a>
-                        </li>
-                      {%- endfor -%}
-                    </ul>
-                  {%- else -%}
-                    <a href="{{ child_link.url }}" class="fdr-nav__sublink{% if child_link.active %} fdr-nav__sublink--active{% endif %}">{{ child_link.title }}</a>
-                  {%- endif -%}
-                </li>
-              {%- endfor -%}
-            </ul>
-          {%- else -%}
-            <!-- Link simple -->
-            <a
-              href="{{ link.url }}"
-              class="fdr-nav__link{% if link.active %} fdr-nav__link--active{% endif %}{% if link.title == section.settings.highlight_item %} fdr-nav__link--highlight{% endif %}"
-            >
-              {{ link.title }}
-            </a>
           {%- endif -%}
         </li>
+        {%- if section.settings.show_conoce_menu and conoce_injected == false -%}
+          {%- if link_title_down contains 'catálogo' or link_title_down contains 'catalogo' or link_title_down contains 'coleccion' or link_title_down contains 'colección' -%}
+            <li class="fdr-nav__item">
+              <a href="{{ conoce_url }}" class="fdr-nav__link{% if request.path == conoce_url %} fdr-nav__link--active{% endif %}">{{ section.settings.conoce_menu_label }}</a>
+            </li>
+            {%- assign conoce_injected = true -%}
+            {%- if section.settings.show_blog_menu and blog_injected == false -%}
+              <li class="fdr-nav__item">
+                <a href="{{ blog_url }}" class="fdr-nav__link{% if blog_active %} fdr-nav__link--active{% endif %}">{{ section.settings.blog_menu_label }}</a>
+              </li>
+              {%- assign blog_injected = true -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
       {%- endfor -%}
+      {%- if section.settings.show_conoce_menu and conoce_injected == false -%}
+        <li class="fdr-nav__item">
+          <a href="{{ conoce_url }}" class="fdr-nav__link{% if request.path == conoce_url %} fdr-nav__link--active{% endif %}">{{ section.settings.conoce_menu_label }}</a>
+        </li>
+        {%- assign conoce_injected = true -%}
+        {%- if section.settings.show_blog_menu and blog_injected == false -%}
+          <li class="fdr-nav__item">
+            <a href="{{ blog_url }}" class="fdr-nav__link{% if blog_active %} fdr-nav__link--active{% endif %}">{{ section.settings.blog_menu_label }}</a>
+          </li>
+          {%- assign blog_injected = true -%}
+        {%- endif -%}
+      {%- elsif section.settings.show_blog_menu and blog_injected == false -%}
+        <li class="fdr-nav__item">
+          <a href="{{ blog_url }}" class="fdr-nav__link{% if blog_active %} fdr-nav__link--active{% endif %}">{{ section.settings.blog_menu_label }}</a>
+        </li>
+        {%- assign blog_injected = true -%}
+      {%- endif -%}
+      {%- if section.settings.show_menu_pdf and menu_pdf_injected == false -%}
+        <li class="fdr-nav__item">
+          <a
+            href="{{ menu_pdf_url }}"
+            class="fdr-nav__link{% if section.settings.menu_pdf_highlight %} fdr-nav__link--highlight{% endif %}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ section.settings.menu_pdf_label | default: 'Menú' }}
+          </a>
+        </li>
+        {%- assign menu_pdf_injected = true -%}
+      {%- endif -%}
     </ul>
   </nav>
 
   <!-- Overlay móvil -->
-  <div class="fdr-overlay" id="fdr-overlay" aria-hidden="true"></div>
+  <div class="fdr-overlay" id="fdr-overlay"></div>
 
 </header>
+
 
 <!-- ===================== ESTILOS ===================== -->
 <style>
 
-  /* ============ RESET & BOX-SIZING ============ */
-  .fdr-topbar,
-  .fdr-topbar *,
+  /* === RESET === */
+  .fdr-promo-bar,
+  .fdr-shipping-bar,
   .fdr-header,
   .fdr-header * {
     box-sizing: border-box;
@@ -177,9 +294,62 @@
     padding: 0;
   }
 
-  /* ============ BARRA SUPERIOR ============ */
-  .fdr-topbar {
-    background-color: {{ section.settings.topbar_bg }};
+  /* ===================== PROMO BAR / COUNTDOWN ===================== */
+  .fdr-promo-bar {
+    background: {{ section.settings.promo_bg | default: '#FFC107' }};
+    color: {{ section.settings.promo_text_color | default: '#1B5E20' }};
+    text-align: center;
+    padding: 7px 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    line-height: 1.3;
+    position: relative;
+    z-index: 10000;
+  }
+
+  .fdr-promo-bar__badge {
+    background: {{ section.settings.promo_badge_bg | default: '#FF5722' }};
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    animation: fdr-pulse-badge 2s ease-in-out infinite;
+  }
+
+  @keyframes fdr-pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .fdr-promo-bar__text {
+    font-weight: 600;
+  }
+
+  .fdr-promo-bar__countdown {
+    font-family: 'Montserrat', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: rgba(0,0,0,0.12);
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  /* ===================== SHIPPING BAR DINAMICA ===================== */
+  .fdr-shipping-bar {
+    background: {{ section.settings.topbar_bg }};
     color: {{ section.settings.topbar_text_color }};
     text-align: center;
     padding: {{ section.settings.topbar_padding }}px 20px;
@@ -188,9 +358,89 @@
     font-weight: 700;
     letter-spacing: 0.5px;
     line-height: 1.3;
+    position: relative;
+    z-index: 10000;
+    transition: all 0.3s ease;
   }
 
-  /* ============ HEADER ============ */
+  .fdr-shipping-bar__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .fdr-shipping-bar__icon {
+    font-size: 1.1em;
+  }
+
+  .fdr-shipping-bar__text {
+    font-weight: 700;
+  }
+
+  .fdr-shipping-bar__progress-wrap {
+    max-width: 400px;
+    margin: 6px auto 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .fdr-shipping-bar__progress-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .fdr-shipping-bar__progress-fill {
+    height: 100%;
+    background: {{ section.settings.topbar_progress_color | default: '#FFC107' }};
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .fdr-shipping-bar__progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 20px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+    animation: fdr-shimmer 1.5s ease-in-out infinite;
+  }
+
+  @keyframes fdr-shimmer {
+    0% { transform: translateX(0); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(20px); opacity: 0; }
+  }
+
+  .fdr-shipping-bar__goal {
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0.85;
+    white-space: nowrap;
+    display: none;
+  }
+
+  .fdr-shipping-bar--complete .fdr-shipping-bar__progress-fill {
+    background: #4CAF50;
+    animation: fdr-confetti-bar 0.6s ease;
+  }
+
+  @keyframes fdr-confetti-bar {
+    0% { transform: scaleY(1); }
+    50% { transform: scaleY(2.5); }
+    100% { transform: scaleY(1); }
+  }
+
+  /* ===================== HEADER ===================== */
   .fdr-header {
     background: {{ section.settings.header_bg }};
     box-shadow: 0 2px 16px rgba(93, 64, 55, 0.07);
@@ -198,11 +448,57 @@
     top: 0;
     z-index: 9999;
     width: 100%;
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, background 0.35s ease, backdrop-filter 0.35s ease;
   }
 
   .fdr-header.fdr-header--scrolled {
     box-shadow: 0 4px 24px rgba(93, 64, 55, 0.13);
+  }
+
+  /* Backdrop blur al scrollear */
+  .fdr-header.fdr-header--blurred {
+    background: {{ section.settings.header_bg | default: '#ffffff' | append: 'e6' }};
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Shrink effect */
+  .fdr-header.fdr-header--shrink .fdr-header__inner {
+    padding: 8px {{ section.settings.header_padding_x }}px;
+    transition: padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fdr-header.fdr-header--shrink .fdr-logo__img {
+    width: 44px;
+    height: 44px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fdr-header.fdr-header--shrink .fdr-logo__icon {
+    font-size: 1.8rem;
+    transition: font-size 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fdr-header.fdr-header--shrink .fdr-logo__name {
+    font-size: {{ section.settings.logo_name_size | times: 0.8 }}rem;
+    transition: font-size 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fdr-header.fdr-header--shrink .fdr-logo__tagline {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.2s, max-height 0.2s;
+  }
+
+  .fdr-header.fdr-header--shrink .fdr-nav {
+    border-top-color: transparent;
+  }
+
+  .fdr-header.fdr-header--shrink .fdr-nav__link {
+    padding-top: {{ section.settings.nav_padding_y | times: 0.65 }}px;
+    padding-bottom: {{ section.settings.nav_padding_y | times: 0.65 }}px;
+    transition: padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .fdr-header__inner {
@@ -213,9 +509,10 @@
     max-width: {{ section.settings.header_max_width }}px;
     margin: 0 auto;
     padding: {{ section.settings.header_padding_y }}px {{ section.settings.header_padding_x }}px;
+    transition: padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* ============ LOGO ============ */
+  /* ===================== LOGO ===================== */
   .fdr-logo {
     display: flex;
     align-items: center;
@@ -228,17 +525,20 @@
     width: 58px;
     height: 58px;
     object-fit: contain;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .fdr-logo__icon {
     font-size: 2.2rem;
     line-height: 1;
+    transition: font-size 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .fdr-logo__text-wrap {
     display: flex;
     flex-direction: column;
     line-height: 1;
+    transition: opacity 0.2s, max-height 0.2s;
   }
 
   .fdr-logo__name {
@@ -248,6 +548,7 @@
     color: {{ section.settings.logo_name_color }};
     letter-spacing: 1px;
     line-height: 1;
+    transition: font-size 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .fdr-logo__tagline {
@@ -258,20 +559,24 @@
     letter-spacing: 3px;
     text-transform: uppercase;
     margin-top: 3px;
+    transition: opacity 0.2s, max-height 0.2s;
   }
 
-  /* ============ BÚSQUEDA ============ */
-  .fdr-search {
+  /* ===================== BÚSQUEDA PREDICTIVA ===================== */
+  .fdr-search-wrap {
     flex: 1;
     max-width: {{ section.settings.search_max_width }}px;
+    position: relative;
+  }
+
+  .fdr-search {
     display: flex;
     align-items: center;
     border: 1.5px solid #e0e0e0;
     border-radius: 30px;
-    overflow: visible;
+    overflow: hidden;
     background: #FAFAF8;
     transition: border-color 0.3s, box-shadow 0.3s;
-    position: relative;
   }
 
   .fdr-search:focus-within {
@@ -306,99 +611,67 @@
     color: #ffffff;
     transition: background 0.2s;
     flex-shrink: 0;
-    border-radius: 0 30px 30px 0;
   }
 
   .fdr-search__btn:hover { background: {{ section.settings.accent_color_dark }}; }
 
-  /* ============ BÚSQUEDA PREDICTIVA ============ */
-  .fdr-search__predictive {
+  /* Dropdown predictivo */
+  .fdr-search__dropdown {
     position: absolute;
     top: calc(100% + 8px);
     left: 0;
     right: 0;
     background: #ffffff;
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    z-index: 10000;
+    border: 1px solid #eee;
+    z-index: 10001;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-8px);
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+    overflow: hidden;
     max-height: 420px;
     overflow-y: auto;
-    border: 1px solid #e8e8e8;
   }
 
-  .fdr-search__predictive--visible {
+  .fdr-search__dropdown.fdr-search__dropdown--open {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
   }
 
-  .fdr-search__predictive-inner {
-    padding: 16px;
-  }
+  .fdr-search__dropdown-inner { padding: 8px; }
 
-  .fdr-search__predictive-empty {
-    display: block;
-    color: #999;
-    font-family: 'Lato', sans-serif;
-    font-size: 0.85rem;
-    text-align: center;
-    padding: 12px 0;
-  }
-
-  .fdr-search__predictive-heading {
-    font-family: 'Amatic SC', cursive;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: {{ section.settings.accent_color }};
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .fdr-search__predictive-list {
-    list-style: none;
-  }
-
-  .fdr-search__predictive-item {
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  .fdr-search__predictive-item:last-child { border-bottom: none; }
-
-  .fdr-search__predictive-link {
+  .fdr-search__result-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 4px;
+    padding: 8px 10px;
+    border-radius: 10px;
     text-decoration: none;
-    color: #333;
+    color: inherit;
     transition: background 0.15s;
-    border-radius: 6px;
+    cursor: pointer;
   }
 
-  .fdr-search__predictive-link:hover {
-    background: #f5f5f0;
-  }
+  .fdr-search__result-item:hover { background: #f5f5f5; }
 
-  .fdr-search__predictive-img {
-    width: 44px;
-    height: 44px;
+  .fdr-search__result-img {
+    width: 48px;
+    height: 48px;
     object-fit: cover;
     border-radius: 8px;
     flex-shrink: 0;
-    background: #f5f5f0;
+    background: #f0f0f0;
   }
 
-  .fdr-search__predictive-info {
+  .fdr-search__result-info {
     flex: 1;
     min-width: 0;
   }
 
-  .fdr-search__predictive-title {
+  .fdr-search__result-title {
     font-family: 'Lato', sans-serif;
     font-size: 0.88rem;
     font-weight: 700;
@@ -408,65 +681,92 @@
     text-overflow: ellipsis;
   }
 
-  .fdr-search__predictive-price {
+  .fdr-search__result-price {
     font-family: 'Montserrat', sans-serif;
     font-size: 0.82rem;
-    font-weight: 600;
+    font-weight: 700;
     color: {{ section.settings.accent_color }};
     margin-top: 2px;
   }
 
-  .fdr-search__predictive-viewall {
-    display: block;
-    text-align: center;
-    padding: 12px;
+  .fdr-search__result-compare {
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: {{ section.settings.accent_color }};
-    text-decoration: none;
-    border-top: 1px solid #eee;
-    margin: 8px -16px -16px;
-    transition: background 0.15s;
-    border-radius: 0 0 12px 12px;
+    font-size: 0.72rem;
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 6px;
   }
 
-  .fdr-search__predictive-viewall:hover {
-    background: {{ section.settings.accent_color }}0a;
-  }
-
-  .fdr-search__predictive-skeleton {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 4px;
-  }
-
-  .fdr-search__predictive-skeleton-img {
-    width: 44px;
-    height: 44px;
+  .fdr-search__result-add {
+    background: {{ section.settings.accent_color }};
+    color: #fff;
+    border: none;
     border-radius: 8px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: fdr-skeleton-shimmer 1.5s infinite;
+    padding: 6px 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s, transform 0.15s;
     flex-shrink: 0;
   }
 
-  .fdr-search__predictive-skeleton-text {
-    flex: 1;
-    height: 12px;
-    border-radius: 4px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: fdr-skeleton-shimmer 1.5s infinite;
+  .fdr-search__result-add:hover {
+    background: {{ section.settings.accent_color_dark }};
+    transform: scale(1.05);
   }
 
-  @keyframes fdr-skeleton-shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+  .fdr-search__result-add:active { transform: scale(0.95); }
+
+  .fdr-search__result-add.fdr-search__result-add--added {
+    background: #4CAF50;
   }
 
-  /* ============ ACCIONES ============ */
+  .fdr-search__no-results {
+    padding: 24px;
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .fdr-search__loading {
+    padding: 20px;
+    text-align: center;
+    color: #aaa;
+  }
+
+  .fdr-search__loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #eee;
+    border-top-color: {{ section.settings.accent_color }};
+    border-radius: 50%;
+    animation: fdr-spin 0.6s linear infinite;
+    margin: 0 auto 8px;
+  }
+
+  @keyframes fdr-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .fdr-search__view-all {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: {{ section.settings.accent_color }};
+    text-decoration: none;
+    border-top: 1px solid #f0f0f0;
+    transition: background 0.15s;
+  }
+
+  .fdr-search__view-all:hover { background: #f9f9f9; }
+
+  /* ===================== ACCIONES ===================== */
   .fdr-actions {
     display: flex;
     align-items: center;
@@ -483,16 +783,14 @@
     color: {{ section.settings.icon_color }};
     text-decoration: none;
     border-radius: 50%;
-    transition: color 0.2s, background 0.2s;
+    transition: color 0.2s, background 0.2s, transform 0.2s;
     position: relative;
-    border: none;
-    background: none;
-    cursor: pointer;
   }
 
   .fdr-actions__btn:hover {
     color: {{ section.settings.accent_color }};
     background: {{ section.settings.accent_color }}0f;
+    transform: translateY(-1px);
   }
 
   .fdr-cart { position: relative; }
@@ -515,26 +813,226 @@
     border: 2px solid {{ section.settings.header_bg }};
     line-height: 1;
     pointer-events: none;
-    transition: transform 0.2s;
-    padding: 0 3px;
+    transition: transform 0.15s;
   }
 
   /* Ocultar burbuja cuando está en 0 */
   .fdr-cart__count[data-count="0"] { display: none; }
-  .fdr-cart__count[data-count=""] { display: none; }
 
-  /* Animación al añadir al carrito */
+  /* Animación bump al cambiar cantidad */
   .fdr-cart__count.fdr-cart--bump {
-    animation: fdr-cart-bump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: fdr-cart-bump 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
   @keyframes fdr-cart-bump {
     0%   { transform: scale(1); }
-    50%  { transform: scale(1.5); }
+    30%  { transform: scale(1.4); }
+    60%  { transform: scale(0.9); }
     100% { transform: scale(1); }
   }
 
-  /* ============ HAMBURGUESA ============ */
+  /* ===================== NAVEGACIÓN ===================== */
+  .fdr-nav {
+    border-top: 1px solid {{ section.settings.accent_color }}1a;
+    transition: border-color 0.35s;
+  }
+
+  .fdr-nav__list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    list-style: none;
+    max-width: {{ section.settings.header_max_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ section.settings.header_padding_x }}px;
+    position: relative;
+  }
+
+  .fdr-nav__item {
+    position: relative;
+  }
+
+  .fdr-nav__item--has-children:hover > .fdr-nav__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  .fdr-nav__item--has-children:hover > .fdr-nav__link .fdr-nav__arrow {
+    transform: rotate(180deg);
+  }
+
+  .fdr-nav__link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: {{ section.settings.nav_padding_y }}px {{ section.settings.nav_padding_x }}px;
+    font-family: 'Amatic SC', cursive;
+    font-size: {{ section.settings.nav_font_size }}rem;
+    font-weight: 700;
+    color: {{ section.settings.nav_link_color }};
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    transition: color 0.25s, padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fdr-nav__link::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: {{ section.settings.accent_color }};
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .fdr-nav__link:hover,
+  .fdr-nav__link--active {
+    color: {{ section.settings.accent_color }};
+  }
+
+  .fdr-nav__link:hover::after,
+  .fdr-nav__link--active::after {
+    width: 60%;
+  }
+
+  /* Arrow para items con dropdown */
+  .fdr-nav__arrow {
+    transition: transform 0.3s ease;
+    opacity: 0.6;
+  }
+
+  /* Ítem destacado */
+  .fdr-nav__link--highlight {
+    color: {{ section.settings.highlight_color }} !important;
+  }
+
+  .fdr-nav__link--highlight::after {
+    background: {{ section.settings.highlight_color }} !important;
+  }
+
+  .fdr-nav__link--highlight:hover {
+    color: {{ section.settings.highlight_color }} !important;
+    opacity: 0.85;
+  }
+
+  /* ===================== DROPDOWN DESKTOP ===================== */
+  .fdr-nav__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    border: 1px solid #f0f0f0;
+    min-width: 240px;
+    max-width: 340px;
+    padding: 10px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+    z-index: 10002;
+  }
+
+  /* Alineación según posición */
+  .fdr-nav__item:first-child .fdr-nav__dropdown {
+    left: 0;
+    transform: translateX(0) translateY(8px);
+  }
+
+  .fdr-nav__item:last-child .fdr-nav__dropdown {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(8px);
+  }
+
+  .fdr-nav__item:first-child:hover .fdr-nav__dropdown {
+    transform: translateX(0) translateY(0);
+  }
+
+  .fdr-nav__item:last-child:hover .fdr-nav__dropdown {
+    transform: translateX(0) translateY(0);
+  }
+
+  .fdr-nav__sublist {
+    list-style: none;
+  }
+
+  .fdr-nav__subitem {
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .fdr-nav__subitem:last-child { border-bottom: none; }
+
+  .fdr-nav__sublink {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #444;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .fdr-nav__sublink:hover {
+    background: {{ section.settings.accent_color }}0d;
+    color: {{ section.settings.accent_color }};
+  }
+
+  .fdr-nav__sublink--active {
+    color: {{ section.settings.accent_color }};
+    background: {{ section.settings.accent_color }}0d;
+  }
+
+  .fdr-nav__subimg {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    background: #f0f0f0;
+  }
+
+  .fdr-nav__subsublist {
+    list-style: none;
+    padding: 0 0 6px 58px;
+  }
+
+  .fdr-nav__subsublink {
+    display: block;
+    padding: 5px 10px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.82rem;
+    color: #777;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .fdr-nav__subsublink:hover {
+    color: {{ section.settings.accent_color }};
+    background: {{ section.settings.accent_color }}0a;
+  }
+
+  .fdr-nav__subsublink--active {
+    color: {{ section.settings.accent_color }};
+    font-weight: 700;
+  }
+
+  /* ===================== HAMBURGUESA (MÓVIL) ===================== */
   .fdr-burger {
     display: none;
     flex-direction: column;
@@ -562,256 +1060,7 @@
   .fdr-burger.fdr-burger--open span:nth-child(2) { opacity: 0; }
   .fdr-burger.fdr-burger--open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  /* ============ NAVEGACIÓN ============ */
-  .fdr-nav {
-    border-top: 1px solid {{ section.settings.accent_color }}1a;
-    position: relative;
-  }
-
-  .fdr-nav__close {
-    display: none;
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 36px;
-    height: 36px;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: {{ section.settings.icon_color }};
-    z-index: 10;
-    border-radius: 50%;
-    transition: background 0.2s;
-  }
-
-  .fdr-nav__close:hover {
-    background: {{ section.settings.accent_color }}0f;
-  }
-
-  .fdr-nav__list {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    list-style: none;
-    max-width: {{ section.settings.header_max_width }}px;
-    margin: 0 auto;
-    padding: 0 {{ section.settings.header_padding_x }}px;
-  }
-
-  .fdr-nav__item {
-    position: relative;
-  }
-
-  .fdr-nav__item-wrap {
-    display: flex;
-    align-items: center;
-  }
-
-  .fdr-nav__link {
-    display: block;
-    padding: {{ section.settings.nav_padding_y }}px {{ section.settings.nav_padding_x }}px;
-    font-family: 'Amatic SC', cursive;
-    font-size: {{ section.settings.nav_font_size }}rem;
-    font-weight: 700;
-    color: {{ section.settings.nav_link_color }};
-    text-decoration: none;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    position: relative;
-    transition: color 0.25s;
-    white-space: nowrap;
-  }
-
-  .fdr-nav__link::after {
-    content: '';
-    position: absolute;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 2px;
-    background: {{ section.settings.accent_color }};
-    border-radius: 2px;
-    transition: width 0.3s ease;
-  }
-
-  .fdr-nav__link:hover,
-  .fdr-nav__link--active {
-    color: {{ section.settings.accent_color }};
-  }
-
-  .fdr-nav__link:hover::after,
-  .fdr-nav__link--active::after {
-    width: 60%;
-  }
-
-  /* Ítem destacado */
-  .fdr-nav__link--highlight {
-    color: {{ section.settings.highlight_color }} !important;
-  }
-
-  .fdr-nav__link--highlight::after {
-    background: {{ section.settings.highlight_color }} !important;
-  }
-
-  .fdr-nav__link--highlight:hover {
-    color: {{ section.settings.highlight_color }} !important;
-    opacity: 0.85;
-  }
-
-  /* Toggle de submenú (desktop: flecha, móvil: botón) */
-  .fdr-nav__toggle {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: {{ section.settings.nav_link_color }};
-    transition: transform 0.3s ease, color 0.25s;
-    flex-shrink: 0;
-    padding: 0;
-  }
-
-  .fdr-nav__toggle svg {
-    transition: transform 0.3s ease;
-  }
-
-  .fdr-nav__toggle[aria-expanded="true"] svg {
-    transform: rotate(180deg);
-  }
-
-  /* ============ SUBMENÚ DROPDOWN (DESKTOP) ============ */
-  .fdr-nav__submenu {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(8px);
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    list-style: none;
-    min-width: 220px;
-    padding: 8px 0;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
-    z-index: 10001;
-    border: 1px solid #eee;
-  }
-
-  /* Flecha del dropdown */
-  .fdr-nav__submenu::before {
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: 50%;
-    transform: translateX(-50%) rotate(45deg);
-    width: 12px;
-    height: 12px;
-    background: #ffffff;
-    border-left: 1px solid #eee;
-    border-top: 1px solid #eee;
-  }
-
-  .fdr-nav__item--has-children:hover > .fdr-nav__submenu,
-  .fdr-nav__item--has-children:focus-within > .fdr-nav__submenu {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .fdr-nav__subitem {
-    position: relative;
-  }
-
-  .fdr-nav__subitem-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .fdr-nav__sublink {
-    display: block;
-    padding: 10px 20px;
-    font-family: 'Lato', sans-serif;
-    font-size: 0.92rem;
-    font-weight: 600;
-    color: #444;
-    text-decoration: none;
-    transition: color 0.2s, background 0.2s;
-    white-space: nowrap;
-    flex: 1;
-  }
-
-  .fdr-nav__sublink:hover,
-  .fdr-nav__sublink--active {
-    color: {{ section.settings.accent_color }};
-    background: {{ section.settings.accent_color }}08;
-  }
-
-  .fdr-nav__subtoggle {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #666;
-    flex-shrink: 0;
-    padding: 0;
-    margin-right: 8px;
-  }
-
-  .fdr-nav__subtoggle svg {
-    transition: transform 0.3s ease;
-  }
-
-  .fdr-nav__subtoggle[aria-expanded="true"] svg {
-    transform: rotate(180deg);
-  }
-
-  /* Sub-submenú (nivel 3) */
-  .fdr-nav__subsubmenu {
-    list-style: none;
-    padding: 0 0 8px 28px;
-    display: none;
-  }
-
-  .fdr-nav__subsubmenu[aria-hidden="false"] {
-    display: block;
-  }
-
-  .fdr-nav__subsubitem {
-    border-left: 2px solid {{ section.settings.accent_color }}20;
-  }
-
-  .fdr-nav__subsublink {
-    display: block;
-    padding: 8px 16px;
-    font-family: 'Lato', sans-serif;
-    font-size: 0.85rem;
-    color: #666;
-    text-decoration: none;
-    transition: color 0.2s, background 0.2s;
-  }
-
-  .fdr-nav__subsublink:hover,
-  .fdr-nav__subsublink--active {
-    color: {{ section.settings.accent_color }};
-    background: {{ section.settings.accent_color }}06;
-  }
-
-  /* ============ OVERLAY MÓVIL ============ */
+  /* ===================== OVERLAY MÓVIL ===================== */
   .fdr-overlay {
     display: none;
     position: fixed;
@@ -827,11 +1076,42 @@
     opacity: 1;
   }
 
-  /* ============ RESPONSIVE MÓVIL ============ */
+</style>
+
+
+<style>
+
+  /* ===================== RESPONSIVE MÓVIL ===================== */
   @media (max-width: 768px) {
+
+    .fdr-promo-bar {
+      font-size: 0.75rem;
+      padding: 5px 12px;
+      gap: 6px;
+    }
+
+    .fdr-promo-bar__countdown {
+      font-size: 0.8rem;
+      padding: 2px 8px;
+    }
+
+    .fdr-shipping-bar {
+      font-size: 0.78rem;
+      padding: 6px 12px;
+    }
+
+    .fdr-shipping-bar__progress-wrap {
+      max-width: 280px;
+      margin-top: 4px;
+    }
+
     .fdr-header__inner {
       padding: 10px 16px;
       gap: 10px;
+    }
+
+    .fdr-header.fdr-header--shrink .fdr-header__inner {
+      padding: 6px 16px;
     }
 
     .fdr-logo__name {
@@ -839,43 +1119,39 @@
     }
 
     .fdr-logo__tagline { display: none; }
+    .fdr-logo__img { width: 44px; height: 44px; }
 
-    .fdr-logo__img {
-      width: 44px;
-      height: 44px;
+    .fdr-header.fdr-header--shrink .fdr-logo__img {
+      width: 36px;
+      height: 36px;
     }
 
-    .fdr-search {
-      display: none;
-    }
-
+    .fdr-search-wrap { display: none; }
     .fdr-burger { display: flex; }
 
-    /* Navegación móvil como drawer */
+    /* === MENÚ MÓVIL SLIDE-OUT === */
     .fdr-nav {
       position: fixed;
       top: 0;
-      left: -300px;
-      width: 300px;
+      left: -280px;
+      width: 280px;
       height: 100vh;
-      height: 100dvh;
       background: {{ section.settings.header_bg }};
       border-right: 3px solid {{ section.settings.accent_color }};
       z-index: 9995;
       overflow-y: auto;
       transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       border-top: none;
-      padding-top: 56px;
+      -webkit-overflow-scrolling: touch;
     }
 
     .fdr-nav.fdr-nav--open { left: 0; }
-
-    .fdr-nav__close { display: flex; }
+    .fdr-nav.fdr-nav--closing { left: -280px; }
 
     .fdr-nav__list {
       flex-direction: column;
       align-items: flex-start;
-      padding: 16px 0 24px;
+      padding: 60px 0 20px 0;
       gap: 0;
     }
 
@@ -884,584 +1160,584 @@
       border-bottom: 1px solid {{ section.settings.accent_color }}14;
     }
 
-    .fdr-nav__item-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
     .fdr-nav__link {
-      font-size: 1.7rem;
-      padding: 14px 24px;
-      flex: 1;
+      font-size: 2rem;
+      padding: 14px 28px;
+      width: 100%;
+      justify-content: space-between;
     }
 
     .fdr-nav__link::after { display: none; }
 
-    .fdr-nav__toggle {
-      display: flex;
-      padding: 14px 20px;
-      width: auto;
-      height: auto;
+    /* Acordeón móvil para submenús */
+    .fdr-nav__item--has-children > .fdr-nav__link .fdr-nav__arrow {
+      transition: transform 0.3s ease;
     }
 
-    /* Submenú acordeón en móvil */
-    .fdr-nav__submenu {
+    .fdr-nav__item--has-children.fdr-nav__item--expanded > .fdr-nav__link .fdr-nav__arrow {
+      transform: rotate(180deg);
+    }
+
+    .fdr-nav__dropdown {
       position: static;
-      transform: none;
       opacity: 1;
       visibility: visible;
-      pointer-events: auto;
-      display: none;
+      transform: none;
+      display: block;
+      max-height: 0;
+      overflow: hidden;
       box-shadow: none;
       border: none;
       border-radius: 0;
-      background: {{ section.settings.accent_color }}06;
       min-width: auto;
-      width: 100%;
+      max-width: 100%;
       padding: 0;
-      transition: none;
+      background: rgba(0,0,0,0.02);
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s;
+      pointer-events: all;
     }
 
-    .fdr-nav__submenu::before { display: none; }
-
-    .fdr-nav__submenu[aria-hidden="false"] {
-      display: block;
+    .fdr-nav__item--expanded .fdr-nav__dropdown {
+      max-height: 800px;
+      padding: 4px 0;
     }
 
-    .fdr-nav__item--has-children:hover > .fdr-nav__submenu {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: none;
+    .fdr-nav__sublist {
+      padding: 0 20px;
+    }
+
+    .fdr-nav__subitem {
+      border-bottom: 1px solid rgba(0,0,0,0.05);
     }
 
     .fdr-nav__sublink {
-      padding: 12px 32px;
-      font-size: 1.05rem;
-      white-space: normal;
+      font-size: 1.1rem;
+      padding: 12px 16px;
     }
 
-    .fdr-nav__subtoggle {
-      display: flex;
-      padding: 12px 20px;
+    .fdr-nav__subimg {
+      width: 32px;
+      height: 32px;
     }
 
-    .fdr-nav__subsubmenu {
-      padding: 0 0 8px 40px;
+    .fdr-nav__subsublist {
+      padding: 0 0 6px 52px;
     }
 
     .fdr-nav__subsublink {
-      padding: 10px 20px;
-      font-size: 0.95rem;
+      font-size: 1rem;
+      padding: 8px 12px;
     }
 
-    /* Overlay */
-    .fdr-overlay.fdr-overlay--visible {
+    /* Búsqueda móvil */
+    .fdr-search-mobile {
       display: block;
+      padding: 0 20px 16px;
+    }
+
+    .fdr-search-mobile .fdr-search {
+      display: flex;
     }
   }
 
-  /* ============ RESPONSIVE PEQUEÑO ============ */
   @media (max-width: 480px) {
-    .fdr-topbar {
-      font-size: 0.85rem;
-      padding: 6px 12px;
-    }
-
-    .fdr-logo__name {
-      font-size: {{ section.settings.logo_name_size | times: 0.72 }}rem;
-    }
-
-    .fdr-nav {
-      width: 260px;
-      left: -260px;
+    .fdr-shipping-bar {
+      font-size: 0.7rem;
+      padding: 5px 10px;
     }
   }
 
-  /* ============ ANIMACIONES GLOBALES ============ */
-  @media (prefers-reduced-motion: reduce) {
-    .fdr-header,
-    .fdr-burger span,
-    .fdr-nav,
-    .fdr-overlay,
-    .fdr-search__predictive,
-    .fdr-nav__submenu,
-    .fdr-search,
-    .fdr-actions__btn,
-    .fdr-nav__link,
-    .fdr-nav__toggle svg,
-    .fdr-nav__subtoggle svg {
-      transition: none !important;
-      animation: none !important;
-    }
-  }
+  /* ===== Scrollbar estilizada ===== */
+  .fdr-nav::-webkit-scrollbar { width: 4px; }
+  .fdr-nav::-webkit-scrollbar-track { background: transparent; }
+  .fdr-nav::-webkit-scrollbar-thumb { background: {{ section.settings.accent_color }}40; border-radius: 4px; }
+  .fdr-nav::-webkit-scrollbar-thumb:hover { background: {{ section.settings.accent_color }}80; }
+
+  .fdr-search__dropdown::-webkit-scrollbar { width: 5px; }
+  .fdr-search__dropdown::-webkit-scrollbar-track { background: transparent; }
+  .fdr-search__dropdown::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
 
 </style>
+
 
 <!-- ===================== JAVASCRIPT ===================== -->
 <script>
 (function() {
   'use strict';
 
-  // ===================== REFERENCIAS DOM =====================
-  var header     = document.getElementById('fdr-header');
-  var burger     = document.getElementById('fdr-burger');
-  var nav        = document.getElementById('fdr-nav');
-  var overlay    = document.getElementById('fdr-overlay');
-  var navClose   = document.getElementById('fdr-nav-close');
-  var cartCount  = document.getElementById('fdr-cart-count');
-  var searchInput     = document.getElementById('fdr-search-input');
-  var searchPredictive = document.getElementById('fdr-search-predictive');
-  var searchForm       = document.getElementById('fdr-search-form');
+  /* ================================================================
+     REFERENCIAS DOM
+  ================================================================ */
+  var header        = document.getElementById('fdr-header');
+  var burger        = document.getElementById('fdr-burger');
+  var nav           = document.getElementById('fdr-nav');
+  var overlay       = document.getElementById('fdr-overlay');
+  var cartEl        = document.getElementById('fdr-cart-count');
+  var searchInput   = document.getElementById('fdr-search-input');
+  var searchDrop    = document.getElementById('fdr-search-dropdown');
+  var searchResults = document.getElementById('fdr-search-results');
+  var shippingBar   = document.getElementById('fdr-shipping-bar');
+  var promoCountdown= document.getElementById('fdr-promo-countdown');
 
-  var MOBILE_BREAKPOINT = 768;
-  var isMenuOpen = false;
-  var searchDebounceTimer = null;
-  var currentSearchQuery = '';
+  var enableShrink  = header && header.getAttribute('data-shrink') === 'true';
 
-  // ===================== UTILIDADES =====================
-  function debounce(fn, ms) {
-    return function() {
-      var args = arguments;
-      clearTimeout(searchDebounceTimer);
-      searchDebounceTimer = setTimeout(function() { fn.apply(null, args); }, ms);
+  /* ================================================================
+     1. SHRINK EFFECT + BACKDROP BLUR AL SCROLLEAR
+  ================================================================ */
+  var shrinkThreshold = 50;
+  var scrollTicking   = false;
+
+  function onScroll() {
+    if (!header) return;
+    var sy = window.scrollY || window.pageYOffset;
+
+    /* Clase scrolled */
+    header.classList.toggle('fdr-header--scrolled', sy > 10);
+
+    /* Shrink effect */
+    if (enableShrink) {
+      header.classList.toggle('fdr-header--shrink', sy > shrinkThreshold);
+    }
+
+    /* Backdrop blur */
+    header.classList.toggle('fdr-header--blurred', sy > shrinkThreshold);
+
+    scrollTicking = false;
+  }
+
+  window.addEventListener('scroll', function() {
+    if (!scrollTicking) {
+      requestAnimationFrame(onScroll);
+      scrollTicking = true;
+    }
+  }, { passive: true });
+
+  /* Ejecutar al cargar */
+  onScroll();
+
+  /* ================================================================
+     2. BARRA DE ENVIO GRATIS DINAMICA (AJAX)
+  ================================================================ */
+  function formatMoney(cents) {
+    var val = (cents / 100).toFixed(0);
+    return '$' + val.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  window.fdrUpdateShippingBar = function(cartData) {
+    if (!shippingBar) return;
+    /* Threshold del setting está en pesos (ej: 200000 = $200.000)
+       /cart.js devuelve total_price en centavos (ej: 5000000 = $50.000)
+       Multiplicamos threshold × 100 para comparar en la misma unidad */
+    var threshold = parseInt(shippingBar.getAttribute('data-threshold') || '200000', 10) * 100;
+    var total     = cartData && cartData.total_price ? parseInt(cartData.total_price, 10) : 0;
+    var remaining = Math.max(0, threshold - total);
+    var progress  = Math.min(100, Math.round(total * 100 / threshold));
+
+    var iconEl    = document.getElementById('fdr-shipping-icon');
+    var textEl    = document.getElementById('fdr-shipping-text');
+    var progEl    = document.getElementById('fdr-shipping-progress');
+    var goalEl    = document.getElementById('fdr-shipping-goal');
+
+    if (iconEl) iconEl.textContent = total >= threshold ? '🎉' : (total > 0 ? '🚚' : '🚚');
+
+    if (textEl) {
+      if (total >= threshold) {
+        textEl.textContent = '{{ section.settings.shipping_free_message | default: "¡Felicidades! Tienes envío gratis" | escape }}';
+      } else if (total > 0) {
+        textEl.textContent = '\u00a1Te faltan ' + formatMoney(remaining) + ' para envío gratis!';
+      } else {
+        textEl.textContent = '{{ section.settings.shipping_default_message | default: "Envíos gratis por compras mayores a $200.000" | escape }}';
+      }
+    }
+
+    if (progEl) progEl.style.width = progress + '%';
+
+    if (goalEl) {
+      goalEl.style.display = total >= threshold ? 'none' : '';
+    }
+
+    if (total >= threshold) {
+      shippingBar.classList.add('fdr-shipping-bar--complete');
+    } else {
+      shippingBar.classList.remove('fdr-shipping-bar--complete');
+    }
+  };
+
+  /* ================================================================
+     3. BÚSQUEDA PREDICTIVA (debounce 200ms)
+  ================================================================ */
+  var searchDebounce = null;
+  var lastQuery      = '';
+  var searchAbort    = null;
+
+  function closeSearchDropdown() {
+    if (searchDrop) {
+      searchDrop.classList.remove('fdr-search__dropdown--open');
+    }
+  }
+
+  function openSearchDropdown() {
+    if (searchDrop) {
+      searchDrop.classList.add('fdr-search__dropdown--open');
+    }
+  }
+
+  function renderSearchLoading() {
+    if (!searchResults) return;
+    searchResults.innerHTML =
+      '<div class="fdr-search__loading">' +
+        '<div class="fdr-search__loading-spinner"></div>' +
+        'Buscando...' +
+      '</div>';
+    openSearchDropdown();
+  }
+
+  function renderSearchResults(products, query) {
+    if (!searchResults) return;
+    if (!products || products.length === 0) {
+      searchResults.innerHTML =
+        '<div class="fdr-search__no-results">' +
+          'No encontramos productos para "' + escapeHtml(query) + '"' +
+        '</div>';
+      openSearchDropdown();
+      return;
+    }
+
+    var html = '';
+    for (var i = 0; i < products.length; i++) {
+      var p     = products[i];
+      var img   = p.featured_image ? ('<img src="' + escapeHtml(p.featured_image) + '" alt="" class="fdr-search__result-img" width="48" height="48" loading="lazy">') : '<div class="fdr-search__result-img" style="background:#f0f0f0;"></div>';
+      var price = p.price ? formatMoney(p.price) : '';
+      var comp  = p.compare_at_price && p.compare_at_price > p.price ? ('<span class="fdr-search__result-compare">' + formatMoney(p.compare_at_price) + '</span>') : '';
+      var vid   = p.variants && p.variants[0] && p.variants[0].id ? p.variants[0].id : '';
+
+      html +=
+        '<a href="' + escapeHtml(p.url) + '" class="fdr-search__result-item">' +
+          img +
+          '<div class="fdr-search__result-info">' +
+            '<div class="fdr-search__result-title">' + escapeHtml(p.title) + '</div>' +
+            '<div class="fdr-search__result-price">' + price + comp + '</div>' +
+          '</div>';
+      if (vid) {
+        html += '<button type="button" class="fdr-search__result-add" onclick="window.fdrQuickAdd(event, ' + vid + ', this)">Añadir</button>';
+      }
+      html += '</a>';
+    }
+
+    html += '<a href="/search?q=' + encodeURIComponent(query) + '" class="fdr-search__view-all">Ver todos los resultados &rarr;</a>';
+
+    searchResults.innerHTML = html;
+    openSearchDropdown();
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function doSearch(query) {
+    query = query.trim();
+    if (!query || query.length < 2) {
+      closeSearchDropdown();
+      return;
+    }
+    lastQuery = query;
+    renderSearchLoading();
+
+    if (searchAbort) searchAbort.abort();
+    searchAbort = new AbortController();
+
+    var suggestUrl = '/search/suggest.json?q=' + encodeURIComponent(query) +
+      '&resources[type]=product' +
+      '&resources[limit]=6' +
+      '&resources[options][unavailable_products]=last' +
+      '&resources[options][fields]=title,variants.title';
+
+    fetch(suggestUrl, { credentials: 'same-origin', signal: searchAbort.signal })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var products = [];
+        if (data && data.resources && data.resources.results && data.resources.results.products) {
+          products = data.resources.results.products;
+        }
+        renderSearchResults(products, query);
+      })
+      .catch(function(err) {
+        if (err.name === 'AbortError') return;
+        if (searchResults) {
+          searchResults.innerHTML = '<div class="fdr-search__no-results">Error al buscar: ' + escapeHtml(err.description || err.message) + '</div>';
+          openSearchDropdown();
+        }
+      });
+  }
+
+  /* Event listeners búsqueda */
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      var val = this.value;
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(function() { doSearch(val); }, 200);
+    });
+
+    searchInput.addEventListener('focus', function() {
+      if (this.value.trim().length >= 2) {
+        doSearch(this.value);
+      }
+    });
+
+    /* Cerrar dropdown al click fuera */
+    document.addEventListener('click', function(e) {
+      var wrap = document.querySelector('.fdr-search-wrap');
+      if (wrap && !wrap.contains(e.target)) {
+        closeSearchDropdown();
+      }
+    });
+
+    /* Tecla Escape cierra dropdown */
+    searchInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeSearchDropdown();
+        this.blur();
+      }
+    });
+  }
+
+  /* ================================================================
+     4. QUICK ADD DESDE BÚSQUEDA PREDICTIVA
+  ================================================================ */
+  window.fdrQuickAdd = function(event, variantId, btn) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (!variantId) return;
+
+    btn.textContent = '...';
+    btn.disabled = true;
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: variantId, quantity: 1 })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function() {
+      btn.textContent = '✓';
+      btn.classList.add('fdr-search__result-add--added');
+      window.fdrUpdateCartCount();
+      setTimeout(function() {
+        btn.textContent = 'Añadir';
+        btn.classList.remove('fdr-search__result-add--added');
+        btn.disabled = false;
+      }, 1500);
+    })
+    .catch(function(err) {
+      btn.textContent = 'Error';
+      console.error('[FDR] Quick add error:', err.description || err.message);
+      setTimeout(function() {
+        btn.textContent = 'Añadir';
+        btn.disabled = false;
+      }, 1500);
+    });
+  };
+
+  /* ================================================================
+     5. CONTADOR CARRITO AJAX + ANIMACIÓN BUMP
+  ================================================================ */
+  window.fdrUpdateCartCount = function() {
+    fetch('/cart.js', { credentials: 'same-origin' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!cartEl) return;
+        var prev = parseInt(cartEl.getAttribute('data-count') || '0', 10);
+        cartEl.textContent = data.item_count;
+        cartEl.setAttribute('data-count', data.item_count);
+
+        /* Animación bump si cambió */
+        if (data.item_count !== prev) {
+          cartEl.classList.remove('fdr-cart--bump');
+          void cartEl.offsetWidth; /* reflow */
+          cartEl.classList.add('fdr-cart--bump');
+          setTimeout(function() { cartEl.classList.remove('fdr-cart--bump'); }, 600);
+        }
+
+        /* Guardar datos globalmente */
+        window.cartData = data;
+
+        /* Actualizar shipping bar */
+        window.fdrUpdateShippingBar(data);
+
+        /* Disparar evento para otros listeners */
+        document.dispatchEvent(new CustomEvent('cart:updated', { detail: data }));
+      })
+      .catch(function(err) {
+        console.error('[FDR] Cart update error:', err.description || err.message);
+      });
+  };
+
+  /* Escuchar eventos de carrito */
+  document.addEventListener('cart:updated', window.fdrUpdateCartCount);
+  document.addEventListener('cart:refresh', window.fdrUpdateCartCount);
+
+  /* Shopify cart API hooks */
+  if (window.Shopify && Shopify.onCartUpdate) {
+    var origCartUpdate = Shopify.onCartUpdate;
+    Shopify.onCartUpdate = function(cart) {
+      window.fdrUpdateCartCount();
+      if (origCartUpdate) origCartUpdate(cart);
     };
   }
 
-  function escapeHtml(text) {
-    var div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  // ===================== 1. STICKY SHADOW =====================
-  function initStickyShadow() {
-    if (!header) return;
-
-    function onScroll() {
-      var scrolled = window.scrollY > 10;
-      header.classList.toggle('fdr-header--scrolled', scrolled);
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); // Estado inicial
-  }
-
-  // ===================== 2. MENÚ MÓVIL =====================
+  /* ================================================================
+     6. MENÚ MÓVIL (auto-cierre al click link + acordeón)
+  ================================================================ */
   function openMenu() {
     if (!nav || !overlay || !burger) return;
+    nav.classList.remove('fdr-nav--closing');
     nav.classList.add('fdr-nav--open');
     overlay.classList.add('fdr-overlay--visible');
     burger.classList.add('fdr-burger--open');
     burger.setAttribute('aria-expanded', 'true');
+    burger.setAttribute('aria-label', 'Cerrar menú');
     document.body.style.overflow = 'hidden';
-    isMenuOpen = true;
   }
 
   function closeMenu() {
     if (!nav || !overlay || !burger) return;
+    nav.classList.add('fdr-nav--closing');
     nav.classList.remove('fdr-nav--open');
     overlay.classList.remove('fdr-overlay--visible');
     burger.classList.remove('fdr-burger--open');
     burger.setAttribute('aria-expanded', 'false');
+    burger.setAttribute('aria-label', 'Abrir menú');
     document.body.style.overflow = '';
-    isMenuOpen = false;
-
-    // Cerrar submenús abiertos en móvil
-    closeAllSubmenus();
   }
 
   function toggleMenu() {
-    isMenuOpen ? closeMenu() : openMenu();
-  }
-
-  function initMobileMenu() {
-    if (burger) {
-      burger.addEventListener('click', function(e) {
-        e.preventDefault();
-        toggleMenu();
-      });
-    }
-
-    if (navClose) {
-      navClose.addEventListener('click', function(e) {
-        e.preventDefault();
-        closeMenu();
-      });
-    }
-
-    if (overlay) {
-      overlay.addEventListener('click', closeMenu);
-    }
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeMenu();
-        closeSearchPredictive();
-      }
-    });
-  }
-
-  // ===================== 3. CERRAR MENÚ AL CLICKEAR LINK =====================
-  function initCloseOnLinkClick() {
     if (!nav) return;
+    if (nav.classList.contains('fdr-nav--open')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
 
-    nav.addEventListener('click', function(e) {
-      var target = e.target;
-
-      // Solo en móvil
-      if (window.innerWidth > MOBILE_BREAKPOINT) return;
-
-      // Si el click fue en un link de navegación (no en toggle)
-      var link = target.closest('.fdr-nav__link, .fdr-nav__sublink, .fdr-nav__subsublink');
-      var toggleBtn = target.closest('[data-toggle-submenu]');
-
-      if (link && !toggleBtn) {
-        closeMenu();
-      }
+  if (burger) {
+    burger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleMenu();
     });
   }
 
-  // ===================== 4. SUBMENÚS DROPDOWN =====================
-  function closeAllSubmenus() {
-    var toggles = document.querySelectorAll('[data-toggle-submenu]');
-    toggles.forEach(function(toggle) {
-      toggle.setAttribute('aria-expanded', 'false');
-      var submenu = toggle.closest('.fdr-nav__item, .fdr-nav__subitem').querySelector('.fdr-nav__submenu, .fdr-nav__subsubmenu');
-      if (submenu) {
-        submenu.setAttribute('aria-hidden', 'true');
-      }
-    });
-  }
+  if (overlay) overlay.addEventListener('click', closeMenu);
 
-  function initSubmenus() {
-    var toggles = document.querySelectorAll('[data-toggle-submenu]');
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeMenu();
+      closeSearchDropdown();
+    }
+  });
 
-    toggles.forEach(function(toggle) {
-      toggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+  /* === Auto-cierre móvil al click en cualquier link === */
+  if (nav) {
+    var allLinks = nav.querySelectorAll('a');
+    for (var li = 0; li < allLinks.length; li++) {
+      allLinks[li].addEventListener('click', function() {
+        /* Solo en móvil (<= 768px) */
+        if (window.innerWidth <= 768) {
+          closeMenu();
+        }
+      });
+    }
 
-        var parent = toggle.closest('.fdr-nav__item, .fdr-nav__subitem');
-        var submenu = parent.querySelector('.fdr-nav__submenu, .fdr-nav__subsubmenu');
-        var isExpanded = toggle.getAttribute('aria-expanded') === 'true';
-
-        // En móvil, cerrar hermanos (comportamiento acordeón)
-        if (window.innerWidth <= MOBILE_BREAKPOINT) {
-          var siblings = parent.parentElement.children;
-          Array.from(siblings).forEach(function(sibling) {
-            if (sibling !== parent) {
-              var siblingToggle = sibling.querySelector('[data-toggle-submenu]');
-              var siblingSubmenu = sibling.querySelector('.fdr-nav__submenu, .fdr-nav__subsubmenu');
-              if (siblingToggle) siblingToggle.setAttribute('aria-expanded', 'false');
-              if (siblingSubmenu) siblingSubmenu.setAttribute('aria-hidden', 'true');
+    /* Acordeón para items con subniveles en móvil */
+    var itemsWithChildren = nav.querySelectorAll('.fdr-nav__item--has-children');
+    for (var ci = 0; ci < itemsWithChildren.length; ci++) {
+      (function(item) {
+        var linkEl = item.querySelector('.fdr-nav__link');
+        if (linkEl) {
+          linkEl.addEventListener('click', function(e) {
+            if (window.innerWidth > 768) return; /* Solo móvil */
+            /* Si tiene submenú, togglear acordeón */
+            if (item.classList.contains('fdr-nav__item--has-children')) {
+              e.preventDefault();
+              e.stopPropagation();
+              item.classList.toggle('fdr-nav__item--expanded');
             }
           });
         }
-
-        // Toggle actual
-        toggle.setAttribute('aria-expanded', String(!isExpanded));
-        if (submenu) {
-          submenu.setAttribute('aria-hidden', String(isExpanded));
-        }
-      });
-    });
-
-    // Desktop: hover en items con children expande automáticamente
-    var itemsWithChildren = document.querySelectorAll('.fdr-nav__item--has-children, .fdr-nav__subitem--has-children');
-    itemsWithChildren.forEach(function(item) {
-      var submenu = item.querySelector(':scope > .fdr-nav__submenu, :scope > .fdr-nav__subsubmenu');
-      if (!submenu) return;
-
-      item.addEventListener('mouseenter', function() {
-        if (window.innerWidth > MOBILE_BREAKPOINT) {
-          submenu.setAttribute('aria-hidden', 'false');
-        }
-      });
-
-      item.addEventListener('mouseleave', function() {
-        if (window.innerWidth > MOBILE_BREAKPOINT) {
-          submenu.setAttribute('aria-hidden', 'true');
-        }
-      });
-    });
-  }
-
-  // ===================== 5. BÚSQUEDA PREDICTIVA =====================
-  function openSearchPredictive() {
-    if (searchPredictive) {
-      searchPredictive.classList.add('fdr-search__predictive--visible');
-      searchPredictive.setAttribute('aria-hidden', 'false');
+      })(itemsWithChildren[ci]);
     }
   }
 
-  function closeSearchPredictive() {
-    if (searchPredictive) {
-      searchPredictive.classList.remove('fdr-search__predictive--visible');
-      searchPredictive.setAttribute('aria-hidden', 'true');
-    }
-  }
+  /* ================================================================
+     7. COUNTDOWN TIMER PARA PROMO BAR
+  ================================================================ */
+  function initCountdown() {
+    var promoBar = document.getElementById('fdr-promo-bar');
+    if (!promoBar || !promoCountdown) return;
+    var endStr = promoBar.getAttribute('data-promo-end');
+    if (!endStr) return;
+    var endDate = new Date(endStr);
+    if (isNaN(endDate.getTime())) return;
 
-  function showSearchSkeleton() {
-    if (!searchPredictive) return;
-    var inner = searchPredictive.querySelector('.fdr-search__predictive-inner');
-    if (!inner) return;
-    var html = '<div class="fdr-search__predictive-heading">Buscando...</div>';
-    for (var i = 0; i < 4; i++) {
-      html += '<div class="fdr-search__predictive-skeleton">' +
-        '<div class="fdr-search__predictive-skeleton-img"></div>' +
-        '<div class="fdr-search__predictive-skeleton-text"></div>' +
-      '</div>';
-    }
-    inner.innerHTML = html;
-    openSearchPredictive();
-  }
+    function updateCountdown() {
+      var now = new Date();
+      var diff = endDate - now;
+      if (diff <= 0) {
+        promoCountdown.textContent = '¡Terminó!';
+        promoBar.style.opacity = '0.6';
+        return;
+      }
+      var days    = Math.floor(diff / (1000 * 60 * 60 * 24));
+      var hours   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-  function renderSearchResults(results, query) {
-    if (!searchPredictive) return;
-    var inner = searchPredictive.querySelector('.fdr-search__predictive-inner');
-    if (!inner) return;
+      var parts = [];
+      if (days > 0)    parts.push(days + 'd');
+      if (hours > 0 || days > 0) parts.push((hours < 10 ? '0' : '') + hours + 'h');
+      parts.push((minutes < 10 ? '0' : '') + minutes + 'm');
+      parts.push((seconds < 10 ? '0' : '') + seconds + 's');
 
-    if (!results || !results.products || results.products.length === 0) {
-      inner.innerHTML = '<span class="fdr-search__predictive-empty">No se encontraron productos para &quot;' + escapeHtml(query) + '&quot;</span>' +
-        '<a href="' + {{ routes.search_url | json }} + '?q=' + encodeURIComponent(query) + '" class="fdr-search__predictive-viewall">Ver todos los resultados</a>';
-      openSearchPredictive();
-      return;
-    }
-
-    var searchUrl = {{ routes.search_url | json }};
-    var html = '<div class="fdr-search__predictive-heading">Productos</div>' +
-      '<ul class="fdr-search__predictive-list">';
-
-    results.products.forEach(function(product) {
-      var imgUrl = product.featured_image
-        ? product.featured_image.replace(/(\.[a-zA-Z]+)$/, '_small$1')
-        : '';
-      var price = product.price !== undefined
-        ? (product.price / 100).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 })
-        : '';
-
-      html += '<li class="fdr-search__predictive-item">' +
-        '<a href="' + product.url + '" class="fdr-search__predictive-link">' +
-          (imgUrl ? '<img src="' + imgUrl + '" alt="' + escapeHtml(product.title) + '" class="fdr-search__predictive-img" loading="lazy">' : '<div class="fdr-search__predictive-img" style="display:flex;align-items:center;justify-content:center;background:#f5f5f0;font-size:1.2rem;">🌿</div>') +
-          '<div class="fdr-search__predictive-info">' +
-            '<div class="fdr-search__predictive-title">' + escapeHtml(product.title) + '</div>' +
-            (price ? '<div class="fdr-search__predictive-price">' + price + '</div>' : '') +
-          '</div>' +
-        '</a>' +
-      '</li>';
-    });
-
-    html += '</ul>' +
-      '<a href="' + searchUrl + '?q=' + encodeURIComponent(query) + '" class="fdr-search__predictive-viewall">Ver todos los resultados para &quot;' + escapeHtml(query) + '&quot;</a>';
-
-    inner.innerHTML = html;
-    openSearchPredictive();
-  }
-
-  function fetchSearchResults(query) {
-    if (!query || query.length < 2) {
-      closeSearchPredictive();
-      return;
+      promoCountdown.textContent = parts.join(' ');
     }
 
-    currentSearchQuery = query;
-    showSearchSkeleton();
-
-    var url = '/search/suggest.json?q=' + encodeURIComponent(query) + '&resources[type]=product&resources[limit]=6&resources[options][fields]=title,product_type,variants.title';
-
-    fetch(url)
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        // Solo actualizar si el query sigue siendo el actual
-        if (currentSearchQuery !== query) return;
-        var results = data.resources && data.resources.results ? data.resources.results : { products: [] };
-        renderSearchResults(results, query);
-      })
-      .catch(function() {
-        if (currentSearchQuery === query) {
-          closeSearchPredictive();
-        }
-      });
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
   }
 
-  function initPredictiveSearch() {
-    if (!searchInput) return;
+  initCountdown();
 
-    // Input con debounce
-    searchInput.addEventListener('input', debounce(function(e) {
-      var query = e.target.value.trim();
-      if (query.length >= 2) {
-        fetchSearchResults(query);
-      } else {
-        closeSearchPredictive();
-      }
-    }, 300));
-
-    // Focus: abrir si hay texto
-    searchInput.addEventListener('focus', function() {
-      var query = searchInput.value.trim();
-      if (query.length >= 2) {
-        fetchSearchResults(query);
-      }
-    });
-
-    // Cerrar al hacer click fuera
-    document.addEventListener('click', function(e) {
-      if (searchForm && !searchForm.contains(e.target)) {
-        closeSearchPredictive();
-      }
-    });
-
-    // Prevenir submit vacío
-    if (searchForm) {
-      searchForm.addEventListener('submit', function(e) {
-        var query = searchInput.value.trim();
-        if (!query) {
-          e.preventDefault();
-          searchInput.focus();
-        }
-      });
-    }
-  }
-
-  // ===================== 6. CONTADOR CARRITO AJAX =====================
-  function animateCartBump(newCount) {
-    if (!cartCount) return;
-    var prev = parseInt(cartCount.getAttribute('data-count') || '0', 10);
-
-    cartCount.textContent = newCount;
-    cartCount.setAttribute('data-count', newCount);
-
-    // Animación bump solo si aumentó
-    if (newCount > prev && prev > 0) {
-      cartCount.classList.remove('fdr-cart--bump');
-      void cartCount.offsetWidth; // reflow para reiniciar animación
-      cartCount.classList.add('fdr-cart--bump');
-    }
-  }
-
-  function updateCartCount() {
-    fetch('/cart.js')
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        animateCartBump(data.item_count);
-      })
-      .catch(function() {});
-  }
-
-  function initCartAjax() {
-    // Eventos nativos de Shopify
-    document.addEventListener('cart:updated', updateCartCount);
-    document.addEventListener('cart:refresh', updateCartCount);
-
-    // Interceptar clicks en botones "Add to cart" para actualización inmediata
-    document.addEventListener('click', function(e) {
-      var addBtn = e.target.closest('[type="submit"][name="add"], .add-to-cart, [data-add-to-cart]');
-      if (addBtn) {
-        // Pequeño delay para que Shopify procese el add
-        setTimeout(updateCartCount, 600);
-        setTimeout(updateCartCount, 1200);
-      }
-    });
-
-    // Polling suave después de cambios de visibilidad (cuando el usuario vuelve a la pestaña)
-    document.addEventListener('visibilitychange', function() {
-      if (!document.hidden) {
-        updateCartCount();
-      }
-    });
-  }
-
-  // ===================== 7. CERRAR MENÚ CON RESIZE =====================
-  function initResizeHandler() {
-    var wasMobile = window.innerWidth <= MOBILE_BREAKPOINT;
-
-    window.addEventListener('resize', debounce(function() {
-      var isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
-
-      // Si cambiamos de móvil a desktop, cerrar el menú
-      if (wasMobile && !isMobile && isMenuOpen) {
-        closeMenu();
-      }
-
-      // Si cambiamos de desktop a móvil, resetear submenús
-      if (!wasMobile && isMobile) {
-        closeAllSubmenus();
-      }
-
-      wasMobile = isMobile;
-    }, 150));
-  }
-
-  // ===================== 8. HEADER SIEMPRE VISIBLE =====================
-  // Asegurar que el header nunca se oculte por lógica de otros componentes
-  function initHeaderVisibility() {
-    if (!header) return;
-
-    // Forzar visibilidad del header
-    header.style.display = '';
-    header.style.visibility = 'visible';
-    header.style.opacity = '1';
-
-    // Observer para detectar si algo intenta ocultar el header
-    var observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.type === 'attributes') {
-          if (header.style.display === 'none') {
-            header.style.display = '';
-          }
-          if (header.style.visibility === 'hidden') {
-            header.style.visibility = 'visible';
-          }
-          if (header.style.opacity === '0') {
-            header.style.opacity = '1';
-          }
-        }
-      });
-    });
-
-    observer.observe(header, {
-      attributes: true,
-      attributeFilter: ['style', 'class', 'hidden']
-    });
-  }
-
-  // ===================== INICIALIZACIÓN =====================
-  function init() {
-    initStickyShadow();
-    initMobileMenu();
-    initCloseOnLinkClick();
-    initSubmenus();
-    initPredictiveSearch();
-    initCartAjax();
-    initResizeHandler();
-    initHeaderVisibility();
-
-    // Actualización inicial del carrito por si hay discrepancia
-    updateCartCount();
-  }
-
-  // Iniciar cuando el DOM esté listo
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  /* ================================================================
+     8. INICIALIZACIÓN
+  ================================================================ */
+  document.addEventListener('DOMContentLoaded', function() {
+    /* Inicializar contador + shipping bar con datos reales del carrito */
+    window.fdrUpdateCartCount();
+  });
 
 })();
 </script>
 
+
 {% schema %}
 {
-  "name": "Header Frutos",
+  "name": "Header Frutos CRO",
   "tag": "header",
   "class": "fdr-header-section",
   "settings": [
+    /* ================================================================
+       BARNA SUPERIOR — ORIGINAL INTACTO
+    ================================================================ */
     {
       "type": "header",
-      "content": "Barra Superior"
+      "content": "📢 Barra Superior"
     },
     {
       "type": "color",
@@ -1478,7 +1754,7 @@
     {
       "type": "text",
       "id": "topbar_text",
-      "label": "Texto barra superior",
+      "label": "Texto barra superior (respaldo)",
       "default": "🚚 Envíos gratis por compras mayores a $120.000 (Área Metropolitana) | ⭐ Calidad Garantizada"
     },
     {
@@ -1501,9 +1777,12 @@
       "unit": "rem",
       "default": 1.1
     },
+    /* ================================================================
+       HEADER PRINCIPAL — ORIGINAL INTACTO + NUEVOS
+    ================================================================ */
     {
       "type": "header",
-      "content": "Header Principal"
+      "content": "🏠 Header Principal"
     },
     {
       "type": "color",
@@ -1565,9 +1844,24 @@
       "unit": "px",
       "default": 32
     },
+    /* ===== NUEVO: Shrink Effect ===== */
     {
       "type": "header",
-      "content": "Logo"
+      "content": "📐 Shrink Effect"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_shrink",
+      "label": "Activar shrink effect al scrollear",
+      "default": true,
+      "info": "Al scrollear 50px, el header se comprime con logo más pequeño, padding reducido y backdrop blur"
+    },
+    /* ================================================================
+       LOGO — ORIGINAL INTACTO
+    ================================================================ */
+    {
+      "type": "header",
+      "content": "🌿 Logo"
     },
     {
       "type": "image_picker",
@@ -1602,9 +1896,12 @@
       "unit": "rem",
       "default": 1.9
     },
+    /* ================================================================
+       BÚSQUEDA — ORIGINAL INTACTO
+    ================================================================ */
     {
       "type": "header",
-      "content": "Búsqueda"
+      "content": "🔍 Búsqueda"
     },
     {
       "type": "text",
@@ -1622,16 +1919,19 @@
       "unit": "px",
       "default": 480
     },
+    /* ================================================================
+       NAVEGACIÓN — ORIGINAL INTACTO
+    ================================================================ */
     {
       "type": "header",
-      "content": "Navegación"
+      "content": "🧭 Navegación"
     },
     {
       "type": "link_list",
       "id": "menu",
       "label": "Menú de navegación",
       "default": "main-menu",
-      "info": "Configura los links en Shopify Admin → Tienda online → Navegación → Menú principal"
+      "info": "Configura los links en Shopify Admin → Tienda online → Navegación → Menú principal. Los subniveles se muestran como dropdowns."
     },
     {
       "type": "text",
@@ -1681,11 +1981,190 @@
       "step": 2,
       "unit": "px",
       "default": 20
+    },
+    {
+      "type": "header",
+      "content": "🌿 Link Conoce Frutos"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_conoce_menu",
+      "label": "Mostrar link «Conoce Frutos» en el menú",
+      "default": true,
+      "info": "Se inserta después de Catálogo y antes de Contáctanos"
+    },
+    {
+      "type": "text",
+      "id": "conoce_menu_label",
+      "label": "Texto del link",
+      "default": "Conoce Frutos"
+    },
+    {
+      "type": "text",
+      "id": "conoce_page_handle",
+      "label": "Handle de la página (sin /pages/)",
+      "default": "conocenos"
+    },
+    {
+      "type": "url",
+      "id": "conoce_page_url",
+      "label": "URL de respaldo si la página no existe aún"
+    },
+    {
+      "type": "header",
+      "content": "📰 Link Blog"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blog_menu",
+      "label": "Mostrar link Blog en el menú",
+      "default": true,
+      "info": "Se inserta después de Conoce Frutos"
+    },
+    {
+      "type": "text",
+      "id": "blog_menu_label",
+      "label": "Texto del link",
+      "default": "Blog"
+    },
+    {
+      "type": "blog",
+      "id": "blog_menu_target",
+      "label": "Blog de Shopify"
+    },
+    {
+      "type": "text",
+      "id": "blog_handle_fallback",
+      "label": "Handle del blog (respaldo)",
+      "default": "noticias",
+      "info": "Ej: noticias → /blogs/noticias"
+    },
+    {
+      "type": "url",
+      "id": "blog_url_fallback",
+      "label": "URL de respaldo del blog"
+    },
+    {
+      "type": "header",
+      "content": "📋 Link Menú (catálogo PDF)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_menu_pdf",
+      "label": "Mostrar link «Menú» en la navegación",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "menu_pdf_label",
+      "label": "Texto del link",
+      "default": "Menú"
+    },
+    {
+      "type": "url",
+      "id": "menu_pdf_url",
+      "label": "URL del menú (Google Drive o PDF)",
+      "info": "Se inserta justo antes de Contáctanos en el menú de Shopify"
+    },
+    {
+      "type": "checkbox",
+      "id": "menu_pdf_highlight",
+      "label": "Destacar link Menú (color especial)",
+      "default": false
+    },
+    /* ================================================================
+       BARRA DE ENVÍO GRATIS — NUEVA
+    ================================================================ */
+    {
+      "type": "header",
+      "content": "🚚 Barra de Envío Gratis Dinámica"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_shipping_bar",
+      "label": "Activar barra de envío gratis dinámica",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "free_shipping_threshold",
+      "label": "Umbral para envío gratis (en pesos, sin puntos ni comas)",
+      "default": 200000,
+      "info": "Ejemplo: 200000 para $200.000"
+    },
+    {
+      "type": "text",
+      "id": "shipping_default_message",
+      "label": "Mensaje carrito vacío",
+      "default": "🚚 Envíos gratis por compras mayores a $200.000"
+    },
+    {
+      "type": "text",
+      "id": "shipping_free_message",
+      "label": "Mensaje envío gratis conseguido",
+      "default": "🎉 ¡Felicidades! Tienes envío gratis"
+    },
+    {
+      "type": "color",
+      "id": "topbar_progress_color",
+      "label": "Color de la barra de progreso",
+      "default": "#FFC107"
+    },
+    /* ================================================================
+       PROMO BAR / COUNTDOWN — NUEVA
+    ================================================================ */
+    {
+      "type": "header",
+      "content": "🔥 Barra de Promo con Countdown"
+    },
+    {
+      "type": "checkbox",
+      "id": "promo_enabled",
+      "label": "Activar barra de promo/countdown",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "promo_badge",
+      "label": "Texto del badge",
+      "default": "🔥 Oferta 24h",
+      "info": "Ej: 🔥 Oferta 24h, ⚡ Flash Sale, 🎁 Promo especial"
+    },
+    {
+      "type": "text",
+      "id": "promo_text",
+      "label": "Texto de la promo",
+      "default": "Envío gratis en TODOS los productos + 10% OFF extra"
+    },
+    {
+      "type": "text",
+      "id": "promo_end_date",
+      "label": "Fecha de fin de la promo",
+      "default": "2025-12-31T23:59:59",
+      "info": "Formato: YYYY-MM-DDTHH:MM:SS — Ej: 2025-12-31T23:59:59"
+    },
+    {
+      "type": "color",
+      "id": "promo_bg",
+      "label": "Fondo de la promo bar",
+      "default": "#FFC107"
+    },
+    {
+      "type": "color",
+      "id": "promo_text_color",
+      "label": "Color texto promo",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "promo_badge_bg",
+      "label": "Fondo del badge",
+      "default": "#FF5722"
     }
   ],
   "presets": [
     {
-      "name": "Header Frutos"
+      "name": "Header Frutos CRO"
     }
   ]
 }

@@ -1,0 +1,749 @@
+{%- style -%}
+.frc-conocenos {
+  --frc-green: {{ section.settings.accent_color | default: '#1B5E20' }};
+  --frc-green-mid: #2E7D32;
+  --frc-lime: #76FF03;
+  --frc-yellow: #FFC107;
+  --frc-brown: #5D4037;
+  --frc-cream: {{ section.settings.bg_color | default: '#F1F8E9' }};
+  --frc-white: #ffffff;
+  --frc-text: #333333;
+  --frc-muted: #666666;
+  --frc-max: {{ section.settings.max_width | default: 1200 }}px;
+  font-family: 'Lato', sans-serif;
+  color: var(--frc-text);
+  background: var(--frc-cream);
+  line-height: 1.65;
+}
+.frc-conocenos * { box-sizing: border-box; }
+
+.frc-conocenos__hero {
+  background: linear-gradient(135deg, {{ section.settings.hero_from | default: '#1B5E20' }}, {{ section.settings.hero_to | default: '#2E7D32' }});
+  padding: clamp(56px, 8vw, 88px) 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.frc-conocenos__hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -60px;
+  width: 240px; height: 240px;
+  background: rgba(118,255,3,0.1);
+  border-radius: 50%;
+}
+.frc-conocenos__hero-eyebrow {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--frc-lime);
+  margin-bottom: 12px;
+}
+.frc-conocenos__hero-title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(52px, 8vw, 88px);
+  color: var(--frc-white);
+  margin: 0 0 14px;
+  line-height: 1;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+.frc-conocenos__hero-sub {
+  font-size: clamp(16px, 2.2vw, 20px);
+  color: rgba(255,255,255,0.92);
+  max-width: 620px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.frc-conocenos__nav {
+  background: var(--frc-white);
+  border-bottom: 1px solid rgba(27,94,32,0.12);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.frc-conocenos__nav-inner {
+  max-width: var(--frc-max);
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.frc-conocenos__nav-inner::-webkit-scrollbar { display: none; }
+.frc-conocenos__pill {
+  flex-shrink: 0;
+  padding: 10px 18px;
+  border-radius: 50px;
+  border: 2px solid var(--frc-green);
+  background: transparent;
+  color: var(--frc-green);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.frc-conocenos__pill:hover,
+.frc-conocenos__pill:focus {
+  background: var(--frc-green);
+  color: var(--frc-white);
+}
+
+.frc-conocenos__pillar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  scroll-margin-top: 72px;
+}
+.frc-conocenos__pillar--reverse { flex-direction: row-reverse; }
+.frc-conocenos__pillar-media {
+  flex: 1 1 48%;
+  min-height: 360px;
+  position: relative;
+  overflow: hidden;
+}
+.frc-conocenos__pillar-media img,
+.frc-conocenos__pillar-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+  object-fit: cover;
+  display: block;
+}
+.frc-conocenos__pillar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  background: linear-gradient(145deg, #e8f5e9, #c8e6c9);
+}
+.frc-conocenos__pillar-body {
+  flex: 1 1 48%;
+  padding: clamp(40px, 6vw, 72px) clamp(24px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.frc-conocenos__pillar--cream .frc-conocenos__pillar-body { background: var(--frc-cream); }
+.frc-conocenos__pillar--white .frc-conocenos__pillar-body { background: var(--frc-white); }
+.frc-conocenos__pillar--brown .frc-conocenos__pillar-body {
+  background: var(--frc-brown);
+  color: #f4e4d9;
+}
+.frc-conocenos__pillar--brown .frc-conocenos__pillar-text { color: #e0d4cc; }
+.frc-conocenos__pillar-emoji {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+.frc-conocenos__pillar-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--frc-lime);
+  margin-bottom: 8px;
+}
+.frc-conocenos__pillar--brown .frc-conocenos__pillar-eyebrow { color: var(--frc-yellow); }
+.frc-conocenos__pillar-title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(40px, 5vw, 56px);
+  color: var(--frc-green);
+  margin: 0 0 16px;
+  line-height: 1.05;
+  font-weight: 700;
+}
+.frc-conocenos__pillar--brown .frc-conocenos__pillar-title { color: var(--frc-yellow); }
+.frc-conocenos__pillar-text {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin: 0;
+}
+.frc-conocenos__pillar-text p { margin: 0 0 12px; }
+.frc-conocenos__pillar-text p:last-child { margin-bottom: 0; }
+
+.frc-conocenos__gallery {
+  padding: clamp(56px, 8vw, 88px) 24px;
+  background: var(--frc-white);
+}
+.frc-conocenos__gallery-inner {
+  max-width: var(--frc-max);
+  margin: 0 auto;
+}
+.frc-conocenos__gallery-head {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.frc-conocenos__gallery-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--frc-green);
+  margin-bottom: 8px;
+}
+.frc-conocenos__gallery-title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(44px, 6vw, 64px);
+  color: var(--frc-green);
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+.frc-conocenos__gallery-sub {
+  color: var(--frc-muted);
+  font-size: 1.05rem;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.frc-conocenos__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+}
+.frc-conocenos__card {
+  grid-column: span 4;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--frc-cream);
+  border: 1px dashed rgba(93,64,55,0.35);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.frc-conocenos__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(27,94,32,0.12);
+}
+.frc-conocenos__card--wide { grid-column: span 6; }
+.frc-conocenos__card--tall .frc-conocenos__card-img { min-height: 280px; }
+.frc-conocenos__card-img {
+  min-height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+.frc-conocenos__card-img--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  background: linear-gradient(160deg, #e8f5e9, #a5d6a7);
+}
+.frc-conocenos__card-body { padding: 20px 22px 24px; }
+.frc-conocenos__card-tag {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--frc-brown);
+  background: var(--frc-yellow);
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.frc-conocenos__card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--frc-green);
+  margin: 0 0 8px;
+}
+.frc-conocenos__card-text {
+  font-size: 0.92rem;
+  color: var(--frc-muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.frc-conocenos__cta {
+  text-align: center;
+  padding: 48px 24px 64px;
+  background: var(--frc-cream);
+}
+.frc-conocenos__cta-btn {
+  display: inline-block;
+  padding: 16px 40px;
+  background: var(--frc-lime);
+  color: #1b3600;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 50px;
+  transition: background 0.2s, transform 0.2s;
+}
+.frc-conocenos__cta-btn:hover {
+  background: var(--frc-yellow);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .frc-conocenos__pillar,
+  .frc-conocenos__pillar--reverse { flex-direction: column; }
+  .frc-conocenos__pillar-media { min-height: 260px; flex: 1 1 100%; }
+  .frc-conocenos__card,
+  .frc-conocenos__card--wide { grid-column: span 12; }
+}
+{%- endstyle -%}
+
+<div class="frc-conocenos">
+
+  <header class="frc-conocenos__hero">
+    {%- if section.settings.hero_eyebrow != blank -%}
+      <span class="frc-conocenos__hero-eyebrow">{{ section.settings.hero_eyebrow }}</span>
+    {%- endif -%}
+    <h1 class="frc-conocenos__hero-title">{{ section.settings.hero_title }}</h1>
+    {%- if section.settings.hero_subtitle != blank -%}
+      <p class="frc-conocenos__hero-sub">{{ section.settings.hero_subtitle }}</p>
+    {%- endif -%}
+  </header>
+
+  <nav class="frc-conocenos__nav" aria-label="Secciones Conócenos">
+    <div class="frc-conocenos__nav-inner">
+      <a href="#mision" class="frc-conocenos__pill">🌿 Misión</a>
+      <a href="#vision" class="frc-conocenos__pill">👁️ Visión</a>
+      <a href="#manifiesto" class="frc-conocenos__pill">📜 Manifiesto</a>
+      <a href="#proposito" class="frc-conocenos__pill">💚 Propósito</a>
+      <a href="#que-es" class="frc-conocenos__pill">🏡 ¿Qué es Frutos?</a>
+    </div>
+  </nav>
+
+  {%- comment -%} MISIÓN {%- endcomment -%}
+  <article id="mision" class="frc-conocenos__pillar frc-conocenos__pillar--white">
+    <div class="frc-conocenos__pillar-media">
+      {%- if section.settings.mision_image != blank -%}
+        {{ section.settings.mision_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: section.settings.mision_title, class: 'frc-conocenos__pillar-img' }}
+      {%- else -%}
+        <div class="frc-conocenos__pillar-placeholder" aria-hidden="true">🌿</div>
+      {%- endif -%}
+    </div>
+    <div class="frc-conocenos__pillar-body">
+      <h2 class="frc-conocenos__pillar-title">{{ section.settings.mision_title }}</h2>
+      <div class="frc-conocenos__pillar-text">{{ section.settings.mision_text }}</div>
+    </div>
+  </article>
+
+  {%- comment -%} VISIÓN {%- endcomment -%}
+  <article id="vision" class="frc-conocenos__pillar frc-conocenos__pillar--reverse frc-conocenos__pillar--cream">
+    <div class="frc-conocenos__pillar-media">
+      {%- if section.settings.vision_image != blank -%}
+        {{ section.settings.vision_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: section.settings.vision_title }}
+      {%- else -%}
+        <div class="frc-conocenos__pillar-placeholder" aria-hidden="true">👁️</div>
+      {%- endif -%}
+    </div>
+    <div class="frc-conocenos__pillar-body">
+      <h2 class="frc-conocenos__pillar-title">{{ section.settings.vision_title }}</h2>
+      <div class="frc-conocenos__pillar-text">{{ section.settings.vision_text }}</div>
+    </div>
+  </article>
+
+  {%- comment -%} MANIFIESTO {%- endcomment -%}
+  <article id="manifiesto" class="frc-conocenos__pillar frc-conocenos__pillar--brown">
+    <div class="frc-conocenos__pillar-media">
+      {%- if section.settings.manifiesto_image != blank -%}
+        {{ section.settings.manifiesto_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: section.settings.manifiesto_title }}
+      {%- else -%}
+        <div class="frc-conocenos__pillar-placeholder" aria-hidden="true">📜</div>
+      {%- endif -%}
+    </div>
+    <div class="frc-conocenos__pillar-body">
+      <h2 class="frc-conocenos__pillar-title">{{ section.settings.manifiesto_title }}</h2>
+      <div class="frc-conocenos__pillar-text">{{ section.settings.manifiesto_text }}</div>
+    </div>
+  </article>
+
+  {%- comment -%} PROPÓSITO {%- endcomment -%}
+  <article id="proposito" class="frc-conocenos__pillar frc-conocenos__pillar--reverse frc-conocenos__pillar--white">
+    <div class="frc-conocenos__pillar-media">
+      {%- if section.settings.proposito_image != blank -%}
+        {{ section.settings.proposito_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: section.settings.proposito_title }}
+      {%- else -%}
+        <div class="frc-conocenos__pillar-placeholder" aria-hidden="true">💚</div>
+      {%- endif -%}
+    </div>
+    <div class="frc-conocenos__pillar-body">
+      <h2 class="frc-conocenos__pillar-title">{{ section.settings.proposito_title }}</h2>
+      <div class="frc-conocenos__pillar-text">{{ section.settings.proposito_text }}</div>
+    </div>
+  </article>
+
+  {%- comment -%} QUÉ ES FRUTOS {%- endcomment -%}
+  <article id="que-es" class="frc-conocenos__pillar frc-conocenos__pillar--cream">
+    <div class="frc-conocenos__pillar-media">
+      {%- if section.settings.que_es_image != blank -%}
+        {{ section.settings.que_es_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: section.settings.que_es_title }}
+      {%- else -%}
+        <div class="frc-conocenos__pillar-placeholder" aria-hidden="true">🏡</div>
+      {%- endif -%}
+    </div>
+    <div class="frc-conocenos__pillar-body">
+      <h2 class="frc-conocenos__pillar-title">{{ section.settings.que_es_title }}</h2>
+      <div class="frc-conocenos__pillar-text">{{ section.settings.que_es_text }}</div>
+    </div>
+  </article>
+
+  {%- comment -%} GALERÍA FOTOS {%- endcomment -%}
+  <section class="frc-conocenos__gallery" aria-labelledby="conocenos-gallery-title">
+    <div class="frc-conocenos__gallery-inner">
+      <div class="frc-conocenos__gallery-head">
+        {%- if section.settings.gallery_eyebrow != blank -%}
+          <p class="frc-conocenos__gallery-eyebrow">{{ section.settings.gallery_eyebrow }}</p>
+        {%- endif -%}
+        <h2 id="conocenos-gallery-title" class="frc-conocenos__gallery-title">{{ section.settings.gallery_title }}</h2>
+        {%- if section.settings.gallery_subtitle != blank -%}
+          <p class="frc-conocenos__gallery-sub">{{ section.settings.gallery_subtitle }}</p>
+        {%- endif -%}
+      </div>
+      <div class="frc-conocenos__grid">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'foto' -%}
+            <article class="frc-conocenos__card{% if block.settings.wide %} frc-conocenos__card--wide{% endif %}{% if block.settings.tall %} frc-conocenos__card--tall{% endif %}" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                <div class="frc-conocenos__card-img" style="background-image: url('{{ block.settings.image | image_url: width: 800 }}');" role="img" aria-label="{{ block.settings.title | escape }}"></div>
+              {%- else -%}
+                <div class="frc-conocenos__card-img frc-conocenos__card-img--placeholder" aria-hidden="true">{{ block.settings.emoji | default: '🌱' }}</div>
+              {%- endif -%}
+              <div class="frc-conocenos__card-body">
+                {%- if block.settings.tag != blank -%}
+                  <span class="frc-conocenos__card-tag">{{ block.settings.tag }}</span>
+                {%- endif -%}
+                {%- if block.settings.title != blank -%}
+                  <h3 class="frc-conocenos__card-title">{{ block.settings.title }}</h3>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <p class="frc-conocenos__card-text">{{ block.settings.text }}</p>
+                {%- endif -%}
+              </div>
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  {%- if section.settings.cta_text != blank -%}
+    <div class="frc-conocenos__cta">
+      <a href="{{ section.settings.cta_link | default: routes.collections_url }}" class="frc-conocenos__cta-btn">{{ section.settings.cta_text }}</a>
+    </div>
+  {%- endif -%}
+
+</div>
+
+{% schema %}
+{
+  "name": "¡Conoce Frutos!",
+  "tag": "section",
+  "class": "frc-conocenos-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero"
+    },
+    {
+      "type": "text",
+      "id": "hero_eyebrow",
+      "label": "Eyebrow",
+      "default": "Alimentación consciente · Bosa, Bogotá"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Título",
+      "default": "¡Conoce Frutos!"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_subtitle",
+      "label": "Subtítulo",
+      "default": "Más que una tienda: un espacio para volver a la raíz, cuidar tu cuerpo y apoyar el comercio local."
+    },
+    {
+      "type": "color",
+      "id": "hero_from",
+      "label": "Hero gradiente inicio",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "hero_to",
+      "label": "Hero gradiente fin",
+      "default": "#2E7D32"
+    },
+    {
+      "type": "header",
+      "content": "Misión"
+    },
+    {
+      "type": "image_picker",
+      "id": "mision_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "mision_title",
+      "label": "Título",
+      "default": "Nutrir con intención"
+    },
+    {
+      "type": "richtext",
+      "id": "mision_text",
+      "label": "Texto",
+      "default": "<p>Acercar alimentos naturales, conscientes y de origen local a las familias de Bogotá, con información honesta y un trato cercano que invite a elegir mejor cada día.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Visión"
+    },
+    {
+      "type": "image_picker",
+      "id": "vision_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "vision_title",
+      "label": "Título",
+      "default": "Una comunidad que vuelve a la raíz"
+    },
+    {
+      "type": "richtext",
+      "id": "vision_text",
+      "label": "Texto",
+      "default": "<p>Ser el referente de bienestar natural en Bosa y el área metropolitana: un lugar donde comprar, aprender, compartir y reconectar con lo que la tierra nos da.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Manifiesto"
+    },
+    {
+      "type": "image_picker",
+      "id": "manifiesto_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "manifiesto_title",
+      "label": "Título",
+      "default": "Creemos en lo natural"
+    },
+    {
+      "type": "richtext",
+      "id": "manifiesto_text",
+      "label": "Texto",
+      "default": "<p>Creemos que tu alimento puede ser tu medicina. Que el comercio local fortalece barrios. Que la información vale tanto como el producto. Y que cada compra consciente es un acto de cuidado — para ti y para tu comunidad.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Propósito"
+    },
+    {
+      "type": "image_picker",
+      "id": "proposito_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "proposito_title",
+      "label": "Título",
+      "default": "El amor práctico es el cuidado"
+    },
+    {
+      "type": "richtext",
+      "id": "proposito_text",
+      "label": "Texto",
+      "default": "<p>Cuidar de las personas a través de lo que comen, de cómo se sienten y de la confianza que construimos en cada pedido, cada conversación y cada visita a nuestro espacio en Bosa.</p>"
+    },
+    {
+      "type": "header",
+      "content": "¿Qué es Frutos de la Raíz?"
+    },
+    {
+      "type": "image_picker",
+      "id": "que_es_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "que_es_title",
+      "label": "Título",
+      "default": "Volver a la Raíz"
+    },
+    {
+      "type": "richtext",
+      "id": "que_es_text",
+      "label": "Texto",
+      "default": "<p>Frutos de la Raíz nació en Bosa como un espacio para la alimentación consciente y el intercambio cultural. Aquí encuentras semillas, frutos secos, aromáticas, especias y productos seleccionados con criterio — sin aditivos innecesarios, con origen claro y precio justo.</p><p>Compra online con envíos en Bogotá o visítanos en el local. Te esperamos con una sonrisa y buenas conversas.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Galería de fotos"
+    },
+    {
+      "type": "text",
+      "id": "gallery_eyebrow",
+      "label": "Eyebrow galería",
+      "default": "📸 Nuestro espacio"
+    },
+    {
+      "type": "text",
+      "id": "gallery_title",
+      "label": "Título galería",
+      "default": "La vida en Frutos"
+    },
+    {
+      "type": "textarea",
+      "id": "gallery_subtitle",
+      "label": "Subtítulo galería",
+      "default": "Fotos reales de nuestro local, productos y comunidad en Bosa."
+    },
+    {
+      "type": "header",
+      "content": "CTA final"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Texto botón",
+      "default": "🛒 Explorar productos"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Link del botón"
+    },
+    {
+      "type": "header",
+      "content": "Estilo"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color acento",
+      "default": "#1B5E20"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo crema",
+      "default": "#F1F8E9"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo contenido",
+      "min": 900,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    }
+  ],
+  "blocks": [
+    {
+      "type": "foto",
+      "name": "Foto CRO",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen"
+        },
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji si no hay imagen",
+          "default": "🌱"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Etiqueta",
+          "default": "Local"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Nuestro espacio en Bosa"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texto",
+          "default": "Un lugar acogedor para hacer tu mercado saludable y conversar sobre bienestar natural."
+        },
+        {
+          "type": "checkbox",
+          "id": "wide",
+          "label": "Tarjeta ancha (2 columnas)",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "tall",
+          "label": "Imagen más alta",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "¡Conoce Frutos!",
+      "blocks": [
+        {
+          "type": "foto",
+          "settings": {
+            "tag": "Local",
+            "title": "Bienvenidos a Bosa",
+            "text": "Nuestro espacio físico donde la comunidad se reúne alrededor de la alimentación consciente.",
+            "emoji": "🏡",
+            "wide": true
+          }
+        },
+        {
+          "type": "foto",
+          "settings": {
+            "tag": "Productos",
+            "title": "Selección natural",
+            "text": "Semillas, frutos secos y aromáticas elegidas con criterio y origen consciente.",
+            "emoji": "🥜"
+          }
+        },
+        {
+          "type": "foto",
+          "settings": {
+            "tag": "Comunidad",
+            "title": "Encuentros y eventos",
+            "text": "Talleres, aromáticas y conversaciones que nutren cuerpo y alma.",
+            "emoji": "🍵"
+          }
+        },
+        {
+          "type": "foto",
+          "settings": {
+            "tag": "Bienestar",
+            "title": "Cuidado en cada detalle",
+            "text": "Empacamos tu pedido con el mismo cariño con el que lo elegimos.",
+            "emoji": "💚",
+            "tall": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

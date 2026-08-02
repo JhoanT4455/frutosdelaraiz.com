@@ -986,9 +986,10 @@
           {%- comment -%} Barra de progreso envío gratis {%- endcomment -%}
           {% if section.settings.show_shipping_bar %}
             {% assign free_ship_threshold = section.settings.free_shipping_threshold | default: 200000 %}
-            {% assign pct_raw = cart.total_price | times: 100.0 | divided_by: free_ship_threshold %}
+            {% assign free_ship_threshold_cents = free_ship_threshold | times: 100 %}
+            {% assign pct_raw = cart.total_price | times: 100.0 | divided_by: free_ship_threshold_cents %}
             {% assign pct = pct_raw | at_most: 100 %}
-            {% assign remaining = free_ship_threshold | minus: cart.total_price %}
+            {% assign remaining = free_ship_threshold_cents | minus: cart.total_price %}
             {% if remaining > 0 %}
               {% assign remaining_money = remaining | money %}
             {% endif %}
@@ -1219,10 +1220,11 @@
             <span class="frc-cart__summary-label">Envío</span>
             <span class="frc-cart__summary-value" data-summary-shipping>
               {% assign free_ship_threshold = section.settings.free_shipping_threshold | default: 200000 %}
-              {% if cart.total_price >= free_ship_threshold %}
+              {% assign free_ship_threshold_cents = free_ship_threshold | times: 100 %}
+              {% if cart.total_price >= free_ship_threshold_cents %}
                 <span style="color: var(--fc-green); font-weight: 700;">¡Gratis!</span>
               {% else %}
-                Calculado en el checkout
+                Envío a todo Bogotá
               {% endif %}
             </span>
           </div>
@@ -1538,7 +1540,7 @@ LOCALE: {{ shop.money_format | json }}.replace(/\{\{\s*amount\s*\}\}/g, '{AMOUNT
       if (cart.total_price >= FC.cfg.FREE_SHIP) {
         shippingVal.innerHTML = '<span style="color:#4CAF50;font-weight:700;">¡Gratis!</span>';
       } else {
-        shippingVal.textContent = 'Calculado en el checkout';
+        shippingVal.textContent = 'Envío a todo Bogotá';
       }
     }
   }
@@ -1876,7 +1878,7 @@ LOCALE: {{ shop.money_format | json }}.replace(/\{\{\s*amount\s*\}\}/g, '{AMOUNT
       "label": "Mostrar barra de progreso",
       "default": true
     },
-  {
+ {
   "type": "number",
   "id": "free_shipping_threshold",
   "label": "Umbral para envío gratis",
